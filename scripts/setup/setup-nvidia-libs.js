@@ -38,6 +38,7 @@ import {
 import { FileHelper } from '@/helpers/file-helper'
 import { SystemHelper } from '@/helpers/system-helper'
 import { LogHelper } from '@/helpers/log-helper'
+import { ensureDirectoryLink } from './setup-helpers'
 
 const { type: OS_TYPE, cpuArchitecture: CPU_ARCH } =
   SystemHelper.getInformation()
@@ -55,20 +56,6 @@ function mapToNvidiaArch(cpuArch) {
   }
 
   return 'x86_64'
-}
-
-async function ensureDirectoryLink(linkPath, targetPath) {
-  if (!fs.existsSync(targetPath)) {
-    return
-  }
-
-  await fs.promises.rm(linkPath, { recursive: true, force: true })
-  await fs.promises.mkdir(path.dirname(linkPath), { recursive: true })
-
-  const relativeTarget = path.relative(path.dirname(linkPath), targetPath)
-  const linkType = SystemHelper.isWindows() ? 'junction' : 'dir'
-
-  await fs.promises.symlink(relativeTarget, linkPath, linkType)
 }
 
 async function ensureCompatibilityLinks() {

@@ -27,6 +27,8 @@ export default class Chatbot {
     this.isProgrammaticFeedScroll = false
 
     // Initialize tool UI handler
+    this.tokenFormatter = new Intl.NumberFormat()
+
     this.toolUIHandler = new ToolUIHandler(
       this.feed,
       this.scrollDown.bind(this),
@@ -544,12 +546,10 @@ export default class Chatbot {
     const tokensPerSecond = Number(
       metrics.tokensPerSecond || metrics.averagedPhaseTokensPerSecond || 0
     )
-    const tokenFormatter = new Intl.NumberFormat()
-
     return `
       <span class="bubble-metric-item">
         <i class="ri-copper-coin-line" aria-hidden="true"></i>
-        <span>${tokenFormatter.format(totalTokens)} (i:${tokenFormatter.format(inputTokens)}/o:${tokenFormatter.format(outputTokens)}) tok</span>
+        <span>${this.tokenFormatter.format(totalTokens)} (i:${this.tokenFormatter.format(inputTokens)}/o:${this.tokenFormatter.format(outputTokens)}) tok</span>
       </span>
       <span class="bubble-metric-separator" aria-hidden="true">•</span>
       <span class="bubble-metric-item">

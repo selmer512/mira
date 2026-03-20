@@ -25,6 +25,15 @@ import {
 import { WORKFLOW_LLM_PROVIDER as LLM_PROVIDER_NAME } from '@/constants'
 import { SkillDomainHelper } from '@/helpers/skill-domain-helper'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _llamaCPPModule: any = null
+async function getLlamaCPPModule() {
+  if (!_llamaCPPModule) {
+    _llamaCPPModule = await Function('return import("node-llama-cpp")')()
+  }
+  return _llamaCPPModule
+}
+
 interface ActionCallingLLMDutyParams {
   input: LLMDutyParams['input']
   skillName: string
@@ -184,9 +193,7 @@ Follow these rules exactly:
   ): Promise<ChatSessionModelFunctions> {
     const actionsEntries = Object.entries(actions)
     const functions: ChatSessionModelFunctions = {}
-    const { defineChatSessionFunction } = await Function(
-      'return import("node-llama-cpp")'
-    )()
+    const { defineChatSessionFunction } = await getLlamaCPPModule()
 
     actionsEntries.forEach(([actionName, action]) => {
       if (!action || !action.type) {
@@ -371,9 +378,7 @@ Follow these rules exactly:
            * We use LlamaChat to have more control over the session (before function calling)
            * @see https://github.com/withcatai/node-llama-cpp/issues/471
            */
-          const { LlamaChat } = await Function(
-            'return import("node-llama-cpp")'
-          )()
+          const { LlamaChat } = await getLlamaCPPModule()
 
           ActionCallingLLMDuty.session = new LlamaChat({
             contextSequence: LLM_MANAGER.context.getSequence(),

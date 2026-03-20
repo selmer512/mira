@@ -12,23 +12,10 @@ import {
 import { FileHelper } from '@/helpers/file-helper'
 import { SystemHelper } from '@/helpers/system-helper'
 import { LogHelper } from '@/helpers/log-helper'
+import { ensureDirectoryLink } from './setup-helpers'
 
 const { type: OS_TYPE, cpuArchitecture: CPU_ARCH } =
   SystemHelper.getInformation()
-
-async function ensureDirectoryLink(linkPath, targetPath) {
-  if (!fs.existsSync(targetPath)) {
-    return
-  }
-
-  await fs.promises.rm(linkPath, { recursive: true, force: true })
-  await fs.promises.mkdir(path.dirname(linkPath), { recursive: true })
-
-  const relativeTarget = path.relative(path.dirname(linkPath), targetPath)
-  const linkType = SystemHelper.isWindows() ? 'junction' : 'dir'
-
-  await fs.promises.symlink(relativeTarget, linkPath, linkType)
-}
 
 /**
  * Map OS and architecture to PyTorch wheel platform identifiers
@@ -150,11 +137,6 @@ async function installPyTorch(requiredVersion, targetPath, manifestPath) {
       ])
 
       LogHelper.success('PyTorch manifest file created')
-
-      if (!SystemHelper.isMacOS()) {
-        await ensureDirectoryLink(PYTORCH_NVIDIA_PATH, NVIDIA_LIBS_PATH)
-      }
-
       LogHelper.success(`PyTorch ${requiredVersion} ready`)
     } catch (error) {
       LogHelper.error(`Failed to install PyTorch: ${error}`)

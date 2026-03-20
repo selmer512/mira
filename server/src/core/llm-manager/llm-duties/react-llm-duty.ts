@@ -96,6 +96,15 @@ import {
   observeCompletionMetrics
 } from './react-llm-duty/metrics'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _llamaCPPModule: any = null
+async function getLlamaCPPModule() {
+  if (!_llamaCPPModule) {
+    _llamaCPPModule = await Function('return import("node-llama-cpp")')()
+  }
+  return _llamaCPPModule
+}
+
 const REACT_CONTINUATION_STATE_FILENAME = '.react-execution-continuation-state.json'
 const REACT_HISTORY_COMPACTION_STATE_FILENAME =
   '.react-history-compaction-state.json'
@@ -261,9 +270,7 @@ export class ReActLLMDuty extends LLMDuty {
 
           ReActLLMDuty.context = await LLM_MANAGER.model.createContext()
 
-          const { LlamaChatSession } = await Function(
-            'return import("node-llama-cpp")'
-          )()
+          const { LlamaChatSession } = await getLlamaCPPModule()
 
           ReActLLMDuty.session = new LlamaChatSession({
             contextSequence: ReActLLMDuty.context.getSequence(),
@@ -1356,9 +1363,7 @@ export class ReActLLMDuty extends LLMDuty {
 
         if (LLM_PROVIDER_NAME === LLMProviders.Local) {
           const tempContext = await LLM_MANAGER.model.createContext()
-          const { LlamaChatSession } = await Function(
-            'return import("node-llama-cpp")'
-          )()
+          const { LlamaChatSession } = await getLlamaCPPModule()
           const tempSession = new LlamaChatSession({
             contextSequence: tempContext.getSequence(),
             autoDisposeSequence: true,

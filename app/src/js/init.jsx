@@ -104,11 +104,7 @@ function Init() {
     tcpServerBoot:
       window.leonConfigInfo?.tcpServer?.enabled === false ? 'success' : 'loading',
     llm: 'loading',
-    llamaServerBoot:
-      window.leonConfigInfo?.llm?.workflowProvider === 'llamacpp' ||
-      window.leonConfigInfo?.llm?.agentProvider === 'llamacpp'
-        ? 'loading'
-        : 'success',
+    llamaServerBoot: usesLlamaCPP ? 'loading' : 'success',
     llmDutiesWarmUp: 'loading'
   })
 
