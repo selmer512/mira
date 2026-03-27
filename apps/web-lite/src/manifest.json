@@ -1,0 +1,10 @@
+{
+  "name": "Leon — Web Lite",
+  "short_name": "Leon",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "description": "Lightweight Leon assistant interface for Smart Mirror and kiosk deployments",
+  "icons": []
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@leon-ai/web-lite",
+  "version": "0.1.0",
+  "description": "Lightweight Preact PWA shell for Leon — Smart Mirror / Raspberry Pi kiosk",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "preact": "^10.23.1",
+    "socket.io-client": "^4.7.5"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.8.2",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.11"
+  }
+}
