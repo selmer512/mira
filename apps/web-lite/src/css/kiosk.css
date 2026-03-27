@@ -1,0 +1,60 @@
+/*
+ * Kiosk mode overrides for Smart Mirror / Raspberry Pi deployments.
+ * Activated when the app is built with VITE_KIOSK=true.
+ *
+ * Design principles:
+ * - High contrast for distance-readable typography
+ * - No heavy animations (respects prefers-reduced-motion; also 30 FPS target)
+ * - Enlarged touch/interaction targets
+ * - Cursor hidden in kiosk mode
+ */
+
+:root {
+  /* Distance-readable base size for smart-mirror viewing distance (~0.5–1 m) */
+  --font-size-base: 1.15rem;
+  --font-size-chat: 1.2rem;
+}
+
+body.kiosk {
+  cursor: none;
+  user-select: none;
+}
+
+/* Larger chat bubbles */
+body.kiosk .chat__bubble {
+  font-size: var(--font-size-chat);
+  padding: 0.75rem 1.1rem;
+  max-width: 85%;
+}
+
+/* Larger input area */
+body.kiosk .chat__input,
+body.kiosk .chat__send {
+  font-size: 1.1rem;
+}
+
+body.kiosk .chat__send {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Larger quick-action buttons */
+body.kiosk .quick-actions__btn {
+  min-width: 5rem;
+  padding: 0.65rem 1rem;
+}
+
+body.kiosk .quick-actions__icon {
+  font-size: 1.6rem;
+}
+
+body.kiosk .quick-actions__text {
+  font-size: 0.8rem;
+}
+
+/* Suppress animations except system preference override */
+@media (prefers-reduced-motion: no-preference) {
+  body.kiosk .chat__dots span {
+    animation-duration: 1.6s;
+  }
+}
