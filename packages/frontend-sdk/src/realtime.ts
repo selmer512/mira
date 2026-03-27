@@ -24,7 +24,7 @@ export interface UtterancePayload {
 
 export interface HotwordDetectedPayload {
   hotword: string
-  buffer: Buffer | ArrayBuffer
+  buffer: ArrayBuffer
 }
 
 export interface WidgetEventPayload {
