@@ -27,7 +27,7 @@ export class Updater {
         LogHelper.warning(`A new version is available: ${latestVersion}`)
         LogHelper.warning(`Current version: ${this.currentVersion}`)
         LogHelper.warning(
-          `Run the following command to update Leon and benefit from the latest features: "npm install --save @leon-ai/leon@${latestVersion}"`
+          `Run the following command to update Mira and benefit from the latest features: "npm install --save @leon-ai/leon@${latestVersion}"`
         )
 
         SOCKET_SERVER.socket?.emit('new-update', latestVersion)
@@ -35,7 +35,7 @@ export class Updater {
         const releaseMode = this.isDevelopment ? 'development' : 'stable'
 
         LogHelper.success(
-          `You are using the latest ${releaseMode} version of Leon`
+          `You are using the latest ${releaseMode} version of Mira`
         )
       }
     } catch (e) {
