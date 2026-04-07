@@ -122,12 +122,7 @@ Follow these rules exactly:
       return {
         status: ActionCallingStatus.Success,
         name: dutyOutput.name,
-        /**
-         * TODO: handle multi required/optional parameters
-         * Because now no matter how many parameters are required and we have optional parameters,
-         * it will return an empty object
-         */
-        arguments: {}
+        arguments: dutyOutput.arguments as Record<string, unknown>
       }
     }
 
