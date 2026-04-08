@@ -54,9 +54,9 @@ export class LogicActionSkillHandler {
 
           if (chunk) {
             // Check if this is a tool log first
-            if (chunk.includes('[LEON_TOOL_LOG]')) {
+            if (chunk.includes('[MIRA_TOOL_LOG]')) {
               // Extract and log the tool message without treating it as skill response
-              const cleanedMessage = chunk.replace('[LEON_TOOL_LOG]', '').trim()
+              const cleanedMessage = chunk.replace('[MIRA_TOOL_LOG]', '').trim()
               if (cleanedMessage) {
                 LogHelper.title(`${BRAIN.skillFriendlyName} skill (tool log)`)
                 LogHelper.info(cleanedMessage)

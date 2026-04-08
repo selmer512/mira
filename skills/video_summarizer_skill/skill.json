@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "description": "Summarize videos from a URL or local path into key points and new knowledge.",
   "author": {
-    "name": "Leon"
+    "name": "Mira"
   },
   "flow": [
     "prepare_audio",

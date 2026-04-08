@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from ..lib import Akinator, memory
 
@@ -14,7 +14,7 @@ def run(params: ActionParams) -> None:
 
     # Return no speech if no value has been found
     if answer is None:
-        return leon.answer({'core': {'isInActionLoop': False}})
+        return mira.answer({'core': {'isInActionLoop': False}})
 
     session = memory.get_session()
 
@@ -36,7 +36,7 @@ def run(params: ActionParams) -> None:
     new_progress_response = akinator.post_answer(answer)
 
     if 'name_proposition' in new_progress_response:
-        leon.answer({
+        mira.answer({
             'key': 'guessed',
             'data': {
                 'name': new_progress_response['name_proposition'],
@@ -44,7 +44,7 @@ def run(params: ActionParams) -> None:
             }
         })
 
-        leon.answer({
+        mira.answer({
             'key': 'guessed_img',
             'data': {
                 'name': new_progress_response['name_proposition'],
@@ -52,7 +52,7 @@ def run(params: ActionParams) -> None:
             }
         })
 
-        return leon.answer({
+        return mira.answer({
             'key': 'ask_for_retry',
             'core': {
                 'isInActionLoop': False,
@@ -74,7 +74,7 @@ def run(params: ActionParams) -> None:
 
     # TODO: widget with image
 
-    leon.answer({
+    mira.answer({
         'key': akinator.question,
         'core': {
             'showSuggestions': True

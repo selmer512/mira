@@ -425,7 +425,7 @@ async function rewriteOwnerDocumentFromTurn(
   try {
     const output = await promptForOwnerDocument(
       prompt,
-      'Maintain a compact durable OWNER.md profile for Leon. Edit the whole document conservatively and accurately.',
+      'Maintain a compact durable OWNER.md profile for Mira. Edit the whole document conservatively and accurately.',
       OWNER_DOCUMENT_UPDATE_MAX_TOKENS,
       OWNER_DOCUMENT_UPDATE_TIMEOUT_MS
     )

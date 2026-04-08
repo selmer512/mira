@@ -6,8 +6,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import type { MessageLog } from '@/types'
 import {
   CONTEXT_PATH,
-  LEON_PULSE_ENABLED,
-  LEON_PULSE_INTERVAL_MS
+  MIRA_PULSE_ENABLED,
+  MIRA_PULSE_INTERVAL_MS
 } from '@/constants'
 import { DateHelper } from '@/helpers/date-helper'
 import { LogHelper } from '@/helpers/log-helper'
@@ -104,7 +104,7 @@ interface PulseOwnerReactionOutput {
 
 const PRIVATE_CONTEXT_DIR = path.join(CONTEXT_PATH, 'private')
 const PULSE_MARKDOWN_PATH = path.join(PRIVATE_CONTEXT_DIR, 'PULSE.md')
-const PULSE_STATE_PATH = path.join(PRIVATE_CONTEXT_DIR, '.leon-pulse-state.json')
+const PULSE_STATE_PATH = path.join(PRIVATE_CONTEXT_DIR, '.mira-pulse-state.json')
 const MAX_PENDING_MATTERS = 6
 const MAX_RECENT_OUTCOMES = 12
 const MAX_SUPPRESSION_POLICIES = 24
@@ -233,8 +233,8 @@ function firstNonEmptyLine(content: string): string {
 function defaultPulseState(): PulseState {
   return {
     version: 1,
-    enabled: LEON_PULSE_ENABLED,
-    intervalMs: LEON_PULSE_INTERVAL_MS,
+    enabled: MIRA_PULSE_ENABLED,
+    intervalMs: MIRA_PULSE_INTERVAL_MS,
     lastTickAt: null,
     lastGeneratedAt: null,
     lastExecutionAt: null,
@@ -270,22 +270,22 @@ export default class PulseManager {
 
   public start(): void {
     const state = this.ensureLoaded()
-    state.enabled = LEON_PULSE_ENABLED
-    state.intervalMs = LEON_PULSE_INTERVAL_MS
+    state.enabled = MIRA_PULSE_ENABLED
+    state.intervalMs = MIRA_PULSE_INTERVAL_MS
     this.persist()
 
     if (this.intervalId || this.initialTimerId) {
       return
     }
 
-    if (!LEON_PULSE_ENABLED) {
+    if (!MIRA_PULSE_ENABLED) {
       LogHelper.title('Pulse Manager')
       LogHelper.info('Pulse is disabled')
       return
     }
 
     const initialDelayMs = Math.min(
-      LEON_PULSE_INTERVAL_MS,
+      MIRA_PULSE_INTERVAL_MS,
       PULSE_INITIAL_DELAY_MS
     )
 
@@ -299,14 +299,14 @@ export default class PulseManager {
 
     this.intervalId = setInterval(() => {
       void this.tick('scheduled')
-    }, LEON_PULSE_INTERVAL_MS)
+    }, MIRA_PULSE_INTERVAL_MS)
     if (typeof this.intervalId.unref === 'function') {
       this.intervalId.unref()
     }
 
     LogHelper.title('Pulse Manager')
     LogHelper.info(
-      `Pulse started with interval ${Math.round(LEON_PULSE_INTERVAL_MS / 60_000)} minute(s)`
+      `Pulse started with interval ${Math.round(MIRA_PULSE_INTERVAL_MS / 60_000)} minute(s)`
     )
   }
 
@@ -605,11 +605,11 @@ export default class PulseManager {
     reason: 'initial' | 'scheduled' | 'manual'
   ): Promise<void> {
     const state = this.ensureLoaded()
-    state.enabled = LEON_PULSE_ENABLED
-    state.intervalMs = LEON_PULSE_INTERVAL_MS
+    state.enabled = MIRA_PULSE_ENABLED
+    state.intervalMs = MIRA_PULSE_INTERVAL_MS
     state.lastTickAt = new Date().toISOString()
 
-    if (!LEON_PULSE_ENABLED) {
+    if (!MIRA_PULSE_ENABLED) {
       this.pushTickRecord(state, 'skipped', 'Pulse is disabled')
       this.persist()
       return
@@ -763,7 +763,7 @@ export default class PulseManager {
       recentConversation.length > 0
         ? recentConversation
             .map((log) => {
-              return `- ${log.who === 'owner' ? 'Owner' : 'Leon'}: ${clipText(normalizeText(log.message), 220)}`
+              return `- ${log.who === 'owner' ? 'Owner' : 'Mira'}: ${clipText(normalizeText(log.message), 220)}`
             })
             .join('\n')
         : '- none'
@@ -865,7 +865,7 @@ export default class PulseManager {
   }): Promise<PulseMatter[]> {
     const { CustomLLMDuty } = await this.loadCustomLLMDuty()
     const prompt = [
-      'Leon Self-Model Snapshot:',
+      'Mira Self-Model Snapshot:',
       evidence.selfModelSnapshot || 'none',
       '',
       'Context Files Available:',
@@ -891,9 +891,9 @@ export default class PulseManager {
       input: prompt,
       data: {
         system_prompt: [
-          'You maintain Leon\'s autonomous pulse queue.',
+          'You maintain Mira\'s autonomous pulse queue.',
           'Return exactly one JSON object and nothing else.',
-          'Generate only concrete proactive matters Leon can execute autonomously right now without owner clarification.',
+          'Generate only concrete proactive matters Mira can execute autonomously right now without owner clarification.',
           'Use only the provided memory, context, recent conversation, and self-model signals.',
           'Do not generate destructive, expensive, or socially sensitive actions.',
           'If a matter appears suppressed, declined, stale, duplicated, or weakly evidenced, do not include it.',
@@ -1055,7 +1055,7 @@ export default class PulseManager {
 
     const input = [
       `${PULSE_REACT_SENTINEL} Autonomous task.`,
-      'This task was initiated by Leon proactively.',
+      'This task was initiated by Mira proactively.',
       'Use current context, memory, and tools to help the owner.',
       'Do not ask the owner for clarification. If you cannot proceed safely with the available evidence, stop briefly and explain the block.',
       `Task: ${matter.turnPrompt}`,
@@ -1157,7 +1157,7 @@ export default class PulseManager {
     const core = await this.loadCoreNodes()
     core.SOCKET_SERVER.socket?.emit('answer', output)
     await core.CONVERSATION_LOGGER.push({
-      who: 'leon',
+      who: 'mira',
       message: output
     })
 
@@ -1311,7 +1311,7 @@ export default class PulseManager {
       `- Summary: ${matter.summary}`,
       `- Why: ${matter.why}`,
       `- Turn prompt: ${matter.turnPrompt}`,
-      `- Leon surfaced message: ${matter.outcome || 'none'}`,
+      `- Mira surfaced message: ${matter.outcome || 'none'}`,
       '',
       'Owner reply:',
       ownerMessage
@@ -1321,7 +1321,7 @@ export default class PulseManager {
       input: prompt,
       data: {
         system_prompt: [
-          'You classify the owner\'s reaction to Leon\'s recent autonomous pulse action.',
+          'You classify the owner\'s reaction to Mira\'s recent autonomous pulse action.',
           'Return exactly one JSON object and nothing else.',
           'Return JSON with this exact shape:',
           '{',
@@ -1335,7 +1335,7 @@ export default class PulseManager {
           '- "accept" means the owner approves or welcomes it.',
           '- "neutral" means unrelated or too ambiguous.',
           '- "preference_memory" should be a short durable owner-preference sentence only when clearly expressed.',
-          '- "behavioral_principle" should be a short first-person Leon adaptation only when a decline implies a future adjustment.'
+          '- "behavioral_principle" should be a short first-person Mira adaptation only when a decline implies a future adjustment.'
         ].join('\n'),
         temperature: 0,
         thought_tokens_budget: 64,
@@ -1606,7 +1606,7 @@ export default class PulseManager {
         : ['- No recent pulse outcomes']
 
     return [
-      '> Leon\'s autonomous pulse queue. Private runtime agenda for proactive action.',
+      '> Mira\'s autonomous pulse queue. Private runtime agenda for proactive action.',
       '# PULSE',
       `- Enabled: ${state.enabled ? 'true' : 'false'}`,
       `- Interval: ${Math.round(state.intervalMs / 60_000)}m`,

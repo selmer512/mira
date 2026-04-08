@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.params_helper import ParamsHelper
 from bridges.python.src.sdk.widget import WidgetOptions
@@ -38,4 +38,4 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
     )
     todos_list_widget = TodosListWidget(todos_list_options)
 
-    leon.answer({'widget': todos_list_widget})
+    mira.answer({'widget': todos_list_widget})

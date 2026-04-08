@@ -5,18 +5,18 @@ labels: bug
 ---
 
 <!--
-Thanks for your interest in Leon! ❤️
+Thanks for your interest in Mira! ❤️
 Please check if there is no similar issue before creating this one.
 If the bug is related to the setup, please submit the issue at: https://github.com/leon-ai/leon-cli/issues/new/choose
 -->
 
 ### Specs
 
-- Leon version:
+- Mira version:
 - OS (or browser) version:
 - Node.js version:
-- Complete "leon check" (or "npm run check") output:
-- (optional) Leon skill version:
+- Complete "mira check" (or "npm run check") output:
+- (optional) Mira skill version:
 
 ### Expected Behavior
 

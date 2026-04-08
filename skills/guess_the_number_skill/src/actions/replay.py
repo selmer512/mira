@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.params_helper import ParamsHelper
 
@@ -13,7 +13,7 @@ def run(_params: ActionParams, params_helper: ParamsHelper) -> None:
     confirmation = params_helper.get_action_argument('confirmation')
 
     if confirmation is not None and confirmation.lower() == 'true':
-        leon.answer({
+        mira.answer({
             'key': 'replay',
             'core': {
                 'is_in_action_loop': False,
@@ -22,7 +22,7 @@ def run(_params: ActionParams, params_helper: ParamsHelper) -> None:
         })
         return
 
-    leon.answer({
+    mira.answer({
         'key': 'stop',
         'core': {
             'is_in_action_loop': False

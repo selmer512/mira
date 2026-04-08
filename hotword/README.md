@@ -1,7 +1,7 @@
 # Hotword
 
 This node enables the wake word "Mira". Once this is running, you can
-call Mira by saying his name according to the language you chose.
+call Mira by saying her name according to the language you chose.
 
 ## Getting Started
 

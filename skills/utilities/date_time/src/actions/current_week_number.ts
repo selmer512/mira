@@ -1,5 +1,5 @@
 import type { ActionFunction } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 
 import { format } from 'numerable'
 
@@ -30,7 +30,7 @@ const getWeekNumber = (date: Date): number => {
 export const run: ActionFunction = async function () {
   const currentDate = new Date()
   const currentWeekNumber = getWeekNumber(currentDate)
-  await leon.answer({
+  await mira.answer({
     key: 'current_week_number',
     data: {
       week_number: format(currentWeekNumber, '0o')

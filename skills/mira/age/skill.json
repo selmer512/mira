@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../schemas/skill-schemas/skill.json",
+  "name": "Age",
+  "bridge": "nodejs",
+  "version": "1.0.0",
+  "description": "Mira tells his age.",
+  "author": {
+    "name": "Théo LUDWIG",
+    "email": "contact@theoludwig.fr",
+    "url": "https://theoludwig.fr"
+  }
+}

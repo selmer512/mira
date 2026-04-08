@@ -7,9 +7,9 @@ export default class OpenRouterLLMProvider extends AISDKRemoteLLMProvider {
     super({
       name: 'OpenRouter LLM Provider',
       providerName: 'openrouter',
-      apiKeyEnv: 'LEON_OPENROUTER_API_KEY',
-      workflowModelEnv: 'LEON_OPENROUTER_MODEL',
-      agentModelEnv: 'LEON_OPENROUTER_AGENT_LLM',
+      apiKeyEnv: 'MIRA_OPENROUTER_API_KEY',
+      workflowModelEnv: 'MIRA_OPENROUTER_MODEL',
+      agentModelEnv: 'MIRA_OPENROUTER_AGENT_LLM',
       defaultModel: 'openrouter/auto',
       baseURL: 'https://openrouter.ai/api/v1',
       flavor: 'openrouter'

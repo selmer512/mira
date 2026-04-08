@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from ..lib import memory
 
@@ -9,8 +9,8 @@ def run(params: ActionParams) -> None:
     current_question = 1
     memory.upsert_session(current_question)
 
-    leon.answer({'key': 'ready'})
-    return leon.answer({
+    mira.answer({'key': 'ready'})
+    return mira.answer({
         'key': str(current_question),
         'data': {
             'question': str(current_question)

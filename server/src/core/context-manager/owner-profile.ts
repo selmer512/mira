@@ -16,7 +16,7 @@ const LEGACY_OWNER_PROFILE_PATH = path.join(
 )
 const LEGACY_OWNER_MEMORY_PATH = path.join(
   SKILLS_PATH,
-  'leon',
+  'mira',
   'introduction',
   'memory',
   'owner.json'

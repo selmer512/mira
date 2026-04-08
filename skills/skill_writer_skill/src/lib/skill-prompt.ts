@@ -3,8 +3,8 @@ export type SkillPromptMode = 'create' | 'modify'
 export const getContextFiles = (bridge: 'nodejs' | 'python'): string[] =>
   bridge === 'nodejs'
     ? [
-        'skills/leon/age/skill.json',
-        'skills/leon/age/src/actions/run.ts',
+        'skills/mira/age/skill.json',
+        'skills/mira/age/src/actions/run.ts',
         'schemas/skill-schemas/skill.json'
       ]
     : [
@@ -14,7 +14,7 @@ export const getContextFiles = (bridge: 'nodejs' | 'python'): string[] =>
       ]
 
 const baseGuidance = [
-  '- First check if any existing Leon tools can help with this functionality',
+  '- First check if any existing Mira tools can help with this functionality',
   '- For video/audio tasks: Use ytdlp-tool, ffmpeg-tool, or other video_streaming tools',
   '- For web requests: Use appropriate HTTP/API tools',
   '- For file operations: Use file system tools',

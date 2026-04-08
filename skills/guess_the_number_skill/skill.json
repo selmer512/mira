@@ -3,7 +3,7 @@
   "name": "Guess the Number",
   "bridge": "python",
   "version": "1.0.0",
-  "description": "Find the number between 0 and 100 that Leon has picked.",
+  "description": "Find the number between 0 and 100 that Mira has picked.",
   "author": {
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",

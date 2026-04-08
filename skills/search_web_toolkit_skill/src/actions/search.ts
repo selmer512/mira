@@ -1,5 +1,5 @@
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import { Settings } from '@sdk/settings'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
@@ -28,7 +28,7 @@ export const run: ActionFunction = async function (
       paramsHelper.getContextData<string>('query')
 
     if (!query) {
-      leon.answer({
+      mira.answer({
         key: 'search_error',
         data: {
           error: 'Search query is required'
@@ -49,7 +49,7 @@ export const run: ActionFunction = async function (
 
     // Check provider support
     if (provider !== 'grok') {
-      leon.answer({
+      mira.answer({
         key: 'provider_not_supported',
         data: {
           provider
@@ -64,7 +64,7 @@ export const run: ActionFunction = async function (
     // Perform search based on type
     if (deepResearch) {
       // Deep research mode using agentic web search
-      leon.answer({
+      mira.answer({
         key: 'deep_research_started',
         data: {
           query,
@@ -75,7 +75,7 @@ export const run: ActionFunction = async function (
       const result = await grok.deepResearch(query)
 
       if (!result.success) {
-        leon.answer({
+        mira.answer({
           key: 'search_error',
           data: {
             error: result.error || 'Unknown error during deep research'
@@ -88,7 +88,7 @@ export const run: ActionFunction = async function (
       const content = result.content || ''
       const citations = result.citations || []
 
-      leon.answer({
+      mira.answer({
         key: 'deep_research_complete',
         data: {
           query,
@@ -106,7 +106,7 @@ export const run: ActionFunction = async function (
       })
     } else if (searchType === 'web') {
       // Web search using server-side web_search tool
-      leon.answer({
+      mira.answer({
         key: 'web_search_started',
         data: {
           query,
@@ -117,7 +117,7 @@ export const run: ActionFunction = async function (
       const result = await grok.searchWeb(query)
 
       if (!result.success) {
-        leon.answer({
+        mira.answer({
           key: 'search_error',
           data: {
             error: result.error || 'Unknown error during web search'
@@ -130,7 +130,7 @@ export const run: ActionFunction = async function (
       const content = result.content || ''
       const citations = result.citations || []
 
-      leon.answer({
+      mira.answer({
         key: 'web_search_complete',
         data: {
           query,
@@ -148,7 +148,7 @@ export const run: ActionFunction = async function (
       })
     } else if (searchType === 'x') {
       // X/Twitter search using server-side x_search tool
-      leon.answer({
+      mira.answer({
         key: 'x_search_started',
         data: {
           query,
@@ -159,7 +159,7 @@ export const run: ActionFunction = async function (
       const result = await grok.searchX(query)
 
       if (!result.success) {
-        leon.answer({
+        mira.answer({
           key: 'search_error',
           data: {
             error: result.error || 'Unknown error during X search'
@@ -172,7 +172,7 @@ export const run: ActionFunction = async function (
       const content = result.content || ''
       const citations = result.citations || []
 
-      leon.answer({
+      mira.answer({
         key: 'x_search_complete',
         data: {
           query,
@@ -190,7 +190,7 @@ export const run: ActionFunction = async function (
       })
     } else {
       // Combined search (both web and X) using both tools
-      leon.answer({
+      mira.answer({
         key: 'combined_search_started',
         data: {
           query,
@@ -201,7 +201,7 @@ export const run: ActionFunction = async function (
       const result = await grok.search(query)
 
       if (!result.success) {
-        leon.answer({
+        mira.answer({
           key: 'search_error',
           data: {
             error: result.error || 'Unknown error during combined search'
@@ -214,7 +214,7 @@ export const run: ActionFunction = async function (
       const content = result.content || ''
       const citations = result.citations || []
 
-      leon.answer({
+      mira.answer({
         key: 'combined_search_complete',
         data: {
           query,
@@ -235,7 +235,7 @@ export const run: ActionFunction = async function (
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'search_error',
       data: {
         error: (error as Error).message

@@ -17,7 +17,7 @@ import {
   HAS_TTS,
   HOST,
   IS_DEVELOPMENT_ENV,
-  LEON_NODE_ENV,
+  MIRA_NODE_ENV,
   PORT,
   STT_PROVIDER,
   TTS_PROVIDER
@@ -51,13 +51,13 @@ const createProvider = async (id) => {
   try {
     await Promise.all([
       nlu.loadGlobalResolversModel(
-        join(process.cwd(), 'core/data/models/leon-global-resolvers-model.nlp')
+        join(process.cwd(), 'core/data/models/mira-global-resolvers-model.nlp')
       ),
       nlu.loadSkillsResolversModel(
-        join(process.cwd(), 'core/data/models/leon-skills-resolvers-model.nlp')
+        join(process.cwd(), 'core/data/models/mira-skills-resolvers-model.nlp')
       ),
       nlu.loadMainModel(
-        join(process.cwd(), 'core/data/models/leon-main-model.nlp')
+        join(process.cwd(), 'core/data/models/mira-main-model.nlp')
       )
     ])
 
@@ -111,7 +111,7 @@ server.httpServer = {}
  */
 /* istanbul ignore next */
 server.generateSkillsRoutes = (instance) => {
-  // Dynamically expose Leon skills over HTTP
+  // Dynamically expose Mira skills over HTTP
   endpoints.forEach((endpoint) => {
     instance.route({
       method: endpoint.method,
@@ -383,7 +383,7 @@ server.init = async () => {
   server.fastify.addHook('preValidation', otherMidd)
 
   LogHelper.title('Initialization')
-  LogHelper.success(`The current env is ${LEON_NODE_ENV}`)
+  LogHelper.success(`The current env is ${MIRA_NODE_ENV}`)
   LogHelper.success(`The current version is ${version}`)
 
   LogHelper.success(`The current time zone is ${DateHelper.getTimeZone()}`)

@@ -5,7 +5,7 @@ import spacy
 import time
 from geonamescache import GeonamesCache
 
-lang = os.environ.get("LEON_PY_TCP_SERVER_LANG")
+lang = os.environ.get("MIRA_PY_TCP_SERVER_LANG")
 if not lang:
     lang = argv[1] if len(argv) > 1 else "en"
 spacy_nlp = None

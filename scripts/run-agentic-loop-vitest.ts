@@ -67,10 +67,10 @@ const childProcess = spawn(
     stdio: 'inherit',
     env: {
       ...process.env,
-      LEON_NODE_ENV: process.env['LEON_NODE_ENV'] || 'testing',
+      MIRA_NODE_ENV: process.env['MIRA_NODE_ENV'] || 'testing',
       ...(suite === 'e2e' && testNamePattern
         ? {
-            LEON_AGENTIC_LOOP_PROVIDER_PATTERN: testNamePattern
+            MIRA_AGENTIC_LOOP_PROVIDER_PATTERN: testNamePattern
           }
         : {})
     }

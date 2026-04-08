@@ -4,7 +4,7 @@
   "description": "Tools for communication and language model interactions.",
   "icon_name": "chat-3",
   "context_files": [
-    "LEON.md",
+    "MIRA.md",
     "ARCHITECTURE.md",
     "MEDIA_PROFILE.md"
   ],

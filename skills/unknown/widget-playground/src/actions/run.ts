@@ -1,5 +1,5 @@
 import type { ActionFunction } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 
 import { PlaygroundTestWidget } from '../widgets/playground-test'
 
@@ -167,7 +167,7 @@ export const run: ActionFunction = async function () {
     ]
   })
 
-  await leon.answer({ widget: musicProviderList })
+  await mira.answer({ widget: musicProviderList })
 
   /!**
    * Todo list
@@ -197,7 +197,7 @@ export const run: ActionFunction = async function () {
     ]
   })
 
-  await leon.answer({ widget: todoList })
+  await mira.answer({ widget: todoList })
 */
   /**
    * Random number
@@ -220,5 +220,5 @@ export const run: ActionFunction = async function () {
     }
   })
 
-  await leon.answer({ widget: playgroundTestWidget })
+  await mira.answer({ widget: playgroundTestWidget })
 }

@@ -30,7 +30,7 @@ export default () =>
       'core',
       'skills-endpoints.json'
     )
-    const lang = LANG_CONFIGS[process.env.LEON_HTTP_API_LANG].short
+    const lang = LANG_CONFIGS[process.env.MIRA_HTTP_API_LANG].short
 
     try {
       const skillDomains = await SkillDomainHelper.getSkillDomains()

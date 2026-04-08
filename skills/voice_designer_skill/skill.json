@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "description": "Design a custom voice from a description and generate speech audio.",
   "author": {
-    "name": "Leon"
+    "name": "Mira"
   },
   "actions": {
     "design_and_speak": {

@@ -65,7 +65,7 @@ export class ConversationLLMDuty extends LLMDuty {
       if (LLM_PROVIDER_NAME === LLMProviders.Local) {
         /**
          * A new context and session will be created only
-         * when Leon's instance is restarted or when it is forced
+         * when Mira's instance is restarted or when it is forced
          */
         if (
           !ConversationLLMDuty.context ||
@@ -104,7 +104,7 @@ export class ConversationLLMDuty extends LLMDuty {
           }
 
           /**
-           * As long as Leon's instance has not been restarted,
+           * As long as Mira's instance has not been restarted,
            * the context, session with history will be loaded
            */
           const history = await LLM_MANAGER.loadHistory(
@@ -117,7 +117,7 @@ export class ConversationLLMDuty extends LLMDuty {
       } else {
         /**
          * For non-local providers:
-         * Once Leon's instance is restarted, clean up the messages history,
+         * Once Mira's instance is restarted, clean up the messages history,
          * then load the messages history
          */
 
@@ -219,7 +219,7 @@ export class ConversationLLMDuty extends LLMDuty {
       }
 
       await LOOP_CONVERSATION_LOGGER.push({
-        who: 'leon',
+        who: 'mira',
         message: completionResult?.output as string
       })
 

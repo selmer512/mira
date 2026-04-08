@@ -81,7 +81,7 @@ describe('NLU', () => {
         utterance,
         entities: [],
         classification: {
-          package: 'leon',
+          package: 'mira',
           module: 'randomnumber',
           action: 'run'
         }

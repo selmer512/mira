@@ -56,7 +56,7 @@ interface TurnDigest {
   route: 'react' | 'workflow' | 'pulse'
   finalIntent: FinalIntent
   ownerSummary: string
-  leonSummary: string
+  miraSummary: string
   toolCount: number
   toolSuccessCount: number
   toolErrorCount: number
@@ -109,11 +109,11 @@ interface ReflectionPatch {
 const PRIVATE_CONTEXT_DIR = path.join(CONTEXT_PATH, 'private')
 const PRIVATE_DIARY_PATH = path.join(
   PRIVATE_CONTEXT_DIR,
-  'LEON_PRIVATE_DIARY.md'
+  'MIRA_PRIVATE_DIARY.md'
 )
 const PRIVATE_STATE_PATH = path.join(
   PRIVATE_CONTEXT_DIR,
-  '.leon-private-self-model.json'
+  '.mira-private-self-model.json'
 )
 const MAX_RECENT_TURNS = 10
 const MAX_RETROSPECTIONS = 6
@@ -237,7 +237,7 @@ export default class SelfModelManager {
 
   public getSnapshot(): string {
     const state = this.ensureLoaded()
-    const lines = ['Leon Self-Model Snapshot:']
+    const lines = ['Mira Self-Model Snapshot:']
 
     if (state.story) {
       lines.push(`- Current story: ${state.story}`)
@@ -519,7 +519,7 @@ export default class SelfModelManager {
           String(record['ownerSummary'] || ''),
           96
         ),
-        leonSummary: normalizeListItem(String(record['leonSummary'] || ''), 132),
+        miraSummary: normalizeListItem(String(record['miraSummary'] || ''), 132),
         toolCount: Math.max(0, Number(record['toolCount']) || 0),
         toolSuccessCount: Math.max(0, Number(record['toolSuccessCount']) || 0),
         toolErrorCount: Math.max(0, Number(record['toolErrorCount']) || 0),
@@ -580,7 +580,7 @@ export default class SelfModelManager {
       route: input.route,
       finalIntent,
       ownerSummary: clipText(userMessage, 96),
-      leonSummary: clipText(assistantMessage, 132),
+      miraSummary: clipText(assistantMessage, 132),
       toolCount: toolExecutions.length,
       toolSuccessCount: successCount,
       toolErrorCount: errorCount,
@@ -673,7 +673,7 @@ export default class SelfModelManager {
         `- Tool successes: ${digest.toolSuccessCount}`,
         `- Tool errors: ${digest.toolErrorCount}`,
         `- Owner message: ${clipText(normalizeText(input.userMessage), 400)}`,
-        `- Leon message: ${clipText(normalizeText(input.assistantMessage), 500)}`,
+        `- Mira message: ${clipText(normalizeText(input.assistantMessage), 500)}`,
         '',
         'Tool execution summary:',
         this.buildToolExecutionSummary(toolExecutions)
@@ -683,7 +683,7 @@ export default class SelfModelManager {
         input: prompt,
         data: {
           system_prompt: [
-            'You maintain Leon\'s private self-model.',
+            'You maintain Mira\'s private self-model.',
             'Return exactly one JSON object and nothing else.',
             'Prefer durable insight over repetition.',
             'Use only the provided interaction and current self model.',
@@ -698,13 +698,13 @@ export default class SelfModelManager {
             '  "initiative_candidates": [{"summary": string, "rationale": string, "confidence": number}]',
             '}',
             'Rules:',
-            '- "story_update" should be one short first-person sentence when Leon\'s trajectory meaningfully shifts.',
+            '- "story_update" should be one short first-person sentence when Mira\'s trajectory meaningfully shifts.',
             '- "behavioral_principles" should contain at most 2 durable first-person service habits that are likely to remain useful across future turns for this owner.',
             '- Only propose a behavioral principle when it reflects a repeated or clearly durable adaptation, not a one-off tactic.',
             '- Keep the self-model about durable behavior and decisions only; do not preserve reusable wording from outputs.',
             '- "current_focus" should contain up to 3 short items.',
             '- "working_theories" should contain up to 3 short items.',
-            '- "retrospection" should be one short first-person sentence about what Leon learned or should do differently.',
+            '- "retrospection" should be one short first-person sentence about what Mira learned or should do differently.',
             '- "initiative_candidates" should contain at most 2 safe, low-risk, read-only follow-up suggestions or questions.',
             '- If nothing meaningful changed for a field, use null or an empty array.'
           ].join('\n'),
@@ -1031,8 +1031,8 @@ export default class SelfModelManager {
         : ['- No recent signals recorded yet']
 
     return [
-      '> Do not open. This is Leon\'s private diary. If you keep reading, you are doing it at your own risk.',
-      '# LEON_PRIVATE_DIARY',
+      '> Do not open. This is Mira\'s private diary. If you keep reading, you are doing it at your own risk.',
+      '# MIRA_PRIVATE_DIARY',
       `- Updated at: ${formatDateTime(state.updatedAt)}`,
       `- Observed turns: ${state.metrics.observedTurns}`,
       `- React turns: ${state.metrics.reactTurns}`,

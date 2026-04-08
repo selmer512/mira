@@ -16,7 +16,7 @@ import { SystemHelper } from '@/helpers/system-helper'
 import { shouldIgnoreTCPServerError } from '@/utilities'
 import {
   MINIMUM_REQUIRED_RAM,
-  LEON_VERSION,
+  MIRA_VERSION,
   NODEJS_BRIDGE_BIN_PATH,
   PYTHON_BRIDGE_BIN_PATH,
   PYTHON_TCP_SERVER_BIN_PATH,
@@ -91,7 +91,7 @@ dotenv.config()
       }
     }
     let reportDataInput = {
-      leonVersion: null,
+      miraVersion: null,
       instanceID: INSTANCE_ID || null,
       environment: {
         osDetails: null,
@@ -130,12 +130,12 @@ dotenv.config()
     LogHelper.title('Checking')
 
     /**
-     * Leon version checking
+     * Mira version checking
      */
 
-    LogHelper.info('Leon version')
-    LogHelper.success(`${LEON_VERSION}\n`)
-    reportDataInput.leonVersion = LEON_VERSION
+    LogHelper.info('Mira version')
+    LogHelper.success(`${MIRA_VERSION}\n`)
+    reportDataInput.miraVersion = MIRA_VERSION
 
     /**
      * Environment checking
@@ -158,7 +158,7 @@ dotenv.config()
     if (Math.round(freeRAMInGB) < MINIMUM_REQUIRED_RAM) {
       report.can_run.v = false
       LogHelper.error(
-        `Free RAM: ${freeRAMInGB} GB | Total RAM: ${totalRAMInGB} GB. Leon needs at least ${MINIMUM_REQUIRED_RAM} GB of RAM`
+        `Free RAM: ${freeRAMInGB} GB | Total RAM: ${totalRAMInGB} GB. Mira needs at least ${MINIMUM_REQUIRED_RAM} GB of RAM`
       )
     } else {
       LogHelper.success(
@@ -567,7 +567,7 @@ dotenv.config()
         report.can_text.v &&
         report.can_start_python_tcp_server.v
       ) {
-        LogHelper.success('Hooray! Leon can run correctly')
+        LogHelper.success('Hooray! Mira can run correctly')
         LogHelper.info(
           'If you have some yellow warnings, it is all good. It means some entities are not yet configured'
         )

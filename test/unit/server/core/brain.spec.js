@@ -77,7 +77,7 @@ describe('brain', () => {
         utterance: 'Hello',
         entities: [],
         classification: {
-          package: 'leon',
+          package: 'mira',
           module: 'greeting',
           action: 'run',
           confidence: 0.9
@@ -128,7 +128,7 @@ describe('brain', () => {
         utterance: 'Hello',
         entities: [],
         classification: {
-          package: 'leon',
+          package: 'mira',
           module: 'greeting',
           action: 'run',
           confidence: 0.9

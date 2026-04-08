@@ -5,7 +5,7 @@ from typing import Callable, Dict, Optional, Union, List, Any
 from pypdl import Pypdl
 from urllib.parse import urlparse
 from .toolkit_config import ToolkitConfig
-from .leon import leon
+from .mira import mira
 from .utils import (
     is_windows,
     is_macos,
@@ -214,7 +214,7 @@ class BaseTool(ABC):
         return env
 
     def execute_command(self, options: ExecuteCommandOptions) -> str:
-        """Execute a command with proper Leon messaging and progress tracking"""
+        """Execute a command with proper Mira messaging and progress tracking"""
 
         binary_name = options.binary_name
         args = options.args
@@ -1083,7 +1083,7 @@ class BaseTool(ABC):
             *args: Additional arguments to log
         """
         # Use a special prefix that the brain can filter out as non-JSON output
-        log_message = f"[LEON_TOOL_LOG] {message}"
+        log_message = f"[MIRA_TOOL_LOG] {message}"
         if args:
             log_message += " " + " ".join(str(arg) for arg in args)
         sys.stdout.write(log_message + "\n")
@@ -1162,10 +1162,10 @@ class BaseTool(ABC):
         tool_group_id: Optional[str] = None,
     ) -> None:
         """
-        Report tool status or information using leon.answer with automatic toolkit/tool context
+        Report tool status or information using mira.answer with automatic toolkit/tool context
 
         Args:
-            key: The message key for leon.answer
+            key: The message key for mira.answer
             data: Optional data dictionary
             tool_group_id: Optional tool group ID for command grouping
         """
@@ -1178,4 +1178,4 @@ class BaseTool(ABC):
         if tool_group_id:
             core_data["toolGroupId"] = tool_group_id
 
-        leon.answer({"key": key, "data": data or {}, "core": core_data})
+        mira.answer({"key": key, "data": data or {}, "core": core_data})

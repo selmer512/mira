@@ -3,7 +3,7 @@ import path from 'node:path'
 
 import type { ActionFunction, ActionParams, CustomEnumEntity } from '@sdk/types'
 import type { TranscriptionOutput } from '@sdk/tools/transcription-schema'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import { Settings } from '@sdk/settings'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
@@ -275,28 +275,28 @@ export const run: ActionFunction = async function (
       !translatedTranscriptionPath ||
       !fs.existsSync(translatedTranscriptionPath)
     ) {
-      leon.answer({
+      mira.answer({
         key: 'translated_transcription_not_found'
       })
       return
     }
 
     if (!audioPath || !fs.existsSync(audioPath)) {
-      leon.answer({
+      mira.answer({
         key: 'audio_not_found'
       })
       return
     }
 
     if (!speakerReferences || speakerReferences.length === 0) {
-      leon.answer({
+      mira.answer({
         key: 'speaker_references_missing'
       })
       return
     }
 
     if (!targetLanguage) {
-      leon.answer({
+      mira.answer({
         key: 'target_language_missing',
         data: {
           note: 'Language entity not found in context. Please specify the target language in the conversation.'
@@ -313,13 +313,13 @@ export const run: ActionFunction = async function (
     const transcription: TranscriptionOutput = JSON.parse(transcriptionContent)
 
     if (!transcription.segments || transcription.segments.length === 0) {
-      leon.answer({
+      mira.answer({
         key: 'no_segments_found'
       })
       return
     }
 
-    leon.answer({
+    mira.answer({
       key: 'synthesis_started',
       data: {
         segment_count: transcription.segments.length.toString(),
@@ -339,7 +339,7 @@ export const run: ActionFunction = async function (
     await fs.promises.mkdir(processedSegmentsDir, { recursive: true })
 
     // Create phrases and groups
-    leon.answer({
+    mira.answer({
       key: 'grouping_segments'
     })
 
@@ -348,7 +348,7 @@ export const run: ActionFunction = async function (
     )
     const groups = groupPhrases(phrases)
 
-    leon.answer({
+    mira.answer({
       key: 'segments_grouped',
       data: {
         original_count: transcription.segments.length.toString(),
@@ -384,7 +384,7 @@ export const run: ActionFunction = async function (
     }> = []
     const validGroupTasks: GroupTask[] = []
 
-    leon.answer({
+    mira.answer({
       key: 'preparing_synthesis_tasks',
       data: {
         total_groups: groups.length.toString()
@@ -402,7 +402,7 @@ export const run: ActionFunction = async function (
 
       const speakerRef = speakerRefMap.get(speakerId)
       if (!speakerRef) {
-        leon.answer({
+        mira.answer({
           key: 'speaker_reference_not_found',
           data: {
             speaker: speakerId
@@ -443,7 +443,7 @@ export const run: ActionFunction = async function (
 
     // Batch synthesize all audio segments at once
     if (synthesisTasks.length > 0) {
-      leon.answer({
+      mira.answer({
         key: 'batch_synthesis_started',
         data: {
           task_count: synthesisTasks.length.toString(),
@@ -471,14 +471,14 @@ export const run: ActionFunction = async function (
           throw new Error(`Unsupported speech synthesis provider: ${provider}`)
         }
 
-        leon.answer({
+        mira.answer({
           key: 'batch_synthesis_completed',
           data: {
             task_count: synthesisTasks.length.toString()
           }
         })
       } catch (error) {
-        leon.answer({
+        mira.answer({
           key: 'batch_synthesis_failed',
           data: {
             error: (error as Error).message
@@ -494,7 +494,7 @@ export const run: ActionFunction = async function (
     // Post-process each generated audio file
     const processedFiles: ProcessedSegment[] = []
 
-    leon.answer({
+    mira.answer({
       key: 'post_processing_started',
       data: {
         segment_count: validGroupTasks.length.toString()
@@ -506,7 +506,7 @@ export const run: ActionFunction = async function (
 
       // Verify the audio file was created
       if (!fs.existsSync(rawAudioPath)) {
-        leon.answer({
+        mira.answer({
           key: 'segment_not_generated',
           data: {
             segment_number: (index + 1).toString()
@@ -549,7 +549,7 @@ export const run: ActionFunction = async function (
           const speedFactor = Math.min(durationRatio, MAX_SPEED_UP_RATIO)
 
           if (speedFactor < durationRatio) {
-            leon.answer({
+            mira.answer({
               key: 'capping_speed',
               data: {
                 segment_number: (index + 1).toString(),
@@ -590,7 +590,7 @@ export const run: ActionFunction = async function (
               /* ignore */
             })
           } catch (error) {
-            leon.answer({
+            mira.answer({
               key: 'tempo_adjustment_failed',
               data: {
                 group_number: (index + 1).toString(),
@@ -617,7 +617,7 @@ export const run: ActionFunction = async function (
       })
     }
 
-    leon.answer({
+    mira.answer({
       key: 'assembling_audio'
     })
 
@@ -644,14 +644,14 @@ export const run: ActionFunction = async function (
         originalTotalDurationMs
       )
 
-      leon.answer({
+      mira.answer({
         key: 'audio_assembly_completed',
         data: {
           output_path: formatFilePath(finalAudioPath)
         }
       })
     } catch (assemblyError) {
-      leon.answer({
+      mira.answer({
         key: 'audio_assembly_failed',
         data: {
           error: (assemblyError as Error).message
@@ -683,7 +683,7 @@ export const run: ActionFunction = async function (
       'utf-8'
     )
 
-    leon.answer({
+    mira.answer({
       key: 'synthesis_completed',
       data: {
         processed_count: processedFiles.length.toString(),
@@ -704,7 +704,7 @@ export const run: ActionFunction = async function (
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'synthesis_error',
       data: {
         error: (error as Error).message

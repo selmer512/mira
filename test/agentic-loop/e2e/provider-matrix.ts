@@ -5,27 +5,27 @@
 export const PROVIDER_MATRIX = [
   {
     provider: 'llamacpp',
-    requiredEnv: 'LEON_LLAMACPP_MODEL_PATH'
+    requiredEnv: 'MIRA_LLAMACPP_MODEL_PATH'
   },
   {
     provider: 'openrouter',
-    requiredEnv: 'LEON_OPENROUTER_API_KEY'
+    requiredEnv: 'MIRA_OPENROUTER_API_KEY'
   },
   {
     provider: 'openai',
-    requiredEnv: 'LEON_OPENAI_API_KEY'
+    requiredEnv: 'MIRA_OPENAI_API_KEY'
   },
   {
     provider: 'anthropic',
-    requiredEnv: 'LEON_ANTHROPIC_API_KEY'
+    requiredEnv: 'MIRA_ANTHROPIC_API_KEY'
   },
   {
     provider: 'moonshotai',
-    requiredEnv: 'LEON_MOONSHOTAI_API_KEY'
+    requiredEnv: 'MIRA_MOONSHOTAI_API_KEY'
   },
   {
     provider: 'zai',
-    requiredEnv: 'LEON_ZAI_API_KEY'
+    requiredEnv: 'MIRA_ZAI_API_KEY'
   }
 ] as const
 

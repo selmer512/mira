@@ -257,7 +257,7 @@ Follow these rules exactly:
             type: param.type,
             description: formatParameterDescription(param)
           }
-          // All parameters are required by default in Leon skills
+          // All parameters are required by default in Mira skills
           // (optional_parameters are handled post-LLM in parseOptionalParameters)
           required.push(paramName)
         }

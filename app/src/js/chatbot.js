@@ -38,7 +38,7 @@ export default class Chatbot {
     await this.loadFeed()
     this.scrollDown()
 
-    this.et.addEventListener('to-leon', (event) => {
+    this.et.addEventListener('to-mira', (event) => {
       this.createBubble({
         who: 'me',
         string: event.detail
@@ -47,7 +47,7 @@ export default class Chatbot {
 
     this.et.addEventListener('me-received', (event) => {
       this.createBubble({
-        who: 'leon',
+        who: 'mira',
         string: event.detail
       })
     })
@@ -72,19 +72,19 @@ export default class Chatbot {
   }
 
   sendTo(who, string) {
-    if (who === 'leon') {
-      this.et.dispatchEvent(new CustomEvent('to-leon', { detail: string }))
+    if (who === 'mira') {
+      this.et.dispatchEvent(new CustomEvent('to-mira', { detail: string }))
     }
   }
 
   receivedFrom(who, string) {
-    if (who === 'leon') {
+    if (who === 'mira') {
       this.et.dispatchEvent(new CustomEvent('me-received', { detail: string }))
     }
   }
 
   isTyping(who, value) {
-    if (who === 'leon') {
+    if (who === 'mira') {
       if (value) {
         this.enableTyping()
       } else if (value === false) {
@@ -327,7 +327,7 @@ export default class Chatbot {
     }
     container.appendChild(bubble)
 
-    if (who === 'leon' && metrics) {
+    if (who === 'mira' && metrics) {
       container.appendChild(this.createMetricsElement(metrics))
     }
 
@@ -421,7 +421,7 @@ export default class Chatbot {
       const title = document.createElement('span')
       const content = document.createElement('div')
 
-      container.className = 'reasoning-block-container leon'
+      container.className = 'reasoning-block-container mira'
       container.setAttribute('data-reasoning-id', generationId)
       block.className = 'reasoning-block'
       header.className = 'reasoning-header'
@@ -479,7 +479,7 @@ export default class Chatbot {
       )
 
       this.saveBubble(
-        'leon',
+        'mira',
         toolInfo.originalString,
         toolInfo.formattedMessage,
         toolInfo.messageId
@@ -644,7 +644,7 @@ export default class Chatbot {
     const beforeElement = isPlanWidget ? null : nextSibling
 
     this.createBubble({
-      who: 'leon',
+      who: 'mira',
       string: bubbleString,
       save: isPlanWidget,
       messageId: replaceMessageId,

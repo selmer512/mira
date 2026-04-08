@@ -7,9 +7,9 @@ export default class AnthropicLLMProvider extends AISDKRemoteLLMProvider {
     super({
       name: 'Anthropic LLM Provider',
       providerName: 'anthropic',
-      apiKeyEnv: 'LEON_ANTHROPIC_API_KEY',
-      workflowModelEnv: 'LEON_ANTHROPIC_MODEL',
-      agentModelEnv: 'LEON_ANTHROPIC_AGENT_LLM',
+      apiKeyEnv: 'MIRA_ANTHROPIC_API_KEY',
+      workflowModelEnv: 'MIRA_ANTHROPIC_MODEL',
+      agentModelEnv: 'MIRA_ANTHROPIC_AGENT_LLM',
       defaultModel: 'claude-3-5-sonnet-latest',
       baseURL: 'https://api.anthropic.com/v1',
       flavor: 'anthropic'

@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.network import Network
 
@@ -45,7 +45,7 @@ def run(params: ActionParams) -> None:
             tech_slug = language.lower()
 
     if limit > 25:
-        leon.answer({
+        mira.answer({
             'key': 'limit_max',
             'data': {
                 'limit': limit
@@ -55,7 +55,7 @@ def run(params: ActionParams) -> None:
     elif limit == 0:
         limit = 5
 
-    leon.answer({'key': 'reaching'})
+    mira.answer({'key': 'reaching'})
 
     network = Network({'base_url': 'https://github.com'})
     try:
@@ -90,7 +90,7 @@ def run(params: ActionParams) -> None:
                 for j, separator in enumerate(separators):
                     stars = stars.replace(separator, '')
 
-            result += str(leon.set_answer_data('list_element', {
+            result += str(mira.set_answer_data('list_element', {
                 'rank': i + 1,
                 'repository_url': f'https://github.com/{repository}',
                 'repository_name': repository,
@@ -99,7 +99,7 @@ def run(params: ActionParams) -> None:
                 'stars_nb': stars
             }))
 
-        return leon.answer({
+        return mira.answer({
             'key': answer_key,
             'data': {
                 'limit': limit,
@@ -108,4 +108,4 @@ def run(params: ActionParams) -> None:
             }
         })
     except Exception as e:
-        return leon.answer({'key': 'unreachable'})
+        return mira.answer({'key': 'unreachable'})

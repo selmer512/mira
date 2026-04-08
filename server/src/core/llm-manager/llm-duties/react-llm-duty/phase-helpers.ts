@@ -269,7 +269,7 @@ export function buildContextManifestSection(manifest: string): string {
 export function buildSelfModelSection(snapshot: string): string {
   const normalized = snapshot.trim()
   if (!normalized) {
-    return 'Leon Self-Model Snapshot: none'
+    return 'Mira Self-Model Snapshot: none'
   }
 
   return normalized

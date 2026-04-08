@@ -1,5 +1,5 @@
 import type { ActionFunction } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
 import OpenMeteoTool from '@sdk/tools/open-meteo'
@@ -36,7 +36,7 @@ export const run: ActionFunction = async function (
       : 'metric'
 
   if (!location) {
-    leon.answer({
+    mira.answer({
       key: 'forecast_error',
       data: {
         location: 'that location',
@@ -61,7 +61,7 @@ export const run: ActionFunction = async function (
         errorMessage.toLowerCase().includes('no weather data') ||
         errorMessage.toLowerCase().includes('not available')
 
-      leon.answer({
+      mira.answer({
         key: isNotFound ? 'location_not_found' : 'forecast_error',
         data: {
           location,
@@ -97,7 +97,7 @@ export const run: ActionFunction = async function (
       }
     })
 
-    await leon.answer({ widget })
+    await mira.answer({ widget })
   } catch (error: unknown) {
     if (isMissingToolSettingsError(error)) {
       return

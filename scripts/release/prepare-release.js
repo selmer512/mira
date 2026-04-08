@@ -21,7 +21,7 @@ import generateChangelog from './generate-changelog'
       await updateVersion(version)
       await generateChangelog(version)
 
-      LogHelper.success('Hooray! Leon is ready to be released!')
+      LogHelper.success('Hooray! Mira is ready to be released!')
       LoaderHelper.stop()
     } catch (e) {
       LogHelper.error(e)

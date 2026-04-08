@@ -6,7 +6,7 @@ import { SkillBridges } from '@/core/brain/types'
 import { NLPAction } from '@/core/nlp/types'
 
 const SKILL_ACTION_ANSWERS_DESCRIPTION =
-  'Answers are the responses that Leon can give to the owners. They can be simple strings or objects with speech and text properties to differentiate between spoken and written responses.'
+  'Answers are the responses that Mira can give to the owners. They can be simple strings or objects with speech and text properties to differentiate between spoken and written responses.'
 
 const actionParametersType = Type.Recursive((self) =>
   Type.Union([
@@ -58,7 +58,7 @@ const skillActionTypes = [
   }),
   Type.Literal('dialog', {
     description:
-      'Action that don\'t need code to run. Leon actually just answers without any business logic.'
+      'Action that don\'t need code to run. Mira actually just answers without any business logic.'
   })
 ]
 const skillDataTypes = [
@@ -293,7 +293,7 @@ export const skillSchemaObject = Type.Strict(
           is_loop: Type.Optional(
             Type.Boolean({
               description:
-                'An action loop is a concept to keep Leon triggering the same skill action until the logic of the skill breaks the loop.'
+                'An action loop is a concept to keep Mira triggering the same skill action until the logic of the skill breaks the loop.'
             })
           ),
           parameters: Type.Optional(
@@ -318,7 +318,7 @@ export const skillSchemaObject = Type.Strict(
       ),
       {
         description:
-          'Actions are the functions that are triggered within a skill, they define what Leon can do with this skill.'
+          'Actions are the functions that are triggered within a skill, they define what Mira can do with this skill.'
       }
     ),
     action_notes: Type.Optional(
@@ -360,7 +360,7 @@ export const skillConfigSchemaObject = Type.Strict(
               {
                 additionalProperties: false,
                 description:
-                  'The action loop is a concept to keep Leon triggering the same skill action until the logic of the skill breaks the loop according to new utterances content.'
+                  'The action loop is a concept to keep Mira triggering the same skill action until the logic of the skill breaks the loop according to new utterances content.'
               }
             )
           ),
@@ -383,7 +383,7 @@ export const skillConfigSchemaObject = Type.Strict(
           utterance_samples: Type.Optional(
             Type.Array(Type.String(), {
               description:
-                'Utterance samples are used by the NLU (Natural Language Understanding) to train the skill. They are examples of what Leon owners can say to trigger the skill action.'
+                'Utterance samples are used by the NLU (Natural Language Understanding) to train the skill. They are examples of what Mira owners can say to trigger the skill action.'
             })
           ),
           answers: Type.Optional(Type.Array(answerTypes)),
@@ -391,7 +391,7 @@ export const skillConfigSchemaObject = Type.Strict(
           suggestions: Type.Optional(
             Type.Array(Type.String(), {
               description:
-                'Suggestions are a simple way to suggest Leon owners what can be answered next.'
+                'Suggestions are a simple way to suggest Mira owners what can be answered next.'
             })
           ),
           slots: Type.Optional(
@@ -410,19 +410,19 @@ export const skillConfigSchemaObject = Type.Strict(
                   suggestions: Type.Optional(
                     Type.Array(Type.String(), {
                       description:
-                        'Suggestions are a simple way to suggest Leon owners what can be answered next.'
+                        'Suggestions are a simple way to suggest Mira owners what can be answered next.'
                     })
                   )
                 },
                 {
                   additionalProperties: false,
                   description:
-                    'A slot expects a type of data called "item", and makes use of questions to let Leon owners knows what data they need to provide.'
+                    'A slot expects a type of data called "item", and makes use of questions to let Mira owners know what data they need to provide.'
                 }
               ),
               {
                 description:
-                  'Depending on how skill developers wants to design their skill, they have the possibility to ask for more information before to get to the meat of the skill. In this way, Leon can gather these information to operate the skill in a complete manner. These information are called "slots".'
+                  'Depending on how skill developers wants to design their skill, they have the possibility to ask for more information before to get to the meat of the skill. In this way, Mira can gather these information to operate the skill in a complete manner. These information are called "slots".'
               }
             )
           ),
@@ -456,7 +456,7 @@ export const skillConfigSchemaObject = Type.Strict(
         ),
         {
           description:
-            'You can see resolvers as utterance samples that are converted (resolved) to a value of your choice. They are very handy when skills expect specific utterances and then according to these utterances attribute a value that can be handled by the skill. If a skill action expects to receive a resolver, then Leon will convert the value for you and this value will be usable from the skill action code. Any value can be passed to resolvers which allow a large possibilities of usages.'
+            'You can see resolvers as utterance samples that are converted (resolved) to a value of your choice. They are very handy when skills expect specific utterances and then according to these utterances attribute a value that can be handled by the skill. If a skill action expects to receive a resolver, then Mira will convert the value for you and this value will be usable from the skill action code. Any value can be passed to resolvers which allow a large possibilities of usages.'
         }
       )
     )

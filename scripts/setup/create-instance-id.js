@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 
-import { LEON_FILE_PATH } from '@/constants'
+import { MIRA_FILE_PATH } from '@/constants'
 import { Telemetry } from '@/telemetry'
 import { LogHelper } from '@/helpers/log-helper'
 
@@ -8,9 +8,9 @@ export default async () => {
   try {
     const { instanceID, birthDate } = await Telemetry.postInstall()
 
-    if (!fs.existsSync(LEON_FILE_PATH)) {
+    if (!fs.existsSync(MIRA_FILE_PATH)) {
       await fs.promises.writeFile(
-        LEON_FILE_PATH,
+        MIRA_FILE_PATH,
         JSON.stringify(
           {
             instanceID,

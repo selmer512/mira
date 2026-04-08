@@ -1,8 +1,8 @@
 # Contributing
 
-Thanks a lot for your interest in contributing to Leon! :heart:
+Thanks a lot for your interest in contributing to Mira! :heart:
 
-**Leon needs open source to live**, the more skills he has, the more skillful he becomes.
+**Mira needs open source to live**, the more skills she has, the more skillful she becomes.
 
 **Before submitting your contribution**, please take a moment to review this document.
 
@@ -10,7 +10,7 @@ Please note we have a [code of conduct](https://github.com/leon-ai/leon/blob/dev
 
 ## How You Can Help
 
-Here are few examples about how you could help on Leon, by:
+Here are few examples about how you could help on Mira, by:
 
 - [Creating a new module](https://docs.getleon.ai/packages-modules).
 - [Working on new features](http://roadmap.getleon.ai) (what is in backlog or todo).
@@ -43,7 +43,7 @@ Here are few examples about how you could help on Leon, by:
   npm test
   ```
 
-  If you're adding new features to Leon, please include tests.
+  If you're adding new features to Mira, please include tests.
 
 ## Development Setup
 
@@ -62,7 +62,7 @@ Gitpod will automatically set up an environment and run an instance for you.
 git clone https://github.com/leon-ai/leon.git leon
 
 # Go to the project root
-cd leon
+cd mira
 
 # Install
 npm install
@@ -105,7 +105,7 @@ Types define which kind of changes you made to the project.
 
 ### Scopes
 
-Scopes define high-level nodes of Leon.
+Scopes define high-level nodes of Mira.
 
 - bridge/python
 - bridge/nodejs
@@ -120,7 +120,7 @@ Scopes define high-level nodes of Leon.
 
 ```sh
 git commit -m "feat(server): awesome new server feature"
-git commit -m "docs(skill/leon): fix spelling"
+git commit -m "docs(skill/mira): fix spelling"
 git commit -m "chore: split training script into awesome blocks"
 git commit -m "style(web app): remove chatbot useless parentheses"
 ```
@@ -134,7 +134,7 @@ Otherwise you may encounter an error such as "npx not found".
 
 You can also contribute by [sponsoring Leon](http://sponsor.getleon.ai).
 
-Please note that I dedicate most of my free time to Leon.
+Please note that I dedicate most of my free time to Mira.
 
 By sponsoring the project you make the project sustainable and faster to develop features.
 
@@ -142,7 +142,7 @@ The focus is not only limited to the activity you see on GitHub but also a lot o
 
 ## Contributing to the Python Bridge or TCP HttpServer
 
-Leon makes use of two binaries, the Python bridge and the TCP server. These binaries are compiled from Python sources.
+Mira makes use of two binaries, the Python bridge and the TCP server. These binaries are compiled from Python sources.
 
 The Python bridge is used to communicate between the core and skills made with Python.
 
@@ -205,12 +205,12 @@ npm run build:python-bridge
 npm run build:tcp-server
 
 # Run the Python bridge
-./bridges/python/dist/{OS-CPU_ARCH}/leon-python-bridge server/src/intent-object.sample.json
+./bridges/python/dist/{OS-CPU_ARCH}/mira-python-bridge server/src/intent-object.sample.json
 
 # Run the TCP server
-./tcp_server/dist/{OS-CPU_ARCH}/leon-tcp-server en
+./tcp_server/dist/{OS-CPU_ARCH}/mira-tcp-server en
 ```
 
 ## Spread the Word
 
-Use [#LeonAI](<https://twitter.com/search?f=live&q=%23LeonAI%20(from%3Agrenlouis%20OR%20from%3Alouistiti_fr)&src=typed_query>) if you tweet about Leon and/or mention [@grenlouis](https://twitter.com/grenlouis).
+Use [#MiraAI](<https://twitter.com/search?f=live&q=%23MiraAI%20(from%3Agrenlouis%20OR%20from%3Alouistiti_fr)&src=typed_query>) if you tweet about Mira and/or mention [@grenlouis](https://twitter.com/grenlouis).

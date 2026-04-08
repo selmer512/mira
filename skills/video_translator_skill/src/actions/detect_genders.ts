@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
 import ECAPATool from '@sdk/tools/ecapa'
@@ -26,7 +26,7 @@ export const run: ActionFunction = async function (
       !Array.isArray(speakerReferences) ||
       speakerReferences.length === 0
     ) {
-      leon.answer({
+      mira.answer({
         key: 'no_speaker_references',
         data: {
           message: 'No speaker references available to analyze gender.'
@@ -66,7 +66,7 @@ export const run: ActionFunction = async function (
       })
     }
 
-    leon.answer({
+    mira.answer({
       key: 'genders_detected',
       data: {
         count: results.length,

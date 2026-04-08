@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import { Settings } from '@sdk/settings'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
@@ -83,7 +83,7 @@ export const run: ActionFunction = async function (
 
     // Validate bridge parameter
     if (bridge !== 'nodejs' && bridge !== 'python') {
-      leon.answer({
+      mira.answer({
         key: 'invalid_bridge',
         data: { bridge }
       })
@@ -97,7 +97,7 @@ export const run: ActionFunction = async function (
       | string
       | undefined
 
-    leon.answer({ key: 'generating_skill', data: { provider } })
+    mira.answer({ key: 'generating_skill', data: { provider } })
 
     const targetPath = process.cwd()
     const skillsRoot = path.join(targetPath, 'skills')
@@ -126,7 +126,7 @@ export const run: ActionFunction = async function (
     const response = await opencodeTool.generateSkill(skillOptions)
 
     if (!response.success) {
-      leon.answer({
+      mira.answer({
         key: 'generation_failed',
         data: { error: response.error || 'Unknown error' }
       })
@@ -141,7 +141,7 @@ export const run: ActionFunction = async function (
       existingSkills
     )
 
-    leon.answer({
+    mira.answer({
       key: 'skill_created',
       data: {
         skill_name: inferredSkillName || newestSkillName || 'new_skill',

@@ -7,9 +7,9 @@ export default class MoonshotAILLMProvider extends AISDKRemoteLLMProvider {
     super({
       name: 'MoonshotAI LLM Provider',
       providerName: 'moonshotai',
-      apiKeyEnv: 'LEON_MOONSHOTAI_API_KEY',
-      workflowModelEnv: 'LEON_MOONSHOTAI_MODEL',
-      agentModelEnv: 'LEON_MOONSHOTAI_AGENT_LLM',
+      apiKeyEnv: 'MIRA_MOONSHOTAI_API_KEY',
+      workflowModelEnv: 'MIRA_MOONSHOTAI_MODEL',
+      agentModelEnv: 'MIRA_MOONSHOTAI_AGENT_LLM',
       defaultModel: 'moonshot-v1-8k',
       baseURL: 'https://api.moonshot.ai/v1',
       flavor: 'moonshotai'

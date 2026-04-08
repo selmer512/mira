@@ -3,7 +3,7 @@ import type { FastifyPluginAsync } from 'fastify'
 import type { APIOptions } from '@/core/http-server/http-server'
 import {
   AGENT_LLM_PROVIDER,
-  LEON_VERSION,
+  MIRA_VERSION,
   HAS_AFTER_SPEECH,
   HAS_LLM,
   HAS_STT,
@@ -11,7 +11,7 @@ import {
   STT_PROVIDER,
   TTS_PROVIDER,
   IS_TELEMETRY_ENABLED,
-  LEON_ROUTING_MODE,
+  MIRA_ROUTING_MODE,
   SHOULD_START_PYTHON_TCP_SERVER,
   WORKFLOW_LLM_PROVIDER
 } from '@/constants'
@@ -83,7 +83,7 @@ export const getInfo: FastifyPluginAsync<APIOptions> = async (
           enabled: HAS_TTS,
           provider: TTS_PROVIDER
         },
-        routingMode: LEON_ROUTING_MODE,
+        routingMode: MIRA_ROUTING_MODE,
         tcpServer: {
           enabled: SHOULD_START_PYTHON_TCP_SERVER
         },
@@ -91,7 +91,7 @@ export const getInfo: FastifyPluginAsync<APIOptions> = async (
           type: PERSONA.mood.type,
           emoji: PERSONA.mood.emoji
         },
-        version: LEON_VERSION
+        version: MIRA_VERSION
       })
     }
   })

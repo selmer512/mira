@@ -18,7 +18,7 @@ interface LoadParams {
 
 /**
  * The goal of this class is to log the conversation data between the
- * owner and Leon.
+ * owner and Mira.
  * This data is saved on the owner's machine.
  * This data can then be used to provide more context to the LLM to achieve
  * better results.
