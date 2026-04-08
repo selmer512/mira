@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "description": "Provide quick weather conditions for any location.",
   "author": {
-    "name": "Leon"
+    "name": "Mira"
   },
   "actions": {
     "get_forecast": {

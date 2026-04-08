@@ -3,7 +3,7 @@
   "name": "Color",
   "bridge": "python",
   "version": "1.0.0",
-  "description": "Leon tells about colors.",
+  "description": "Mira tells about colors.",
   "author": {
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",
@@ -12,15 +12,15 @@
   "actions": {
     "tell_favorite_color": {
       "type": "dialog",
-      "description": "Leon tells about his favorite color."
+      "description": "Mira tells about his favorite color."
     },
     "tell_why": {
       "type": "dialog",
-      "description": "Leon tells why he likes his favorite color."
+      "description": "Mira tells why he likes his favorite color."
     },
     "tell_hexadecimal_color": {
       "type": "logic",
-      "description": "Leon tells the hexadecimal code of a color.",
+      "description": "Mira tells the hexadecimal code of a color.",
       "parameters": {
         "color_name": {
           "type": "string",

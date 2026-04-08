@@ -62,6 +62,6 @@ SKILL_LOCALE_CONFIG["widget_contents"] = SKILL_LOCALE_CONFIG_CONTENT.get(
     "widget_contents", {}
 )
 
-LEON_VERSION = os.getenv("npm_package_version")
+MIRA_VERSION = os.getenv("npm_package_version")
 
 PYTHON_BRIDGE_VERSION = version.__version__

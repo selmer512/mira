@@ -10,7 +10,7 @@ dotenv.config({ path: path.join(ROOT_DIR, '.env') })
 
 export default defineConfig({
   resolve: {
-    // Reuse Leon's TS path aliases so the ReAct code can be imported directly.
+    // Reuse Mira's TS path aliases so the ReAct code can be imported directly.
     alias: {
       '@@': ROOT_DIR,
       '@': path.join(ROOT_DIR, 'server', 'src'),

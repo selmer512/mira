@@ -5,11 +5,11 @@ import { FileHelper } from '@/helpers/file-helper'
 import type { ActionFunction, ActionParams } from '@sdk/types'
 import { INTENT_OBJECT } from '@bridge/constants'
 import { ParamsHelper } from '@sdk/params-helper'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { setToolReporter } from '@sdk/tool-reporter'
 ;(async (): Promise<void> => {
   setToolReporter(async (input) => {
-    await leon.answer(input)
+    await mira.answer(input)
   })
 
   const {

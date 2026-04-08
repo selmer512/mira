@@ -101,7 +101,7 @@ export function formatHistoryForCompaction(
   logs: MessageLog[]
 ): string {
   const lines = logs.map((log, index) => {
-    const speaker = log.who === 'owner' ? 'Owner' : 'Leon'
+    const speaker = log.who === 'owner' ? 'Owner' : 'Mira'
     const message = cleanText(log.message)
 
     return `${index + 1}. ${speaker}: ${message}`

@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 
 
@@ -13,7 +13,7 @@ def run(params: ActionParams) -> None:
             decision = resolver['value']
 
     if decision:
-        return leon.answer({
+        return mira.answer({
             'key': 'confirm_retry',
             'core': {
                 'isInActionLoop': False,
@@ -21,7 +21,7 @@ def run(params: ActionParams) -> None:
             }
         })
 
-    leon.answer({
+    mira.answer({
         'key': 'deny_retry',
         'core': {
             'isInActionLoop': False

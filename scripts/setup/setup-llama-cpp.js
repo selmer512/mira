@@ -365,7 +365,7 @@ async function buildFromSource() {
     LogHelper.success('llama.cpp source extracted')
     LogHelper.info('Building llama.cpp from source...')
 
-    // Always use Leon-managed CMake for the source build.
+    // Always use Mira-managed CMake for the source build.
     await command(
       `"${CMAKE_BIN_PATH}" -B build -G Ninja -DCMAKE_MAKE_PROGRAM="${NINJA_BIN_PATH}" -DGGML_CUDA=ON -DLLAMA_BUILD_SERVER=ON -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_ARCHITECTURES=native`,
       {

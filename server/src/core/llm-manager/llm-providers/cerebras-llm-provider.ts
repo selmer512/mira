@@ -10,9 +10,9 @@ export default class CerebrasLLMProvider extends AISDKRemoteLLMProvider {
     super({
       name: 'Cerebras LLM Provider',
       providerName: 'cerebras',
-      apiKeyEnv: 'LEON_CEREBRAS_API_KEY',
-      workflowModelEnv: 'LEON_CEREBRAS_MODEL',
-      agentModelEnv: 'LEON_CEREBRAS_AGENT_LLM',
+      apiKeyEnv: 'MIRA_CEREBRAS_API_KEY',
+      workflowModelEnv: 'MIRA_CEREBRAS_MODEL',
+      agentModelEnv: 'MIRA_CEREBRAS_AGENT_LLM',
       defaultModel: 'gpt-oss-120b',
       baseURL: 'https://api.cerebras.ai/v1',
       flavor: 'cerebras'

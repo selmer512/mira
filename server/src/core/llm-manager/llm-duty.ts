@@ -16,7 +16,7 @@ import { LLMDuties } from '@/core/llm-manager/types'
 
 export interface LLMDutyInitParams {
   /**
-   * Whether to use the loop history which is erased when Leon's instance is restarted.
+   * Whether to use the loop history which is erased when Mira's instance is restarted.
    * If set to false, the main conversation history will be used
    */
   useLoopHistory?: boolean

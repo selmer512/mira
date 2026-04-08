@@ -1,5 +1,5 @@
 import type { ActionFunction } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import { Settings } from '@sdk/settings'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
@@ -43,7 +43,7 @@ export const run: ActionFunction = async function (
 
   // Validate duration
   if (duration < 1 || duration > 30) {
-    leon.answer({
+    mira.answer({
       key: 'invalid_duration',
       data: { duration }
     })
@@ -62,7 +62,7 @@ export const run: ActionFunction = async function (
 
   try {
     // Step 1: Research the topic using Grok
-    leon.answer({
+    mira.answer({
       key: 'researching',
       data: { topic }
     })
@@ -77,7 +77,7 @@ export const run: ActionFunction = async function (
     ])
 
     if (!researchResult.success || !researchResult.data) {
-      leon.answer({
+      mira.answer({
         key: 'error',
         data: { error: researchResult.error || 'Research failed' }
       })
@@ -88,7 +88,7 @@ export const run: ActionFunction = async function (
     const researchContent = researchResult.content
 
     if (!researchContent) {
-      leon.answer({
+      mira.answer({
         key: 'error',
         data: { error: 'No research content found' }
       })
@@ -96,7 +96,7 @@ export const run: ActionFunction = async function (
     }
 
     // Step 2: Generate podcast script using OpenRouter with structured output
-    leon.answer({ key: 'generating_script' })
+    mira.answer({ key: 'generating_script' })
 
     const openrouter = await ToolManager.initTool(OpenRouterTool)
 
@@ -175,7 +175,7 @@ Generate the script as a JSON object with this structure:
     })
 
     if (!scriptResult.success || !scriptResult.data) {
-      leon.answer({
+      mira.answer({
         key: 'error',
         data: { error: scriptResult.error || 'Script generation failed' }
       })
@@ -185,7 +185,7 @@ Generate the script as a JSON object with this structure:
     const script = scriptResult.data as PodcastScript
 
     // Step 3: Synthesize audio using ChatterboxONNX (batch processing!)
-    leon.answer({ key: 'synthesizing_audio' })
+    mira.answer({ key: 'synthesizing_audio' })
 
     const chatterbox = await ToolManager.initTool(ChatterboxONNXTool)
 
@@ -257,7 +257,7 @@ Generate the script as a JSON object with this structure:
     }
 
     // Step 5: Return success
-    leon.answer({
+    mira.answer({
       key: 'success',
       data: {
         topic,
@@ -269,7 +269,7 @@ Generate the script as a JSON object with this structure:
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'error',
       data: { error: (error as Error).message },
       core: {

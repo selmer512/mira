@@ -129,11 +129,11 @@ jobs:
           set -euo pipefail
           ls -la bridges/python/dist
           required=(
-            "bridges/python/dist/leon-python-bridge-linux-aarch64.zip"
-            "bridges/python/dist/leon-python-bridge-linux-x86_64.zip"
-            "bridges/python/dist/leon-python-bridge-macosx-arm64.zip"
-            "bridges/python/dist/leon-python-bridge-macosx-x86_64.zip"
-            "bridges/python/dist/leon-python-bridge-win-amd64.zip"
+            "bridges/python/dist/mira-python-bridge-linux-aarch64.zip"
+            "bridges/python/dist/mira-python-bridge-linux-x86_64.zip"
+            "bridges/python/dist/mira-python-bridge-macosx-arm64.zip"
+            "bridges/python/dist/mira-python-bridge-macosx-x86_64.zip"
+            "bridges/python/dist/mira-python-bridge-win-amd64.zip"
           )
           for asset in "${required[@]}"; do
             [ -f "$asset" ] || { echo "Missing asset: $asset"; exit 1; }

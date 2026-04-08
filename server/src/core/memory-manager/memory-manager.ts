@@ -26,11 +26,11 @@ import type {
 } from './types'
 
 const CONTEXT_SYNC_TTL_MS = 5 * 60 * 1_000
-const LEON_MEMORY_DISCUSSION_TTL_DAYS = 5
-const LEON_MEMORY_RECALL_TOP_K = 12
-const LEON_MEMORY_PLANNING_RECALL_TOP_K = 6
-const LEON_MEMORY_PLANNING_TOKEN_BUDGET = 220
-const LEON_MEMORY_EXECUTION_TOKEN_BUDGET = 480
+const MIRA_MEMORY_DISCUSSION_TTL_DAYS = 5
+const MIRA_MEMORY_RECALL_TOP_K = 12
+const MIRA_MEMORY_PLANNING_RECALL_TOP_K = 6
+const MIRA_MEMORY_PLANNING_TOKEN_BUDGET = 220
+const MIRA_MEMORY_EXECUTION_TOKEN_BUDGET = 480
 const PERSISTENT_EXTRACTION_TIMEOUT_MS = 45_000
 const PERSISTENT_EXTRACTION_MAX_RETRIES = 1
 const PERSISTENT_EXTRACTION_MAX_TOKENS = 220
@@ -41,7 +41,7 @@ const SOFT_DELETED_RETENTION_MS = 7 * 24 * 60 * 60 * 1_000
 const DISCUSSION_ACTIVE_RETENTION_DAYS = 30
 const DISCUSSION_COLD_ARCHIVE_AFTER_DAYS = 180
 const DAILY_FULL_RETENTION_DAYS = 90
-const QMD_INDEX_NAME = 'leon-memory'
+const QMD_INDEX_NAME = 'mira-memory'
 const DAILY_SUMMARY_QUEUE_STALE_MS = 2 * 60 * 1_000
 const PERSISTENT_SIMILARITY_JACCARD_THRESHOLD = 0.84
 const PERSISTENT_SIMILARITY_CONTAINMENT_MIN_CHARS = 40
@@ -49,7 +49,7 @@ const RECALL_MIN_QUERY_TERMS = 3
 const MIN_TRUNCATED_RECALL_TOKENS = 48
 const TRUNCATED_RECALL_BUDGET_RATIO = 0.6
 const PERSISTENT_SIMILARITY_LOOKBACK = 300
-const DISCUSSION_TTL_MS = LEON_MEMORY_DISCUSSION_TTL_DAYS * 24 * 60 * 60 * 1_000
+const DISCUSSION_TTL_MS = MIRA_MEMORY_DISCUSSION_TTL_DAYS * 24 * 60 * 60 * 1_000
 const DAY_MS = 24 * 60 * 60 * 1_000
 const DAY_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 const MAINTENANCE_REPORTS_DIRNAME = 'reports'
@@ -160,11 +160,11 @@ function renderRecallPrompt(result: RecallResult): string {
   return lines.join('\n')
 }
 
-function parseConversationPair(content: string): Array<{ who: 'owner' | 'leon', message: string }> {
+function parseConversationPair(content: string): Array<{ who: 'owner' | 'mira', message: string }> {
   const lines = content.split('\n')
   const ownerLine = lines.find((line) => line.startsWith('Owner:'))
-  const leonLine = lines.find((line) => line.startsWith('Leon:'))
-  const records: Array<{ who: 'owner' | 'leon', message: string }> = []
+  const miraLine = lines.find((line) => line.startsWith('Mira:'))
+  const records: Array<{ who: 'owner' | 'mira', message: string }> = []
 
   if (ownerLine) {
     records.push({
@@ -173,10 +173,10 @@ function parseConversationPair(content: string): Array<{ who: 'owner' | 'leon', 
     })
   }
 
-  if (leonLine) {
+  if (miraLine) {
     records.push({
-      who: 'leon',
-      message: leonLine.replace(/^Leon:\s*/i, '').trim()
+      who: 'mira',
+      message: miraLine.replace(/^Mira:\s*/i, '').trim()
     })
   }
 
@@ -490,8 +490,8 @@ export default class MemoryManager {
       await this.load()
     }
 
-    const topK = input.topK || LEON_MEMORY_RECALL_TOP_K
-    const tokenBudget = input.tokenBudget || LEON_MEMORY_EXECUTION_TOKEN_BUDGET
+    const topK = input.topK || MIRA_MEMORY_RECALL_TOP_K
+    const tokenBudget = input.tokenBudget || MIRA_MEMORY_EXECUTION_TOKEN_BUDGET
     const namespaces = this.normalizeRecallNamespaces(input.namespaces)
 
     if (!input.skipContextSync && namespaces.includes('context')) {
@@ -831,7 +831,7 @@ export default class MemoryManager {
 
   public async buildPlanningMemoryPack(
     query: string,
-    tokenBudget = LEON_MEMORY_PLANNING_TOKEN_BUDGET
+    tokenBudget = MIRA_MEMORY_PLANNING_TOKEN_BUDGET
   ): Promise<string> {
     if (!this.shouldRecallForQuery(query)) {
       return ''
@@ -844,7 +844,7 @@ export default class MemoryManager {
         'memory_daily',
         'memory_discussion'
       ],
-      topK: LEON_MEMORY_PLANNING_RECALL_TOP_K,
+      topK: MIRA_MEMORY_PLANNING_RECALL_TOP_K,
       tokenBudget,
       includeFacts: true,
       skipContextSync: true,
@@ -867,7 +867,7 @@ export default class MemoryManager {
     query: string,
     _toolkitId: string,
     contextFiles: string[] = [],
-    tokenBudget = LEON_MEMORY_EXECUTION_TOKEN_BUDGET
+    tokenBudget = MIRA_MEMORY_EXECUTION_TOKEN_BUDGET
   ): Promise<string> {
     if (!this.shouldRecallForQuery(query)) {
       return ''
@@ -882,7 +882,7 @@ export default class MemoryManager {
         ? ['memory_persistent', 'memory_discussion', 'context']
         : ['memory_persistent', 'memory_discussion'],
       contextFilenames: includeContext ? normalizedContextFiles : [],
-      topK: LEON_MEMORY_RECALL_TOP_K,
+      topK: MIRA_MEMORY_RECALL_TOP_K,
       tokenBudget,
       includeFacts: true
     })
@@ -918,7 +918,7 @@ export default class MemoryManager {
 
     const now = input.sentAt || Date.now()
     const dayKey = toDayKey(now)
-    const pairedContent = `Owner: ${userMessage}\nLeon: ${assistantMessage}`
+    const pairedContent = `Owner: ${userMessage}\nMira: ${assistantMessage}`
 
     await this.remember({
       scope: 'daily',
@@ -1237,7 +1237,7 @@ export default class MemoryManager {
 
     const prompt = `Conversation turn:
 User: ${normalizedUserMessage}
-Leon: ${normalizedAssistantMessage}
+Mira: ${normalizedAssistantMessage}
 
 Extract only durable personal memories worth persisting long-term.
 Keep only stable user facts/preferences/commitments likely useful in future conversations.

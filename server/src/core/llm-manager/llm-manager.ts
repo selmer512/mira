@@ -387,11 +387,11 @@ export default class LLMManager {
          *    - [ok] Create yt-dlp tool -> download_video
          *    - [ok] Fix logic-action-skill-handler, send message sync replaceMessageId
          *    - [ok] 2025-09-04: find a way to make tools report progress to actions without they become error messages for the brain child process
-         *    - [ok] With leon.answer, when path are given in the answer, then we should be able to open the file explorer on the given path when we click on the path from the web app
-         *      - [ok] Also, implement built-in functions, such as when executing child process: also automatically report which command is being executed (leon.answer())
+         *    - [ok] With mira.answer, when path are given in the answer, then we should be able to open the file explorer on the given path when we click on the path from the web app
+         *      - [ok] Also, implement built-in functions, such as when executing child process: also automatically report which command is being executed (mira.answer())
          *      - [ok] Since we spawn new processes, we need to make sure to kill them properly once done, otherwise we'll have zombie processes
-         *      - [ok] Instead of console.log() in base-tool, make use of leon.answer()
-         *      - [ok] Once done for TypeScript, rewrite it for the Python SDK (base-tool.ts, leon.ts (for replaceMessageId)
+         *      - [ok] Instead of console.log() in base-tool, make use of mira.answer()
+         *      - [ok] Once done for TypeScript, rewrite it for the Python SDK (base-tool.ts, mira.ts (for replaceMessageId)
          *    - [ok] Implement special UI for tools report (command outputs, etc.)
          *    - [ok] Create bash tool -> execute_command (+ shell skill that can run commands on the host based on remote LLM)
          *    - Create whisper_faster -> transcribe
@@ -400,17 +400,17 @@ export default class LLMManager {
          *        - English only: https://huggingface.co/Systran/faster-distil-whisper-large-v3
          *      - [ok] In base-tool, implement a function "getResources" similar to getBinaryPath() to download resources (e.g. Whisper model)
          *      - [ok] Fix base-tool.ts TSLint errors
-         *      - [ok] Auto download whisper_faster binary from leon-binaries repo
+         *      - [ok] Auto download whisper_faster binary from mira-binaries repo
          *      - [ok] Run my GitHub workflow via the GitHub action UI. Create GitHub action to compile binaries cross platforms (see how to use GitHub Action CLI directly)
-         *      - [ok] Remove pipfile package from faster_whisper in leon-binaries
+         *      - [ok] Remove pipfile package from faster_whisper in mira-binaries
          *      - [ok] Try whisper_faster end to end -> see if when download model.bin it still returns error
-         *      - [ok] Remove TODOs from run_faster_whisper.py in leon-binaries
+         *      - [ok] Remove TODOs from run_faster_whisper.py in mira-binaries
          *      - [ok] In base-tool.ts: should be able to add cliProgress: true without it reports errors. Hence, for log, I think we need to wrap logs so the brain will not think it is an error
          *      - [ok] Same for base_tool.py with dl.start and display=True
          *      - [ok] In yt-dlp tool, add tips from my personal notes
          *    - [ok] Be able to push data/args to context from skill actions. No need to use memory library SDK for simple memory. E.g. audio_path. Remove from music_audio transcribe_audio memory video translator, and use context instead
          *    - [ok] Try by using OpenAI tool to transcribe_audio (settings.json)
-         *    - [ok] Create tool schemas to normalize tool function outputs across Leon
+         *    - [ok] Create tool schemas to normalize tool function outputs across Mira
          *    - [ok] Create 11labs and openai tools for transcription
          *    - [ok] Make use of the ElevenLabs dubbing API instead, much simpler!
          *      - Dub API: https://elevenlabs.io/docs/api-reference/dubbing/create?explorer=true
@@ -481,7 +481,7 @@ export default class LLMManager {
          *    - Create "video_streaming_toolkit_skill" (ffmpeg related stuff?) and "music_audio_toolkit_skill", such common skills contain actions that can be reused by other skills
          *    - Settings priority: 1. caller action (video_translator:*); 2. called action (music_audio:*)
          *    - Create openai_audio tool -> transcribe; translate; synthesize, etc.
-         *    - Now that we share the CUDA runtime, we can remove it from all current Leon's binaries (e.g. TCP Server, etc.) and point the path instead
+         *    - Now that we share the CUDA runtime, we can remove it from all current Mira's binaries (e.g. TCP Server, etc.) and point the path instead
          *    - [ok] In video_translator skill, can add this in flow: "transcriber:transcribe_audio" to execute an action from another skill; but need to config transcribe_audio within this skill need to find a way
          *      VideoTranslator settings
                  *  - transcribe action {
@@ -516,7 +516,7 @@ export default class LLMManager {
          *    - With auto binary/model download if it is a requirement and not downloaded yet; output to the owner that it is downloading the binary/model
          *    - Cf. https://chatgpt.com/c/68b5c2c6-ec88-832f-aa44-3b7ada3171a3 -> For projects that aren't already compiled (Pyannote, WhisperX, etc.), need to compile them ourselves via GitHub Actions + Pyinstaller or cx_freeze. Keep compile setup files in /tool_bins/ folder. E.g. /tool_bins/whisperx/setup.py, /tool_bins/whisperx/whisperx, etc.
          *    - Tool settings OR use skill settings? (OpenRouter API key, etc.)
-         * TODO NEXT: B. Then create a Skill Writer skill where Leon can write a skill > actions by himself based on examples and given owner query (e.g. to_do list, video translator, etc.) and current architecture. Leon can also write tools by himself. If a skill is not found, then we can fallback so Leon can suggest to develop a skill for the owner
+         * TODO NEXT: B. Then create a Skill Writer skill where Mira can write a skill > actions by himself based on examples and given owner query (e.g. to_do list, video translator, etc.) and current architecture. Mira can also write tools by himself. If a skill is not found, then we can fallback so Mira can suggest to develop a skill for the owner
          *  - Skill Writer skill: OpenCode uses GLM 4.7 via Cerebras. Implement "@" skill caller with autocompletion on webapp (e.g. @Skill Writer)
          *  - Use https://github.com/anomalyco/opencode for code generation?
          *  - Use https://zenmux.ai/volcengine/doubao-seed-code ?
@@ -525,12 +525,12 @@ export default class LLMManager {
          *    "summarize this video", etc.
          *    "Clone Elon Musk's voice and say "SpaceX is the most ambitious company on Earth!"" -> research about Elon Musk video/audio samples, download it, and then use XTTS-2 (or something else) to clone the voice and synthesize the text
          *    "I need to learn the following words in Chinese: ..., ..., .... Please challenge me to pronounce them correctly and to remember them by giving me examples and sentences"
-         * TODO NEXT: C. Create the autonomous mode where we give the tools directly to Leon (ReAct). E.g. "Can you download the audiobook for Hunger Games 2 and Hunger Games 3?"
+         * TODO NEXT: C. Create the autonomous mode where we give the tools directly to Mira (ReAct). E.g. "Can you download the audiobook for Hunger Games 2 and Hunger Games 3?"
          *  - Make use of OpenRouter; https://zenmux.ai/ etc.
          * TODO: main goal with A, B, C:
          *  - A: we have a clear breakdown of the atomic structure: skills > actions > toolkits > tools > functions
-         *  - B: Leon can write skills and tools by himself (useful when it is a common scenario and that it just needs to be executed and needs to be reliable)
-         *  - C: Leon can use the tools directly to achieve the owner's goals and if the necessary tool isn't found, Leon can suggest to develop one for the owner (B.)
+         *  - B: Mira can write skills and tools by himself (useful when it is a common scenario and that it just needs to be executed and needs to be reliable)
+         *  - C: Mira can use the tools directly to achieve the owner's goals and if the necessary tool isn't found, Mira can suggest to develop one for the owner (B.)
          * TODO: 2 skills to build based A, B, C:
          *  - TODO 1. Based on my French YouTube video, create a video that will dub my voice in English, get transcription from YouTube, select all the key moments and create a 1 minute video automatically so I can post on Twitter
          *  - TODO 2. Go on my Twitter account and unfollow the followers that look like bot or spam accounts. Ask me for confirmation before unfollow
@@ -574,7 +574,7 @@ export default class LLMManager {
          *      [ok] Implement the locale to the timer skill. And verify all actions
          *      [ok] In bridges/nodejs/src/constants.ts and bridges/python/src/constants.py, change the SKILL_CONFIG by removing the config/{lang}.json and only use the locale config. Need to add "variables" and "widget_contents" to the local config too. When implementing variables, check for dialog skill answers if it has conflict
          *      [ok] When action calling, also need to provide non-missing action arguments or need to set the active state with collected params OR fix the slot filling, it needs to push the slots into the context, not only the active state
-         *      [ok] Fix skill output chunk parsing. Add new line and read line by line in the brain. skillOutput is empty on data end, need to check; long stdout output because now we send much more data? leon.py, fix widgets (test with todo list skill, etc.) "Add 1l of water, a pillow and a pair of socks to my shopping list please"
+         *      [ok] Fix skill output chunk parsing. Add new line and read line by line in the brain. skillOutput is empty on data end, need to check; long stdout output because now we send much more data? mira.py, fix widgets (test with todo list skill, etc.) "Add 1l of water, a pillow and a pair of socks to my shopping list please"
          *      [ok] Verify to_do list widget onChange (entities -> action argument) when click checkbox
          *      [ok] Reimplement HTTP APIs for watch (fetch [to do now] + run action [ok]) as per core rewrite changes
          *      [ok] Related to the issue below. For the action calling duty, it tries to run multiple tools: "Create a computer list, think of the main components of a computer and add them to the list". Need to create an action call queue that will run the actions one by one, and wait for the previous action to finish before running the next one. This will allow to run multiple actions in a single utterance, e.g. "Create a computer list, think of the main components of a computer and add them to the list" -> should run 2 actions:
@@ -587,7 +587,7 @@ export default class LLMManager {
          * </tool_call>
          *      [ok] (related to below issue 2025-08-19) when "clean active state", should we also clean action router duty and skill router duty? The action router duty seems to be overloaded after a while, cf. usedInputTokens
          *      [ok] "Add tomatoes, potatoes, 1kg of rice to the shopping list" -> issue, it will grab previous list. "Check potatoes from the shopping list" -> does not check because does not go through end data, only on data
-         *      [ok] Add "common_answers" to locale config for reusable answers across actions (leon.ts + leon.py); test it with the todo list skill (list_does_not_exist, list_already_exists, etc.)
+         *      [ok] Add "common_answers" to locale config for reusable answers across actions (mira.ts + mira.py); test it with the todo list skill (list_does_not_exist, list_already_exists, etc.)
          *      [ok] (finally no need for query_resolver for now, action args are enough) instead of creating a new multi-tasking duty, maybe we can use the next action arguments? E.g. for "replay" we could have a boolean. By using param description, should automatically set true or false when the param type is boolean so skill devs don't need to care about this. Or just use our global resolver?
          *      [ok] Flow implementation
          *      [ok] Action loop -> fix nlu.ts with conv state / description from undefined param (param.description)
@@ -626,7 +626,7 @@ export default class LLMManager {
          *      [ok] Rework the MBTI skill with resolver skill. Once done, from there we can consider the rewrite of the core as nearly completed
          *      Check suggestions. Already done with widgets before? Need to check previous progress in Trello cards
          *        - Re-enable them from brain.ts, search for "// Send suggestions to the client"
-         *      "dialog" skill type: rework it with new core. It is a good solution for Q&A. E.g. specific knowledge base, etc. Create a dialog skill for Leon itself about general questions (what it can do, why Leon has been created, who created Leon, when was the last update, how to develop new skill, how to contribute, some Easter eggs, etc.)
+         *      "dialog" skill type: rework it with new core. It is a good solution for Q&A. E.g. specific knowledge base, etc. Create a dialog skill for Mira itself about general questions (what it can do, why Mira has been created, who created Mira, when was the last update, how to develop new skill, how to contribute, some Easter eggs, etc.)
          *      Recreate all "dialog" skills with the new core. Remove feature for nested data such as in partner_assistant skill (not very useful, medium code complexity, poor ROI)
          *      Allow "missing_param_follow_ups" in skill config to handle customized missing params follow-ups
          *      Delete all legacy core code
@@ -637,8 +637,8 @@ export default class LLMManager {
          *      [ok] (PLAN CHANGED, DO NOT DO THIS) -> Implement config/{lang}.json in skills with new properties (cf. Trello card description)
          *      [ok] Implement slot filling duty > missing params > conversation state
          *      [ok] Research (redevelop next_action?) and create resolver duty / loop in skills (guess the number, rochambeau, MBTI test, etc.)
-         *      If action is not found, then fallback to a duty for chitchat/help with Leon's personality
-         *      Implement toolkits and tools (E.g. weather toolkit (folder) > several providers (each provider is a tool class, they must contain the same methods between each other as most as possible). Cf. MVP. And create the toolkit finder duty logic when the Leon instance includes +64 skills
+         *      If action is not found, then fallback to a duty for chitchat/help with Mira's personality
+         *      Implement toolkits and tools (E.g. weather toolkit (folder) > several providers (each provider is a tool class, they must contain the same methods between each other as most as possible). Cf. MVP. And create the toolkit finder duty logic when the Mira instance includes +64 skills
          *      Create real weather skill with tools (one tool for each provider, can choose provider in skill settings)
          *      After everything is confirmed, then migrate all skills with the new configs
          *      Clean up NLU class, etc. if not used anymore

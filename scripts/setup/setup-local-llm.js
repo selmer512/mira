@@ -185,7 +185,7 @@ export default async function setupLocalLLM() {
 
   if (!canInstall) {
     LogHelper.warning(
-      `Local LLM support requires at least ${LLM_MINIMUM_TOTAL_VRAM} GB of total VRAM and a supported GPU setup. Current total VRAM is ${hardware.totalVRAM} GB. Leon will continue without installing a default local LLM.`
+      `Local LLM support requires at least ${LLM_MINIMUM_TOTAL_VRAM} GB of total VRAM and a supported GPU setup. Current total VRAM is ${hardware.totalVRAM} GB. Mira will continue without installing a default local LLM.`
     )
 
     return

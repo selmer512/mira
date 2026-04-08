@@ -1,7 +1,7 @@
 from typing import Optional, Type
 
 from .base_tool import BaseTool
-from .leon import leon
+from .mira import mira
 from .utils import format_file_path
 
 
@@ -19,7 +19,7 @@ class ToolManager:
         missing = tool.get_missing_settings()
 
         if missing:
-            leon.answer(
+            mira.answer(
                 {
                     "key": "bridges.tools.missing_settings",
                     "data": {

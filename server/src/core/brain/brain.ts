@@ -78,7 +78,7 @@ export default class Brain {
   private _skillProcess: SkillProcess = undefined
   private _skillFriendlyName = ''
   public skillOutput = ''
-  public isMuted = false // Close Leon mouth if true; e.g. over HTTP
+  public isMuted = false // Close Mira mouth if true; e.g. over HTTP
 
   constructor() {
     if (!Brain.instance) {
@@ -143,13 +143,13 @@ export default class Brain {
         SOCKET_SERVER.socket?.emit('tts-interruption')
         // Cancel all the future speeches
         TTS.speeches = []
-        LogHelper.info('Leon got interrupted')
+        LogHelper.info('Mira got interrupted')
       }
 
       if (isTalkingWithVoice) {
-        LogHelper.info('Leon is talking with voice')
+        LogHelper.info('Mira is talking with voice')
       } else {
-        LogHelper.info('Leon stopped talking with voice')
+        LogHelper.info('Mira stopped talking with voice')
       }
     }
 
@@ -207,7 +207,7 @@ export default class Brain {
     for (let i = 0; i < this.answerQueue.answers.length; i += 1) {
       /**
        * Use setTimeout to have a more natural feeling that
-       * Leon is starting to type another message just after sending the previous one
+       * Mira is starting to type another message just after sending the previous one
        */
       setTimeout(() => {
         SOCKET_SERVER.socket?.emit('is-typing', true)
@@ -337,7 +337,7 @@ export default class Brain {
           }
 
           await CONVERSATION_LOGGER.push({
-            who: 'leon',
+            who: 'mira',
             message: textAnswer
           })
         }
@@ -372,7 +372,7 @@ export default class Brain {
   }
 
   /**
-   * Make Leon talk by adding the answer to the answer queue
+   * Make Mira talk by adding the answer to the answer queue
    */
   public async talk(
     answer: QueuedAnswer,

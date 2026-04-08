@@ -1,12 +1,12 @@
 import type { ActionFunction } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { Network } from '@sdk/network'
 
 export const run: ActionFunction = async function (params) {
   const targetLanguage = params.slots.target_language.resolution.value
   const textToTranslate = params.new_utterance
   const network = new Network({
-    baseURL: `${process.env['LEON_HOST']}:${process.env['LEON_PORT']}/api/v1`
+    baseURL: `${process.env['MIRA_HOST']}:${process.env['MIRA_PORT']}/api/v1`
   })
   const systemPrompt = `You are an AI system that translates a given text to "${targetLanguage}" by auto-detecting the source language. You do not add any context to your response.`
   const prompt = `Text to translate: "${textToTranslate}"`
@@ -27,7 +27,7 @@ export const run: ActionFunction = async function (params) {
   })
   const translation = response.data.output
 
-  await leon.answer({
+  await mira.answer({
     key: 'translate',
     data: {
       output: translation

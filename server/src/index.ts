@@ -8,7 +8,7 @@ import {
   IS_DEVELOPMENT_ENV,
   IS_PRODUCTION_ENV,
   IS_TELEMETRY_ENABLED,
-  LANG as LEON_LANG,
+  LANG as MIRA_LANG,
   NVIDIA_CUBLAS_PATH,
   NVIDIA_CUDNN_PATH,
   NVIDIA_CUSPARSE_PATH,
@@ -43,10 +43,10 @@ import { LangHelper } from '@/helpers/lang-helper'
 import { LogHelper } from '@/helpers/log-helper'
 import { SystemHelper } from '@/helpers/system-helper'
 ;(async (): Promise<void> => {
-  process.title = 'leon'
+  process.title = 'mira'
   const shouldStartPythonTCPServer = SHOULD_START_PYTHON_TCP_SERVER
 
-  // Kill any existing Leon process before starting a new one
+  // Kill any existing Mira process before starting a new one
   const processList = await psList()
   processList
     .filter(
@@ -59,7 +59,7 @@ import { SystemHelper } from '@/helpers/system-helper'
     )
     .forEach((p) => {
       kill(p.pid)
-      LogHelper.info(`Killed existing Leon process: ${p.pid}`)
+      LogHelper.info(`Killed existing Mira process: ${p.pid}`)
     })
 
   /**
@@ -72,7 +72,7 @@ import { SystemHelper } from '@/helpers/system-helper'
   if (shouldStartPythonTCPServer) {
     LogHelper.time('TCP Server ready')
     const tcpServerArgs = [
-      LangHelper.getShortCode(LEON_LANG),
+      LangHelper.getShortCode(MIRA_LANG),
       '--pytorch-path',
       PYTORCH_TORCH_PATH,
       '--nvidia-path',
@@ -145,7 +145,7 @@ import { SystemHelper } from '@/helpers/system-helper'
   }
 
   // Start the socket server as early as possible so init status events can
-  // flow to the client while the rest of Leon keeps booting.
+  // flow to the client while the rest of Mira keeps booting.
   await SOCKET_SERVER.init()
   PULSE_MANAGER.start()
 

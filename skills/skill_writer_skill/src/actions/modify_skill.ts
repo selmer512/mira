@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import { Settings } from '@sdk/settings'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
@@ -29,7 +29,7 @@ export const run: ActionFunction = async function (
       | string
       | undefined
 
-    leon.answer({ key: 'modifying_skill', data: { provider } })
+    mira.answer({ key: 'modifying_skill', data: { provider } })
 
     // Context files for OpenCode to learn from (choose based on bridge)
     const contextFiles = getContextFiles(bridge)
@@ -54,14 +54,14 @@ export const run: ActionFunction = async function (
     const response = await opencodeTool.generateSkill(skillOptions)
 
     if (!response.success) {
-      leon.answer({
+      mira.answer({
         key: 'generation_failed',
         data: { error: response.error || 'Unknown error' }
       })
       return
     }
 
-    leon.answer({
+    mira.answer({
       key: 'skill_modified',
       data: {
         provider: response.provider_used || provider,

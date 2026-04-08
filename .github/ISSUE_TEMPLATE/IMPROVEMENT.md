@@ -5,7 +5,7 @@ labels: improvement
 ---
 
 <!--
-Thanks for your interest in Leon! ❤️
+Thanks for your interest in Mira! ❤️
 Please check if there is no similar issue before creating this one.
 -->
 

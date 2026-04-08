@@ -1,9 +1,9 @@
 import type { ActionFunction } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 
 export const run: ActionFunction = async function (params) {
   const currentDate = new Date()
-  await leon.answer({
+  await mira.answer({
     key: 'current_date',
     data: {
       weekday: currentDate.toLocaleString(params.lang, { weekday: 'long' }),

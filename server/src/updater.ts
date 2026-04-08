@@ -1,12 +1,12 @@
 import axios from 'axios'
 
-import { LEON_VERSION } from '@/constants'
+import { MIRA_VERSION } from '@/constants'
 import { SOCKET_SERVER } from '@/core'
 import { LogHelper } from '@/helpers/log-helper'
 
 export class Updater {
-  private static readonly currentVersion = LEON_VERSION
-  private static readonly isDevelopment = (LEON_VERSION || '').includes('+dev')
+  private static readonly currentVersion = MIRA_VERSION
+  private static readonly isDevelopment = (MIRA_VERSION || '').includes('+dev')
   private static readonly gitBranch = this.isDevelopment ? 'develop' : 'master'
   private static readonly axios = axios.create({
     baseURL: 'https://raw.githubusercontent.com/leon-ai/leon',
@@ -27,7 +27,7 @@ export class Updater {
         LogHelper.warning(`A new version is available: ${latestVersion}`)
         LogHelper.warning(`Current version: ${this.currentVersion}`)
         LogHelper.warning(
-          `Run the following command to update Leon and benefit from the latest features: "npm install --save @leon-ai/leon@${latestVersion}"`
+          `Run the following command to update Mira and benefit from the latest features: "npm install --save @leon-ai/leon@${latestVersion}"`
         )
 
         SOCKET_SERVER.socket?.emit('new-update', latestVersion)
@@ -35,7 +35,7 @@ export class Updater {
         const releaseMode = this.isDevelopment ? 'development' : 'stable'
 
         LogHelper.success(
-          `You are using the latest ${releaseMode} version of Leon`
+          `You are using the latest version of Mira`
         )
       }
     } catch (e) {

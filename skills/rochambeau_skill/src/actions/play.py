@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 
 import random
@@ -29,7 +29,7 @@ def run(params: ActionParams) -> None:
         'handsign': None,
         'points': 0
     }
-    leon_player = {
+    mira_player = {
         'handsign': random.choice(list(handsigns)),
         'points': 0
     }
@@ -41,36 +41,36 @@ def run(params: ActionParams) -> None:
 
     # Exit the loop if no handsign has been found
     if player['handsign'] is None:
-        leon.answer({'core': {'is_in_action_loop': False}})
+        mira.answer({'core': {'is_in_action_loop': False}})
 
-    leon_emoji = handsigns[leon_player['handsign']]['emoji']
+    mira_emoji = handsigns[mira_player['handsign']]['emoji']
     player_emoji = handsigns[player['handsign']]['emoji']
 
-    leon.answer({'key': 'leon_emoji', 'data': {'leon_emoji': leon_emoji}})
+    mira.answer({'key': 'mira_emoji', 'data': {'mira_emoji': mira_emoji}})
 
-    if leon_player['handsign'] == player['handsign']:
-        leon.answer({'key': 'equal'})
+    if mira_player['handsign'] == player['handsign']:
+        mira.answer({'key': 'equal'})
 
-    # Point for Leon
-    elif handsigns[leon_player['handsign']]['superior_to'] == player['handsign']:
-        leon.answer({
-            'key': 'point_for_leon',
+    # Point for Mira
+    elif handsigns[mira_player['handsign']]['superior_to'] == player['handsign']:
+        mira.answer({
+            'key': 'point_for_mira',
             'data': {
-                'handsign_1': leon_player['handsign'].lower(),
+                'handsign_1': mira_player['handsign'].lower(),
                 'handsign_2': player['handsign'].lower()
             }
         })
 
     else:
-        leon.answer({
+        mira.answer({
             'key': 'point_for_player',
             'data': {
                 'handsign_1': player['handsign'].lower(),
-                'handsign_2': leon_player['handsign'].lower()
+                'handsign_2': mira_player['handsign'].lower()
             }
         })
 
-    leon.answer({
+    mira.answer({
         'key': 'ask_for_rematch',
         'core': {
             'is_in_action_loop': False

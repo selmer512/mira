@@ -1,7 +1,7 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
-process.env['LEON_NODE_ENV'] = 'testing'
-process.env['LEON_LLM_PROVIDER'] = 'openai'
+process.env['MIRA_NODE_ENV'] = 'testing'
+process.env['MIRA_LLM_PROVIDER'] = 'openai'
 
 /**
  * Hoisted mocks let the imported ReAct module capture the fake phase functions
@@ -250,7 +250,7 @@ describe('ReActLLMDuty agentic loop', () => {
 
   it('short-circuits to final synthesis when a tool returns a handoff signal', async () => {
     // This covers the path where a tool result already contains the semantic
-    // handoff Leon should forward into the final-answer phase.
+    // handoff Mira should forward into the final-answer phase.
     logUnitProgress('tool handoff scenario', {
       input: 'There is a file waiting for you. Do what it asks you to do.',
       stepFunction: 'operating_system_control.bash.executeBashCommand'

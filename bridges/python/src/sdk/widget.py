@@ -9,7 +9,7 @@ from ..constants import SKILL_LOCALE_CONFIG, INTENT_OBJECT
 
 T = TypeVar('T')
 
-UtteranceSender = Literal['leon', 'owner']
+UtteranceSender = Literal['mira', 'owner']
 
 
 class SendUtteranceWidgetEventMethodParams(TypedDict):

@@ -122,7 +122,7 @@ export interface NLUProcessResult {
     sentiments: NLUProcessSentiment[]
     /**
      * Generic key/value store for simple memory pushed from skill actions (e.g. audio_path, last_download_path, etc.)
-     * Updated via leon.answer({ core: { context_data: { key: value } } })
+     * Updated via mira.answer({ core: { context_data: { key: value } } })
      */
     data: Record<string, unknown>
   }

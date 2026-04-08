@@ -6,7 +6,7 @@
   "context_files": [
     "ARCHITECTURE.md",
     "WORKSPACE_INTELLIGENCE.md",
-    "LEON_RUNTIME.md",
+    "MIRA_RUNTIME.md",
     "HOME.md"
   ],
   "tools": [

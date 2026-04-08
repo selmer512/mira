@@ -10,9 +10,9 @@ export default class HuggingFaceLLMProvider extends AISDKRemoteLLMProvider {
     super({
       name: 'HuggingFace LLM Provider',
       providerName: 'huggingface',
-      apiKeyEnv: 'LEON_HUGGINGFACE_API_KEY',
-      workflowModelEnv: 'LEON_HUGGINGFACE_MODEL',
-      agentModelEnv: 'LEON_HUGGINGFACE_AGENT_LLM',
+      apiKeyEnv: 'MIRA_HUGGINGFACE_API_KEY',
+      workflowModelEnv: 'MIRA_HUGGINGFACE_MODEL',
+      agentModelEnv: 'MIRA_HUGGINGFACE_AGENT_LLM',
       defaultModel: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
       baseURL: 'https://router.huggingface.co/v1',
       flavor: 'huggingface'

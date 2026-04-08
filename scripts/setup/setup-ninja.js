@@ -14,7 +14,7 @@ import { LogHelper } from '@/helpers/log-helper'
 import { SystemHelper } from '@/helpers/system-helper'
 
 /**
- * Download and set up Leon-managed Ninja
+ * Download and set up Mira-managed Ninja
  * 1. Resolve the pinned version from versions.json
  * 2. Download the matching Linux archive for the current architecture
  * 3. Extract it into bin/ninja/ninja/

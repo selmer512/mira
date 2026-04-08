@@ -3,7 +3,7 @@ import path from 'node:path'
 import { tmpdir } from 'node:os'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
 import FfmpegTool from '@sdk/tools/ffmpeg'
@@ -44,12 +44,12 @@ export const run: ActionFunction = async function (
     | undefined
 
   if (!videoSource) {
-    leon.answer({ key: 'missing_video_source' })
+    mira.answer({ key: 'missing_video_source' })
     return
   }
 
   try {
-    leon.answer({
+    mira.answer({
       key: 'preparing_audio',
       data: {
         video_source: videoSource,
@@ -75,7 +75,7 @@ export const run: ActionFunction = async function (
       )
 
       if (!fs.existsSync(audioPath)) {
-        leon.answer({
+        mira.answer({
           key: 'download_failed',
           data: {
             video_source: videoSource,
@@ -86,7 +86,7 @@ export const run: ActionFunction = async function (
       }
     } else {
       if (!fs.existsSync(videoSource)) {
-        leon.answer({
+        mira.answer({
           key: 'video_source_not_found',
           data: { video_source: formatFilePath(videoSource) }
         })
@@ -116,7 +116,7 @@ export const run: ActionFunction = async function (
         )
 
         if (!fs.existsSync(audioPath)) {
-          leon.answer({
+          mira.answer({
             key: 'audio_extraction_failed',
             data: {
               video_source: videoSource,
@@ -128,7 +128,7 @@ export const run: ActionFunction = async function (
       }
     }
 
-    leon.answer({
+    mira.answer({
       key: 'audio_ready',
       data: {
         audio_path: formatFilePath(audioPath)
@@ -146,7 +146,7 @@ export const run: ActionFunction = async function (
       return
     }
     const errorMessage = (error as Error).message
-    leon.answer({
+    mira.answer({
       key: isHttpUrl(videoSource)
         ? 'download_failed'
         : 'audio_extraction_failed',

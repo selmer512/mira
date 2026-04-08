@@ -1,5 +1,5 @@
 import type { ActionFunction } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 
 import { TimerWidget } from '../widgets/timer-widget'
 import { getTimerMemoryByWidgetId, getNewestTimerMemory } from '../lib/memory'
@@ -11,7 +11,7 @@ export const run: ActionFunction = async function (_params, paramsHelper) {
     : await getNewestTimerMemory()
 
   if (!timerMemory) {
-    return await leon.answer({ key: 'no_timer_set' })
+    return await mira.answer({ key: 'no_timer_set' })
   }
 
   const { interval, finishedAt, duration } = timerMemory
@@ -34,5 +34,5 @@ export const run: ActionFunction = async function (_params, paramsHelper) {
     }
   })
 
-  await leon.answer({ widget: timerWidget })
+  await mira.answer({ widget: timerWidget })
 }

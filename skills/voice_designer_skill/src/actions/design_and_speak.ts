@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 
 import type { ActionFunction } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
 import Qwen3TtsTool from '@sdk/tools/qwen3_tts'
@@ -28,12 +28,12 @@ export const run: ActionFunction = async function (
   const speechText = paramsHelper.getActionArgument('speech_text') as string
 
   if (!voiceDescription) {
-    leon.answer({ key: 'missing_voice_description' })
+    mira.answer({ key: 'missing_voice_description' })
     return
   }
 
   if (!speechText) {
-    leon.answer({ key: 'missing_speech_text' })
+    mira.answer({ key: 'missing_speech_text' })
     return
   }
 
@@ -48,7 +48,7 @@ export const run: ActionFunction = async function (
   const tool = await ToolManager.initTool(Qwen3TtsTool)
 
   try {
-    leon.answer({ key: 'designing_voice' })
+    mira.answer({ key: 'designing_voice' })
 
     await tool.designVoice({
       text: speechText,
@@ -65,7 +65,7 @@ export const run: ActionFunction = async function (
       )
 
       if (!generatedFile) {
-        leon.answer({
+        mira.answer({
           key: 'output_not_found',
           data: { output_folder: formatFilePath(outputDir) }
         })
@@ -75,7 +75,7 @@ export const run: ActionFunction = async function (
       finalOutputPath = path.join(outputDir, generatedFile)
     }
 
-    leon.answer({
+    mira.answer({
       key: 'success',
       data: {
         audio_path: formatFilePath(finalOutputPath)
@@ -90,7 +90,7 @@ export const run: ActionFunction = async function (
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'error',
       data: {
         error: (error as Error).message

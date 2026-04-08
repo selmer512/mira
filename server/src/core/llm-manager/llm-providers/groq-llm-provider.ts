@@ -10,9 +10,9 @@ export default class GroqLLMProvider extends AISDKRemoteLLMProvider {
     super({
       name: 'Groq LLM Provider',
       providerName: 'groq',
-      apiKeyEnv: 'LEON_GROQ_API_KEY',
-      workflowModelEnv: 'LEON_GROQ_MODEL',
-      agentModelEnv: 'LEON_GROQ_AGENT_LLM',
+      apiKeyEnv: 'MIRA_GROQ_API_KEY',
+      workflowModelEnv: 'MIRA_GROQ_MODEL',
+      agentModelEnv: 'MIRA_GROQ_AGENT_LLM',
       defaultModel: 'llama-3.1-8b-instant',
       baseURL: 'https://api.groq.com/openai/v1',
       flavor: 'groq'

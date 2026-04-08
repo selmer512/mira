@@ -20,12 +20,12 @@ TTS_MODEL_FOLDER_PATH = os.path.join(AUDIO_MODELS_PATH, 'tts')
 TTS_BERT_FRENCH_MODEL_DIR_PATH = os.path.join(TTS_MODEL_FOLDER_PATH, 'bert-case-french-europeana-cased')
 TTS_BERT_BASE_MODEL_DIR_PATH = os.path.join(TTS_MODEL_FOLDER_PATH, 'bert-base-uncased')
 TTS_MODEL_CONFIG_PATH = os.path.join(TTS_MODEL_FOLDER_PATH, 'config.json')
-IS_TTS_ENABLED = os.environ.get('LEON_TTS', 'true') == 'true'
+IS_TTS_ENABLED = os.environ.get('MIRA_TTS', 'true') == 'true'
 
 # ASR
 ASR_MODEL_PATH = os.path.join(AUDIO_MODELS_PATH, 'asr')
-IS_ASR_ENABLED = os.environ.get('LEON_STT', 'true') == 'true'
+IS_ASR_ENABLED = os.environ.get('MIRA_STT', 'true') == 'true'
 
 # Wake word
 WAKE_WORD_MODEL_FOLDER_PATH = os.path.join(AUDIO_MODELS_PATH, 'wake_word')
-IS_WAKE_WORD_ENABLED = os.environ.get('LEON_WAKE_WORD', 'true') == 'true'
+IS_WAKE_WORD_ENABLED = os.environ.get('MIRA_WAKE_WORD', 'true') == 'true'

@@ -78,12 +78,12 @@ options = {
 executables = [
     Executable(
         script=os.path.join("tcp_server", "src", "main.py"),
-        target_name="leon-tcp-server",
+        target_name="mira-tcp-server",
     )
 ]
 
 setup(
-    name="leon-tcp-server",
+    name="mira-tcp-server",
     version=__version__,
     executables=executables,
     options=options,

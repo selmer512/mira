@@ -6,10 +6,10 @@ describe('server', () => {
   describe('init()', () => {
     test('uses default language if the given one is unsupported', async () => {
       server.bootstrap = jest.fn() // Need to mock bootstrap method to not continue the init
-      process.env.LEON_LANG = 'fake-lang'
+      process.env.MIRA_LANG = 'fake-lang'
 
       await server.init()
-      expect(process.env.LEON_LANG).toBe('en-US')
+      expect(process.env.MIRA_LANG).toBe('en-US')
     })
 
     test('initializes server configurations', async () => {
@@ -28,10 +28,10 @@ describe('server', () => {
     test('listens for request', async () => {
       console.log = jest.fn()
 
-      await server.listen(process.env.LEON_PORT)
+      await server.listen(process.env.MIRA_PORT)
       expect(
         console.log.mock.calls[1][1].indexOf(
-          `${process.env.LEON_HOST}:${process.env.LEON_PORT}`
+          `${process.env.MIRA_HOST}:${process.env.MIRA_PORT}`
         )
       ).not.toEqual(-1)
     })

@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import { Settings } from '@sdk/settings'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
@@ -50,14 +50,14 @@ export const run: ActionFunction = async function (
     const audioPath = audioPathArg || paramsHelper.getContextData('audio_path')
 
     if (!audioPath || !fs.existsSync(audioPath)) {
-      leon.answer({
+      mira.answer({
         key: 'audio_not_found'
       })
       return
     }
 
     if (!targetLanguage) {
-      leon.answer({
+      mira.answer({
         key: 'target_language_missing'
       })
       return
@@ -70,7 +70,7 @@ export const run: ActionFunction = async function (
     const audioName = path.parse(audioPath).name
     const audioExt = path.parse(audioPath).ext
 
-    leon.answer({
+    mira.answer({
       key: 'dubbing_started',
       data: {
         audio_path: formatFilePath(audioPath),
@@ -97,7 +97,7 @@ export const run: ActionFunction = async function (
     const dubbingId = dubbingResponse.dubbing_id
     const expectedDuration = Math.round(dubbingResponse.expected_duration_sec)
 
-    leon.answer({
+    mira.answer({
       key: 'dubbing_created',
       data: {
         dubbing_id: dubbingId,
@@ -120,7 +120,7 @@ export const run: ActionFunction = async function (
 
       // Report progress every 3 polls (30 seconds with default interval)
       if (pollCount % 3 === 0) {
-        leon.answer({
+        mira.answer({
           key: 'dubbing_progress',
           data: {
             status,
@@ -131,7 +131,7 @@ export const run: ActionFunction = async function (
       }
 
       if (status === 'failed') {
-        leon.answer({
+        mira.answer({
           key: 'dubbing_failed',
           data: {
             dubbing_id: dubbingId,
@@ -143,7 +143,7 @@ export const run: ActionFunction = async function (
     }
 
     if (status === 'dubbing') {
-      leon.answer({
+      mira.answer({
         key: 'dubbing_timeout',
         data: {
           dubbing_id: dubbingId,
@@ -173,7 +173,7 @@ export const run: ActionFunction = async function (
 
     // Verify the dubbed file exists
     if (!fs.existsSync(dubbedPath)) {
-      leon.answer({
+      mira.answer({
         key: 'dubbing_download_failed',
         data: {
           dubbing_id: dubbingId,
@@ -187,7 +187,7 @@ export const run: ActionFunction = async function (
     const dubbedStats = await fs.promises.stat(dubbedPath)
     const dubbedSizeMB = formatBytes(dubbedStats.size)
 
-    leon.answer({
+    mira.answer({
       key: 'dubbing_completed',
       data: {
         dubbed_path: formatFilePath(dubbedPath),
@@ -206,7 +206,7 @@ export const run: ActionFunction = async function (
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'dubbing_error',
       data: { error: (error as Error).message },
       core: {

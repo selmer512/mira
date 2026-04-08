@@ -1,7 +1,7 @@
 import axios from 'axios'
 import '@leon-ai/aurora/style.css'
 
-window.leonInitStatusEvent = new EventTarget()
+window.miraInitStatusEvent = new EventTarget()
 
 import './init'
 import Client from './client'
@@ -11,13 +11,13 @@ import { onkeydownstartrecording, onkeydowninput } from './onkeydown'
 
 const config = {
   app: 'webapp',
-  server_host: import.meta.env.VITE_LEON_HOST,
-  server_port: import.meta.env.VITE_LEON_PORT,
+  server_host: import.meta.env.VITE_MIRA_HOST,
+  server_port: import.meta.env.VITE_MIRA_PORT,
   min_decibels: -40, // Noise detection sensitivity
   max_blank_time: 1_000 // Maximum time to consider a blank (ms)
 }
 const serverUrl =
-  import.meta.env.VITE_LEON_NODE_ENV === 'production'
+  import.meta.env.VITE_MIRA_NODE_ENV === 'production'
     ? ''
     : `${config.server_host}:${config.server_port}`
 
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // let rec = {}
     // let chunks = []
 
-    window.leonConfigInfo = response.data
+    window.miraConfigInfo = response.data
     const infoKeys = [
       'timeZone',
       'telemetry',
@@ -52,12 +52,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     ]
     const infoToDisplay = {}
     infoKeys.forEach((key) => {
-      infoToDisplay[key] = window.leonConfigInfo[key]
+      infoToDisplay[key] = window.miraConfigInfo[key]
     })
 
-    v.textContent += window.leonConfigInfo.version
+    v.textContent += window.miraConfigInfo.version
 
-    client.updateMood(window.leonConfigInfo.mood)
+    client.updateMood(window.miraConfigInfo.mood)
     client.init()
 
     infoButton.addEventListener('click', () => {
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         .getUserMedia({ audio: true })
         .then((stream) => {
           if (MediaRecorder) {
-            rec = new Recorder(stream, mic, window.leonConfigInfo)
+            rec = new Recorder(stream, mic, window.miraConfigInfo)
             client.recorder = rec
 
             rec.ondataavailable((e) => {

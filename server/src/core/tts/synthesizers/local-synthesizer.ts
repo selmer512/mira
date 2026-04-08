@@ -66,7 +66,7 @@ export default class LocalSynthesizer extends TTSSynthesizerBase {
              */
             if (HAS_STT) {
               PYTHON_TCP_CLIENT.emit(
-                'leon-speech-audio-ended',
+                'mira-speech-audio-ended',
                 duration / 1_000 || 500
               )
               setTimeout(() => {

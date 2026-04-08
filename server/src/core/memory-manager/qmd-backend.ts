@@ -42,7 +42,7 @@ import type {
   RecallRetrievalMode
 } from './types'
 
-const QMD_INDEX_NAME = 'leon-memory'
+const QMD_INDEX_NAME = 'mira-memory'
 const QMD_UPDATE_MIN_INTERVAL_MS = 5_000
 const QMD_EMBED_MIN_INTERVAL_MS = 30_000
 const BRIDGE_SOURCE_CONTENT_CAP = 96_000

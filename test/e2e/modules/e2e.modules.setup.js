@@ -24,8 +24,8 @@ global.date = {
   time_zone: moment.tz.guess()
 }
 
-process.env.LEON_LANG = 'en-US'
-process.env.LEON_TIME_ZONE = global.date.time_zone
+process.env.MIRA_LANG = 'en-US'
+process.env.MIRA_TIME_ZONE = global.date.time_zone
 
 beforeAll(async () => {
   await global.nlu.loadModel(global.paths.nlp_model)

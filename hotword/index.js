@@ -1,5 +1,5 @@
 /**
- * This file allows to run a separate node to detect the wake word "Leon/Léon"
+ * This file allows to run a separate node to detect the wake word "Mira/Míra"
  * You can consider to run this file on a different hardware
  */
 
@@ -8,9 +8,9 @@ const record = require('node-record-lpcm16')
 const { Detector, Models } = require('@bugsounet/snowboy')
 const { io } = require('socket.io-client')
 
-process.env.LEON_HOST = process.env.LEON_HOST || 'http://localhost'
-process.env.LEON_PORT = process.env.LEON_PORT || 1337
-const url = `${process.env.LEON_HOST}:${process.env.LEON_PORT}`
+process.env.MIRA_HOST = process.env.MIRA_HOST || 'http://localhost'
+process.env.MIRA_PORT = process.env.MIRA_PORT || 1337
+const url = `${process.env.MIRA_HOST}:${process.env.MIRA_PORT}`
 const socket = io(url)
 const { argv } = process
 const lang = argv[2] || 'en'
@@ -28,9 +28,9 @@ socket.on('connect', () => {
     const models = new Models()
 
     models.add({
-      file: `${__dirname}/models/leon-${lang}.pmdl`,
+      file: `${__dirname}/models/mira-${lang}.pmdl`,
       sensitivity: '0.5',
-      hotwords: `leon-${lang}`
+      hotwords: `mira-${lang}`
     })
 
     const detector = new Detector({

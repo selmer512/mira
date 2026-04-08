@@ -4,7 +4,7 @@ import socket
 import sys
 from typing import Any, Dict, TypedDict, Union, Literal, Optional
 
-from ..constants import LEON_VERSION, PYTHON_BRIDGE_VERSION
+from ..constants import MIRA_VERSION, PYTHON_BRIDGE_VERSION
 
 
 class NetworkOptions(TypedDict, total=False):
@@ -62,7 +62,7 @@ class Network:
 
             request_kwargs: Dict[str, Any] = {
                 'headers': {
-                    'User-Agent': f"Leon Personal Assistant {LEON_VERSION} - Python Bridge {PYTHON_BRIDGE_VERSION}",
+                    'User-Agent': f"Mira Personal Assistant {MIRA_VERSION} - Python Bridge {PYTHON_BRIDGE_VERSION}",
                     **headers
                 }
             }

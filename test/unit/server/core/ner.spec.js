@@ -35,13 +35,13 @@ describe('NER', () => {
         'en',
         path.join(
           __dirname,
-          '../../../../packages/leon/data/expressions/en.json'
+          '../../../../packages/mira/data/expressions/en.json'
         ),
         {
           utterance: 'Give me a random number',
           entities: [],
           classification: {
-            package: 'leon',
+            package: 'mira',
             module: 'randomnumber',
             action: 'run',
             confidence: 1

@@ -1,6 +1,6 @@
 export const INIT_MESSAGES = [
   [
-    'Hello there! Glad to e-meet meet you, I\'m Leon, your open-source personal assistant. While I\'m still learning and improving, I promise to do my best to be helpful.'
+    'Hello there! Glad to e-meet meet you, I\'m Mira, your open-source personal assistant. While I\'m still learning and improving, I promise to do my best to be helpful.'
   ],
   [
     `<ul>

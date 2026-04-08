@@ -1,7 +1,7 @@
 {
   "id": "1700053946667-srkw",
   "lang": "en",
-  "domain": "leon",
+  "domain": "mira",
   "skill": "random_number",
   "action": "run",
   "utterance": "give a random number",

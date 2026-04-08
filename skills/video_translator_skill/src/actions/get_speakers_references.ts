@@ -3,7 +3,7 @@ import path from 'node:path'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
 import type { TranscriptionOutput } from '@sdk/tools/transcription-schema'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
 import FfmpegTool from '@sdk/tools/ffmpeg'
@@ -43,14 +43,14 @@ export const run: ActionFunction = async function (
   try {
     // Validate inputs
     if (!transcriptionPath || !fs.existsSync(transcriptionPath)) {
-      leon.answer({
+      mira.answer({
         key: 'transcription_not_found'
       })
       return
     }
 
     if (!audioPath || !fs.existsSync(audioPath)) {
-      leon.answer({
+      mira.answer({
         key: 'audio_not_found'
       })
       return
@@ -70,13 +70,13 @@ export const run: ActionFunction = async function (
       !transcription.speakers ||
       transcription.speakers.length === 0
     ) {
-      leon.answer({
+      mira.answer({
         key: 'no_speakers_found'
       })
       return
     }
 
-    leon.answer({
+    mira.answer({
       key: 'extraction_started',
       data: {
         speaker_count: transcription.speaker_count.toString(),
@@ -110,7 +110,7 @@ export const run: ActionFunction = async function (
         fallback = true
       }
       if (speakerSegments.length === 0) {
-        leon.answer({
+        mira.answer({
           key: 'no_valid_segments',
           data: {
             speaker
@@ -136,7 +136,7 @@ export const run: ActionFunction = async function (
       }
 
       if (!reference1Segment) {
-        leon.answer({
+        mira.answer({
           key: 'insufficient_audio',
           data: {
             speaker
@@ -166,7 +166,7 @@ export const run: ActionFunction = async function (
         reference1Segment.end - reference1Segment.start
       ).toFixed(1)
 
-      leon.answer({
+      mira.answer({
         key: 'extracting_reference',
         data: {
           speaker,
@@ -190,7 +190,7 @@ export const run: ActionFunction = async function (
         reference2Segment.end - reference2Segment.start
       ).toFixed(1)
 
-      leon.answer({
+      mira.answer({
         key: 'extracting_reference',
         data: {
           speaker,
@@ -214,7 +214,7 @@ export const run: ActionFunction = async function (
         reference2_path: reference2Path
       })
 
-      leon.answer({
+      mira.answer({
         key: 'speaker_references_created',
         data: {
           speaker,
@@ -225,7 +225,7 @@ export const run: ActionFunction = async function (
     }
 
     // Return success with all speaker references
-    leon.answer({
+    mira.answer({
       key: 'extraction_completed',
       data: {
         speaker_count: speakerReferences.length.toString(),
@@ -241,7 +241,7 @@ export const run: ActionFunction = async function (
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'extraction_error',
       data: {
         error: (error as Error).message

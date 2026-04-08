@@ -154,7 +154,7 @@ export const toolManifestSchemaObject = Type.Strict(
       }
     )
   }, {
-    description: 'Schema for a Leon tool manifest.'
+    description: 'Schema for a Mira tool manifest.'
   })
 )
 

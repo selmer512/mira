@@ -38,7 +38,7 @@ import { SkillRouterLLMDuty } from '@/core/llm-manager/llm-duties/skill-router-l
 import { ActionCallingLLMDuty } from '@/core/llm-manager/llm-duties/action-calling-llm-duty'
 import { SlotFillingLLMDuty } from '@/core/llm-manager/llm-duties/slot-filling-llm-duty'
 import { ReActLLMDuty } from '@/core/llm-manager/llm-duties/react-llm-duty'
-import { LEON_ROUTING_MODE } from '@/constants'
+import { MIRA_ROUTING_MODE } from '@/constants'
 import { RoutingMode } from '@/types'
 
 // TODO: core rewrite delete?
@@ -342,7 +342,7 @@ export default class NLU {
       /!**
        * If a context is active, then use the appropriate classification based on score probability.
        * E.g. 1. Create my shopping list; 2. Actually delete it.
-       * If there are several "delete it" across skills, Leon needs to make use of
+       * If there are several "delete it" across skills, Mira needs to make use of
        * the current context ({domain}.{skill}) to define the most accurate classification
        *!/
       if (this.conversation.hasActiveContext()) {
@@ -643,8 +643,8 @@ export default class NLU {
     this.conversation.cleanActiveState()
     await NLUProcessResultUpdater.update(DEFAULT_NLU_PROCESS_RESULT)
 
-    const leonMode = this.getLeonMode()
-    if (leonMode === RoutingMode.Workflow) {
+    const miraMode = this.getMiraMode()
+    if (miraMode === RoutingMode.Workflow) {
       const utterance = this._nluProcessResult.new.utterance as NLPUtterance
       if (!utterance) {
         return
@@ -659,7 +659,7 @@ export default class NLU {
     }
 
     const routingDecision = {
-      mode: leonMode,
+      mode: miraMode,
       route: this.routingRoutes.react,
       reason: 'skill_not_found'
     }
@@ -676,8 +676,8 @@ export default class NLU {
     // TODO: core rewrite chit-chat duty / or conversation skill?
   }
 
-  private getLeonMode(): RoutingMode {
-    const mode = String(LEON_ROUTING_MODE || RoutingMode.Smart).toLowerCase()
+  private getMiraMode(): RoutingMode {
+    const mode = String(MIRA_ROUTING_MODE || RoutingMode.Smart).toLowerCase()
     if (
       mode === RoutingMode.Workflow ||
       mode === RoutingMode.Agent ||
@@ -688,7 +688,7 @@ export default class NLU {
 
     LogHelper.title('NLU')
     LogHelper.warning(
-      `Unknown LEON_ROUTING_MODE "${LEON_ROUTING_MODE}", defaulting to smart`
+      `Unknown MIRA_ROUTING_MODE "${MIRA_ROUTING_MODE}", defaulting to smart`
     )
 
     return RoutingMode.Smart
@@ -699,7 +699,7 @@ export default class NLU {
     route: RoutingRoute
     reason: string
   } {
-    const mode = this.getLeonMode()
+    const mode = this.getMiraMode()
 
     if (mode === RoutingMode.Agent) {
       return { mode, route: this.routingRoutes.react, reason: 'agent_mode' }

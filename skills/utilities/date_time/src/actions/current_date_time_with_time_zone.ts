@@ -1,5 +1,5 @@
 import type { ActionFunction, SpacyLocationCityEntity } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 
 import { zeroPad } from '../lib/zeroPad'
 
@@ -13,7 +13,7 @@ export const run: ActionFunction = async function (params) {
   }
 
   if (cityEntity == null || cityEntity.resolution.data == null) {
-    return await leon.answer({
+    return await mira.answer({
       key: 'city_not_found'
     })
   }
@@ -22,7 +22,7 @@ export const run: ActionFunction = async function (params) {
   const currentDate = new Date(
     new Date().toLocaleString('en', { timeZone: timezone })
   )
-  await leon.answer({
+  await mira.answer({
     key: 'current_date_time_with_time_zone',
     data: {
       weekday: currentDate.toLocaleString(params.lang, { weekday: 'long' }),

@@ -19,7 +19,7 @@ const intentPathCandidate = filteredArgs.find((arg) => !arg.startsWith('--'))
 const INTENT_OBJ_FILE_PATH =
   runtime === 'skill' ? intentPathCandidate : undefined
 
-export const LEON_VERSION = process.env['npm_package_version']
+export const MIRA_VERSION = process.env['npm_package_version']
 
 export const RUNTIME = runtime
 

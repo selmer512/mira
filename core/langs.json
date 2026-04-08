@@ -11,7 +11,7 @@
     "fallbacks": [
       {
         "words": ["merci"],
-        "domain": "leon",
+        "domain": "mira",
         "skill": "welcome",
         "action": "run"
       }

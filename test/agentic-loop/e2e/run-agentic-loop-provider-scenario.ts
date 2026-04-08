@@ -104,14 +104,14 @@ async function main(): Promise<void> {
     return
   }
 
-  process.env['LEON_NODE_ENV'] = 'testing'
-  process.env['LEON_LLM_PROVIDER'] = provider
-  process.env['LEON_WORKFLOW_LLM_PROVIDER'] = provider
-  process.env['LEON_AGENT_LLM_PROVIDER'] = provider
+  process.env['MIRA_NODE_ENV'] = 'testing'
+  process.env['MIRA_LLM_PROVIDER'] = provider
+  process.env['MIRA_WORKFLOW_LLM_PROVIDER'] = provider
+  process.env['MIRA_AGENT_LLM_PROVIDER'] = provider
 
   const tempAssetPath = path.join(
     os.tmpdir(),
-    `leon-agentic-loop-${provider}-${Date.now()}.txt`
+    `mira-agentic-loop-${provider}-${Date.now()}.txt`
   )
 
   const {
@@ -133,13 +133,13 @@ async function main(): Promise<void> {
 
   await fs.writeFile(
     tempAssetPath,
-    'Hey Leon, please list the files on your project root.\n',
+    'Hey Mira, please list the files on your project root.\n',
     'utf8'
   )
 
   const turns: string[] = [
     // Return final answer directly
-    'Hi Leon, just doing a quick check since I switched your LLM provider. What do you reply if I tell you "ping"?',
+    'Hi Mira, just doing a quick check since I switched your LLM provider. What do you reply if I tell you "ping"?',
     // Create simple plan
     'What\'s the weather like today in Shenzhen?',
     // Create plan with dynamic replanning (inject new step)
@@ -219,7 +219,7 @@ async function main(): Promise<void> {
       })
 
       /**
-       * Push each owner/Leon turn through the shared conversation logger so the
+       * Push each owner/Mira turn through the shared conversation logger so the
        * next ReAct invocation sees real multi-turn history.
        */
       await CONVERSATION_LOGGER.push({
@@ -235,7 +235,7 @@ async function main(): Promise<void> {
         result && typeof result.output === 'string' ? result.output : ''
       if (output) {
         await CONVERSATION_LOGGER.push({
-          who: 'leon',
+          who: 'mira',
           message: output
         })
       }

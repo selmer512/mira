@@ -6,8 +6,8 @@ import fastifyStatic from '@fastify/static'
 import {
   API_VERSION,
   AGENT_LLM_PROVIDER,
-  LEON_VERSION,
-  LEON_NODE_ENV,
+  MIRA_VERSION,
+  MIRA_NODE_ENV,
   HAS_OVER_HTTP,
   IS_TELEMETRY_ENABLED,
   WORKFLOW_LLM_PROVIDER
@@ -60,8 +60,8 @@ export default class HTTPServer {
     this.fastify.addHook('preValidation', otherMidd)
 
     LogHelper.title('Initialization')
-    LogHelper.info(`Environment: ${LEON_NODE_ENV}`)
-    LogHelper.info(`Version: ${LEON_VERSION}`)
+    LogHelper.info(`Environment: ${MIRA_NODE_ENV}`)
+    LogHelper.info(`Version: ${MIRA_VERSION}`)
     LogHelper.info(`Time zone: ${DateHelper.getTimeZone()}`)
     LogHelper.info(
       `LLM providers: workflow=${WORKFLOW_LLM_PROVIDER}, agent=${AGENT_LLM_PROVIDER}`

@@ -3,7 +3,7 @@
   "name": "Bash",
   "bridge": "python",
   "version": "1.0.0",
-  "description": "Leon executes bash commands based on LLM reasoning.",
+  "description": "Mira executes bash commands based on LLM reasoning.",
   "author": {
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",

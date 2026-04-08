@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import { Settings } from '@sdk/settings'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
@@ -32,7 +32,7 @@ export const run: ActionFunction = async function (
   _params: ActionParams,
   paramsHelper: ParamsHelper
 ) {
-  /*return leon.answer({
+  /*return mira.answer({
     key: 'transcription_completed',
     data: {
       transcription_path: formatFilePath(
@@ -77,7 +77,7 @@ export const run: ActionFunction = async function (
     const audioPath = audioPathArg || paramsHelper.getContextData('audio_path')
 
     if (!audioPath || !fs.existsSync(audioPath)) {
-      leon.answer({
+      mira.answer({
         key: 'audio_not_found'
       })
       return
@@ -90,7 +90,7 @@ export const run: ActionFunction = async function (
       `${audioName}_transcription.json`
     )
 
-    leon.answer({
+    mira.answer({
       key: 'transcription_started',
       data: {
         audio_path: formatFilePath(audioPath),
@@ -134,19 +134,19 @@ export const run: ActionFunction = async function (
         elevenlabsDiarize
       )
     } else {
-      leon.answer({ key: 'provider_not_supported' })
+      mira.answer({ key: 'provider_not_supported' })
       return
     }
 
     if (!fs.existsSync(transcriptionPath)) {
-      leon.answer({
+      mira.answer({
         key: 'transcription_error',
         data: { error: 'Transcription file not found' }
       })
       return
     }
 
-    leon.answer({
+    mira.answer({
       key: 'transcription_completed',
       data: {
         transcription_path: formatFilePath(transcriptionPath)
@@ -161,7 +161,7 @@ export const run: ActionFunction = async function (
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'transcription_error',
       data: { error: (error as Error).message },
       core: {

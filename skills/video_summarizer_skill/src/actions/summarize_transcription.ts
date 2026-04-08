@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import { Settings } from '@sdk/settings'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
@@ -57,7 +57,7 @@ export const run: ActionFunction = async function (
       paramsHelper.getContextData<string>('summary_language')
 
     if (!transcriptionPath || !fs.existsSync(transcriptionPath)) {
-      leon.answer({ key: 'transcription_not_found' })
+      mira.answer({ key: 'transcription_not_found' })
       return
     }
 
@@ -67,7 +67,7 @@ export const run: ActionFunction = async function (
       const rawContent = await fs.promises.readFile(transcriptionPath, 'utf8')
       transcription = JSON.parse(rawContent) as TranscriptionOutput
     } catch (error) {
-      leon.answer({
+      mira.answer({
         key: 'summary_error',
         data: { error: (error as Error).message },
         core: {
@@ -79,13 +79,13 @@ export const run: ActionFunction = async function (
 
     const segments = transcription.segments || []
     if (segments.length === 0) {
-      leon.answer({ key: 'no_segments_found' })
+      mira.answer({ key: 'no_segments_found' })
       return
     }
 
     const rawTranscript = buildTranscriptText(segments)
     if (!rawTranscript) {
-      leon.answer({ key: 'no_segments_found' })
+      mira.answer({ key: 'no_segments_found' })
       return
     }
 
@@ -130,7 +130,7 @@ Each item must be concise and factual. Avoid filler or repetition.
 Transcript:
 ${transcriptText}`
 
-    leon.answer({
+    mira.answer({
       key: 'summary_started',
       data: {
         segment_count: segments.length,
@@ -169,7 +169,7 @@ ${transcriptText}`
     )
 
     if (!response.success) {
-      leon.answer({
+      mira.answer({
         key: 'summary_error',
         data: { error: response.error || 'Unknown error' }
       })
@@ -189,14 +189,14 @@ ${transcriptText}`
       .filter(Boolean)
 
     if (keyPoints.length === 0 && newKnowledge.length === 0) {
-      leon.answer({ key: 'summary_empty' })
+      mira.answer({ key: 'summary_empty' })
       return
     }
 
     const keyPointsText = keyPoints.map((item) => `- ${item}`).join('\n')
     const newKnowledgeText = newKnowledge.map((item) => `- ${item}`).join('\n')
 
-    leon.answer({
+    mira.answer({
       key: 'summary_completed',
       data: {
         key_points: keyPointsText || '- (none)',

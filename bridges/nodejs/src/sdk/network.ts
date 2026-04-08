@@ -3,7 +3,7 @@ import dns from 'node:dns'
 import type { AxiosInstance } from 'axios'
 import axios from 'axios'
 
-import { LEON_VERSION, NODEJS_BRIDGE_VERSION } from '@bridge/constants'
+import { MIRA_VERSION, NODEJS_BRIDGE_VERSION } from '@bridge/constants'
 
 interface NetworkOptions {
   /** `baseURL` will be prepended to `url`. It can be convenient to set `baseURL` for an instance of `Network` to pass relative URLs. */
@@ -99,7 +99,7 @@ export class Network {
         data: options.data as never,
         responseType: options.responseType,
         headers: {
-          'User-Agent': `Leon Personal Assistant ${LEON_VERSION} - Node.js Bridge ${NODEJS_BRIDGE_VERSION}`,
+          'User-Agent': `Mira Personal Assistant ${MIRA_VERSION} - Node.js Bridge ${NODEJS_BRIDGE_VERSION}`,
           ...options.headers
         }
       })

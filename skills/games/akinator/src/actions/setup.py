@@ -1,11 +1,11 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from ..lib import Akinator, memory
 
 def run(params: ActionParams) -> None:
     """Initialize new session"""
 
-    leon.answer({'key': 'calling_akinator'})
+    mira.answer({'key': 'calling_akinator'})
 
     slots, lang = params['slots'], params['lang']
     thematic = slots['thematic']['resolution']['value']
@@ -30,14 +30,14 @@ def run(params: ActionParams) -> None:
             'session': akinator.json['session'],
         })
 
-        leon.answer({
+        mira.answer({
             'key': question,
             'core': {
                 'showNextActionSuggestions': True
             }
         })
     except:
-        leon.answer({
+        mira.answer({
             'key': 'network_error',
             'core': {
                 'isInActionLoop': False
