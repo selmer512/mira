@@ -24,7 +24,7 @@ import setFfprobePermissions from './set-ffprobe-permissions'
 // Do not load ".env" file because it is not created yet
 
 /**
- * Main entry to set up Leon
+ * Main entry to set up Mira
  */
 ;(async () => {
   try {
@@ -57,7 +57,7 @@ import setFfprobePermissions from './set-ffprobe-permissions'
     await createInstanceID()
 
     LogHelper.default('')
-    LogHelper.success('Hooray! Leon is installed and ready to go!')
+    LogHelper.success('Hooray! Mira is installed and ready to go!')
     LoaderHelper.stop()
   } catch (e) {
     LogHelper.error(e)

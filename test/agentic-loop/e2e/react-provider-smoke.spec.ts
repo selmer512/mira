@@ -104,7 +104,7 @@ function resolveProviderMatrix(
 }
 
 const ACTIVE_PROVIDER_MATRIX = resolveProviderMatrix(
-  process.env['LEON_AGENTIC_LOOP_PROVIDER_PATTERN'] ||
+  process.env['MIRA_AGENTIC_LOOP_PROVIDER_PATTERN'] ||
     extractTestNamePattern(process.argv)
 )
 
@@ -166,10 +166,10 @@ async function runProviderScenario(
       cwd: ROOT_DIR,
       env: {
         ...process.env,
-        LEON_NODE_ENV: 'testing',
-        LEON_LLM_PROVIDER: provider,
-        LEON_WORKFLOW_LLM_PROVIDER: provider,
-        LEON_AGENT_LLM_PROVIDER: provider
+        MIRA_NODE_ENV: 'testing',
+        MIRA_LLM_PROVIDER: provider,
+        MIRA_WORKFLOW_LLM_PROVIDER: provider,
+        MIRA_AGENT_LLM_PROVIDER: provider
       },
       all: true,
       reject: false,
@@ -276,7 +276,7 @@ describe('agentic loop e2e', () => {
         )
 
         /**
-         * The third turn is intentionally structural: we care that Leon read
+         * The third turn is intentionally structural: we care that Mira read
          * the injected file and listed the project root, not about exact prose.
          */
         expect(turn3!.output.trim().length).toBeGreaterThan(0)

@@ -3,7 +3,7 @@
   "tool_id": "memory",
   "toolkit_id": "structured_knowledge",
   "name": "Memory",
-  "description": "Read and write Leon memory entries (persistent, daily, discussion).",
+  "description": "Read and write Mira memory entries (persistent, daily, discussion).",
   "icon_name": "brain-2",
   "author": {
     "name": "Louis Grenard",
@@ -12,7 +12,7 @@
   },
   "functions": {
     "read": {
-      "description": "Recall relevant memories for a query using Leon's memory system. Keep the query short and semantically close to the user's wording. Prefer concrete entities or relationships already mentioned. Avoid long speculative keyword lists.",
+      "description": "Recall relevant memories for a query using Mira's memory system. Keep the query short and semantically close to the user's wording. Prefer concrete entities or relationships already mentioned. Avoid long speculative keyword lists.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -63,7 +63,7 @@
       }
     },
     "write": {
-      "description": "Write a memory item into Leon memory (persistent/daily/discussion).",
+      "description": "Write a memory item into Mira memory (persistent/daily/discussion).",
       "parameters": {
         "type": "object",
         "properties": {

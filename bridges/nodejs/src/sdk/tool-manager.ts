@@ -42,7 +42,7 @@ export default class ToolManager {
         })
       } catch (error) {
         console.warn(
-          `[LEON_TOOL_LOG] Failed to report missing tool settings: ${
+          `[MIRA_TOOL_LOG] Failed to report missing tool settings: ${
             (error as Error).message
           }`
         )

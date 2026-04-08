@@ -208,7 +208,7 @@ class OpenCodeTool(BaseTool):
     def _scan_available_toolkits(self, relevant_toolkits: Optional[set] = None) -> str:
         """Scan available toolkits and their tools (optionally filtered)"""
         toolkits_dir = Path("bridges/toolkits")
-        toolkit_info = "# Available Leon Tools & Toolkits\n\n"
+        toolkit_info = "# Available Mira Tools & Toolkits\n\n"
         toolkit_info += "**IMPORTANT**: You must USE existing tools instead of creating duplicate functionality.\n"
         toolkit_info += "You can EXTEND existing tools with new methods OR create NEW tools when necessary.\n\n"
 
@@ -583,14 +583,14 @@ class OpenCodeTool(BaseTool):
 
         return guidelines
 
-    def _build_leon_context(
+    def _build_mira_context(
         self,
         description: str,
         system_prompt: Optional[str] = None,
         context_files: Optional[List[str]] = None,
         bridge: str = "nodejs",
     ) -> str:
-        """Build Leon-specific context for OpenCode from template"""
+        """Build Mira-specific context for OpenCode from template"""
         try:
             system_prompt_section = (
                 f"# System Instructions\n\n{system_prompt}\n\n" if system_prompt else ""
@@ -631,7 +631,7 @@ class OpenCodeTool(BaseTool):
                     ),
                     "TOOL_CREATION_GUIDELINES": tool_creation_guidelines,
                     "AURORA_COMPONENTS": aurora_components,
-                    "LEON_ANSWER_BASIC_EXAMPLE": self._build_leon_answer_basic_example(
+                    "MIRA_ANSWER_BASIC_EXAMPLE": self._build_mira_answer_basic_example(
                         bridge
                     ),
                     "CONTEXT_DATA_EXAMPLE": self._build_context_data_example(bridge),
@@ -640,7 +640,7 @@ class OpenCodeTool(BaseTool):
                 },
             )
         except Exception:
-            return self._build_leon_context_legacy(
+            return self._build_mira_context_legacy(
                 description, system_prompt, context_files, bridge
             )
 
@@ -660,9 +660,9 @@ class OpenCodeTool(BaseTool):
         if bridge == "nodejs":
             return (
                 "- **Tool usage**: Import tools like `import YtdlpTool from '@sdk/tools/ytdlp'`\n"
-                "- **SDK imports**: @sdk/types, @sdk/leon, @sdk/params-helper\n"
+                "- **SDK imports**: @sdk/types, @sdk/mira, @sdk/params-helper\n"
                 "- **Action structure**: Export a `run` function as the action entry point\n"
-                "- **Responses**: Use leon.answer() to respond to users\n"
+                "- **Responses**: Use mira.answer() to respond to users\n"
                 f"- **File extensions**: ALL files MUST use {file_extension} (actions, widgets, utilities)\n"
                 "- **Extra files**: Put shared helpers in src/lib; only action entry points go in src/actions\n"
                 f"- **File structure**: skill.json + locales/en.json + src/actions/*{file_extension} + src/widgets/*{file_extension} + src/lib/*{file_extension}\n"
@@ -670,9 +670,9 @@ class OpenCodeTool(BaseTool):
 
         return (
             "- **Tool usage**: Import tools like `from sdk.tools.ytdlp import YtdlpTool`\n"
-            "- **SDK imports**: from bridges.python.src.sdk.leon import leon; from bridges.python.src.sdk.types import ActionParams; from bridges.python.src.sdk.params_helper import ParamsHelper\n"
+            "- **SDK imports**: from bridges.python.src.sdk.mira import mira; from bridges.python.src.sdk.types import ActionParams; from bridges.python.src.sdk.params_helper import ParamsHelper\n"
             "- **Action structure**: Define a `run` function as the action entry point\n"
-            "- **Responses**: Use leon.answer() to respond to users\n"
+            "- **Responses**: Use mira.answer() to respond to users\n"
             f"- **File extensions**: ALL files MUST use {file_extension} (actions, widgets, utilities)\n"
             "- **Extra files**: Put shared helpers in src/lib; only action entry points go in src/actions\n"
             f"- **File structure**: skill.json + locales/en.json + src/actions/*{file_extension} + src/widgets/*{file_extension} + src/lib/*{file_extension}\n"
@@ -773,12 +773,12 @@ class OpenCodeTool(BaseTool):
             "```\n\n"
         )
 
-    def _build_leon_answer_basic_example(self, bridge: str) -> str:
+    def _build_mira_answer_basic_example(self, bridge: str) -> str:
         if bridge == "nodejs":
             return (
                 "```typescript\n"
                 "// Simple text response with localized message key\n"
-                "leon.answer({\n"
+                "mira.answer({\n"
                 "  key: 'success_message',\n"
                 "  data: {\n"
                 "    file_name: 'example.mp4',\n"
@@ -791,7 +791,7 @@ class OpenCodeTool(BaseTool):
         return (
             "```python\n"
             "# Simple text response with localized message key\n"
-            "leon.answer({\n"
+            "mira.answer({\n"
             "  'key': 'success_message',\n"
             "  'data': {\n"
             "    'file_name': 'example.mp4',\n"
@@ -806,7 +806,7 @@ class OpenCodeTool(BaseTool):
             return (
                 "```typescript\n"
                 "// Action 1: Download video and pass path to next action\n"
-                "leon.answer({\n"
+                "mira.answer({\n"
                 "  key: 'download_completed',\n"
                 "  data: {\n"
                 "    file_path: formatFilePath(videoPath)\n"
@@ -828,7 +828,7 @@ class OpenCodeTool(BaseTool):
         return (
             "```python\n"
             "# Action 1: Download video and pass path to next action\n"
-            "leon.answer({\n"
+            "mira.answer({\n"
             "  'key': 'download_completed',\n"
             "  'data': {\n"
             "    'file_path': format_file_path(video_path)\n"
@@ -852,7 +852,7 @@ class OpenCodeTool(BaseTool):
             return (
                 "```typescript\n"
                 "import type { ActionFunction } from '@sdk/types'\n"
-                "import { leon } from '@sdk/leon'\n"
+                "import { mira } from '@sdk/mira'\n"
                 "import { ParamsHelper } from '@sdk/params-helper'\n\n"
                 "export const run: ActionFunction = async function (\n"
                 "  params,\n"
@@ -870,7 +870,7 @@ class OpenCodeTool(BaseTool):
 
         return (
             "```python\n"
-            "from bridges.python.src.sdk.leon import leon\n"
+            "from bridges.python.src.sdk.mira import mira\n"
             "from bridges.python.src.sdk.types import ActionParams\n"
             "from bridges.python.src.sdk.params_helper import ParamsHelper\n\n"
             "def run(params: ActionParams, params_helper: ParamsHelper) -> None:\n"
@@ -956,14 +956,14 @@ class OpenCodeTool(BaseTool):
                 snapshots.append(f"{file} (missing)")
         return snapshots
 
-    def _build_leon_context_legacy(
+    def _build_mira_context_legacy(
         self,
         description: str,
         system_prompt: Optional[str] = None,
         context_files: Optional[List[str]] = None,
         bridge: str = "nodejs",
     ) -> str:
-        """Build Leon-specific context for OpenCode"""
+        """Build Mira-specific context for OpenCode"""
         context = ""
 
         if system_prompt:
@@ -978,8 +978,8 @@ class OpenCodeTool(BaseTool):
         language = "TypeScript" if bridge == "nodejs" else "Python"
         file_extension = ".ts" if bridge == "nodejs" else ".py"
 
-        context += "# Leon Skill Development Guidelines\n\n"
-        context += f"You are generating code for Leon AI assistant using **{language}**. Follow these guidelines:\n\n"
+        context += "# Mira Skill Development Guidelines\n\n"
+        context += f"You are generating code for Mira AI assistant using **{language}**. Follow these guidelines:\n\n"
         context += f"- **Language**: CRITICAL - Write ALL skill source code in {language} (actions, widgets, utilities, everything)\n"
         context += f"- **Bridge**: Use the {'Node.js' if bridge == 'nodejs' else 'Python'} bridge\n"
         context += f"- **Consistency**: The bridge setting ({bridge}) applies to the ENTIRE skill - all actions, widgets, and utilities must use {language}\n"
@@ -989,17 +989,17 @@ class OpenCodeTool(BaseTool):
 
         if bridge == "nodejs":
             context += "- **Tool usage**: Import tools like `import YtdlpTool from '@sdk/tools/ytdlp'`\n"
-            context += "- **SDK imports**: @sdk/types, @sdk/leon, @sdk/params-helper\n"
+            context += "- **SDK imports**: @sdk/types, @sdk/mira, @sdk/params-helper\n"
             context += "- **Action structure**: Export a `run` function as the action entry point\n"
-            context += "- **Responses**: Use leon.answer() to respond to users\n"
+            context += "- **Responses**: Use mira.answer() to respond to users\n"
             context += f"- **File extensions**: ALL files MUST use {file_extension} (actions, widgets, utilities)\n"
             context += "- **Extra files**: Put shared helpers in src/lib; only action entry points go in src/actions\n"
             context += f"- **File structure**: skill.json + locales/en.json + src/actions/*{file_extension} + src/widgets/*{file_extension} + src/lib/*{file_extension}\n"
         else:
             context += "- **Tool usage**: Import tools like `from sdk.tools.ytdlp import YtdlpTool`\n"
-            context += "- **SDK imports**: from bridges.python.src.sdk.leon import leon; from bridges.python.src.sdk.types import ActionParams; from bridges.python.src.sdk.params_helper import ParamsHelper\n"
+            context += "- **SDK imports**: from bridges.python.src.sdk.mira import mira; from bridges.python.src.sdk.types import ActionParams; from bridges.python.src.sdk.params_helper import ParamsHelper\n"
             context += "- **Action structure**: Define a `run` function as the action entry point\n"
-            context += "- **Responses**: Use leon.answer() to respond to users\n"
+            context += "- **Responses**: Use mira.answer() to respond to users\n"
             context += f"- **File extensions**: ALL files MUST use {file_extension} (actions, widgets, utilities)\n"
             context += "- **Extra files**: Put shared helpers in src/lib; only action entry points go in src/actions\n"
             context += f"- **File structure**: skill.json + locales/en.json + src/actions/*{file_extension} + src/widgets/*{file_extension} + src/lib/*{file_extension}\n"
@@ -1208,7 +1208,7 @@ class OpenCodeTool(BaseTool):
         context += '- Has `"flow"` array defining action execution order\n'
         context += "- Only the FIRST action in the flow is exposed to the LLM\n"
         context += "- Subsequent actions are triggered automatically in sequence\n"
-        context += "- Data passes between actions via `leon.answer({ 'core': { 'context_data': {...} } })`\n"
+        context += "- Data passes between actions via `mira.answer({ 'core': { 'context_data': {...} } })`\n"
         context += '- Can reference actions from other skills (e.g., `"music_audio_toolkit_skill:transcribe_audio"`)\n\n'
 
         context += "## Required Fields (Per Schema)\n\n"
@@ -1336,7 +1336,7 @@ class OpenCodeTool(BaseTool):
         context += "4. **Descriptive action descriptions**: LLM uses them to match user intent (16-128 chars)\n"
         context += "5. **Descriptive action names**: Use verbs (download_video, transcribe, translate)\n"
         context += "6. **First action gets parameters**: Only the first action in a flow receives user parameters\n"
-        context += "7. **Use context_data**: Pass data between flow actions via `leon.answer({ 'core': { 'context_data': {...} } })`\n"
+        context += "7. **Use context_data**: Pass data between flow actions via `mira.answer({ 'core': { 'context_data': {...} } })`\n"
         context += (
             "8. **Schema validation**: Always include `$schema` reference at the top\n"
         )
@@ -1611,14 +1611,14 @@ class OpenCodeTool(BaseTool):
         # Add Aurora UI components documentation
         context += self._scan_aurora_components()
 
-        context += "# Understanding leon.answer() - Critical Information\n\n"
-        context += "The `leon.answer()` method is your primary way to communicate with users and pass data between actions.\n\n"
+        context += "# Understanding mira.answer() - Critical Information\n\n"
+        context += "The `mira.answer()` method is your primary way to communicate with users and pass data between actions.\n\n"
         context += "## Basic Usage\n\n"
 
         if bridge == "nodejs":
             context += "```typescript\n"
             context += "// Simple text response with localized message key\n"
-            context += "leon.answer({\n"
+            context += "mira.answer({\n"
             context += "  key: 'success_message',\n"
             context += "  data: {\n"
             context += "    file_name: 'example.mp4',\n"
@@ -1629,7 +1629,7 @@ class OpenCodeTool(BaseTool):
         else:
             context += "```python\n"
             context += "# Simple text response with localized message key\n"
-            context += "leon.answer({\n"
+            context += "mira.answer({\n"
             context += "  'key': 'success_message',\n"
             context += "  'data': {\n"
             context += "    'file_name': 'example.mp4',\n"
@@ -1644,7 +1644,7 @@ class OpenCodeTool(BaseTool):
         if bridge == "nodejs":
             context += "```typescript\n"
             context += "// Action 1: Download video and pass path to next action\n"
-            context += "leon.answer({\n"
+            context += "mira.answer({\n"
             context += "  key: 'download_completed',\n"
             context += "  data: {\n"
             context += "    file_path: formatFilePath(videoPath)\n"
@@ -1668,7 +1668,7 @@ class OpenCodeTool(BaseTool):
         else:
             context += "```python\n"
             context += "# Action 1: Download video and pass path to next action\n"
-            context += "leon.answer({\n"
+            context += "mira.answer({\n"
             context += "  'key': 'download_completed',\n"
             context += "  'data': {\n"
             context += "    'file_path': format_file_path(video_path)\n"
@@ -1691,10 +1691,10 @@ class OpenCodeTool(BaseTool):
             context += "```\n\n"
 
         context += "## Widget Usage\n\n"
-        context += "**Show**: `leon.answer({ widget: myWidget })` (no key/data!)\n"
+        context += "**Show**: `mira.answer({ widget: myWidget })` (no key/data!)\n"
         context += "**Update**: Use `replaceMessageId` and keep same widget ID\n\n"
 
-        context += "## leon.answer() Options\n\n"
+        context += "## mira.answer() Options\n\n"
         context += "- **key**: Localized message key\n"
         context += "- **data**: Variables for message (user-visible)\n"
         context += "- **widget**: UI component (MUST be alone, no key/data!)\n"
@@ -1759,15 +1759,15 @@ class OpenCodeTool(BaseTool):
 
         model_to_use = provider_data.get("model")
 
-        # Build the OpenCode prompt with Leon-specific context
-        leon_context = self._build_leon_context(
+        # Build the OpenCode prompt with Mira-specific context
+        mira_context = self._build_mira_context(
             description, system_prompt, context_files or [], bridge
         )
-        full_prompt = f"{leon_context}\n\n{description}"
+        full_prompt = f"{mira_context}\n\n{description}"
 
         # Create temporary prompt file
         with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".txt", delete=False, prefix="opencode-leon-"
+            mode="w", suffix=".txt", delete=False, prefix="opencode-mira-"
         ) as tmp:
             tmp.write(full_prompt)
             prompt_file = tmp.name

@@ -33,13 +33,13 @@ export default () =>
         LogHelper.success('Run-time synthesis engine download done')
         LogHelper.info('Unpacking...')
         await command(
-          `cd ${tmpDir} && tar xfvj flite_2.1-release.orig.tar.bz2 && cp ../assets/leon.lv flite-2.1-release/config`,
+          `cd ${tmpDir} && tar xfvj flite_2.1-release.orig.tar.bz2 && cp ../assets/mira.lv flite-2.1-release/config`,
           { shell: true }
         )
         LogHelper.success('Unpack done')
         LogHelper.info('Configuring...')
         await command(
-          `cd ${tmpDir}/flite-2.1-release && ./configure --with-langvox=leon`,
+          `cd ${tmpDir}/flite-2.1-release && ./configure --with-langvox=mira`,
           { shell: true }
         )
         LogHelper.success('Configure done')

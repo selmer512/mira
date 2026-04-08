@@ -27,7 +27,7 @@ export class HomeContextFile extends ContextFile {
     const serverSourcePath = path.join(projectRoot, 'server', 'src')
 
     return [
-      `> Workspace paths and runtime directories. Leon workspace rooted at ${projectRoot}. Key folders for skills, toolkits, models, logs and runtime temp are available.`,
+      `> Workspace paths and runtime directories. Mira workspace rooted at ${projectRoot}. Key folders for skills, toolkits, models, logs and runtime temp are available.`,
       '# HOME',
       `- Generated at: ${DateHelper.getDateTime()}`,
       `- Project root: ${projectRoot}`,

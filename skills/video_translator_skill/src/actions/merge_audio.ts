@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
 import FfmpegTool from '@sdk/tools/ffmpeg'
@@ -36,7 +36,7 @@ export const run: ActionFunction = async function (
   try {
     // Validate required inputs
     if (!videoPath) {
-      leon.answer({
+      mira.answer({
         key: 'no_video_path',
         data: {
           error:
@@ -47,7 +47,7 @@ export const run: ActionFunction = async function (
     }
 
     if (!dubbedAudioPath) {
-      leon.answer({
+      mira.answer({
         key: 'no_dubbed_audio_path',
         data: {
           error:
@@ -59,7 +59,7 @@ export const run: ActionFunction = async function (
 
     // Verify video file exists
     if (!fs.existsSync(videoPath)) {
-      leon.answer({
+      mira.answer({
         key: 'video_file_not_found',
         data: {
           video_path: formatFilePath(videoPath)
@@ -70,7 +70,7 @@ export const run: ActionFunction = async function (
 
     // Verify dubbed audio file exists
     if (!fs.existsSync(dubbedAudioPath)) {
-      leon.answer({
+      mira.answer({
         key: 'dubbed_audio_file_not_found',
         data: {
           dubbed_audio_path: formatFilePath(dubbedAudioPath)
@@ -93,7 +93,7 @@ export const run: ActionFunction = async function (
         `${audioName}_with_instrumental.wav`
       )
 
-      leon.answer({
+      mira.answer({
         key: 'merging_with_instrumental'
       })
 
@@ -124,7 +124,7 @@ export const run: ActionFunction = async function (
       mergeStartedData['target_language'] = targetLanguage
     }
 
-    leon.answer({
+    mira.answer({
       key: 'merge_started',
       data: mergeStartedData
     })
@@ -148,7 +148,7 @@ export const run: ActionFunction = async function (
 
     // Verify the merged video file exists
     if (!fs.existsSync(outputVideoPath)) {
-      leon.answer({
+      mira.answer({
         key: 'merge_failed',
         data: {
           video_path: formatFilePath(path.basename(videoPath)),
@@ -173,7 +173,7 @@ export const run: ActionFunction = async function (
       mergeCompletedData['target_language'] = targetLanguage
     }
 
-    leon.answer({
+    mira.answer({
       key: 'merge_completed',
       data: mergeCompletedData,
       core: {
@@ -187,7 +187,7 @@ export const run: ActionFunction = async function (
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'merge_error',
       data: {
         error: (error as Error).message

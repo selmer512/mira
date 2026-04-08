@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.widget import WidgetOptions
 from ..lib import memory
@@ -12,7 +12,7 @@ def run(params: ActionParams) -> None:
     todo_lists_count = memory.count_todo_lists()
 
     if todo_lists_count == 0:
-        return leon.answer({'key': 'no_list'})
+        return mira.answer({'key': 'no_list'})
 
     list_names: list[str] = []
     for list_element in memory.get_todo_lists():
@@ -24,4 +24,4 @@ def run(params: ActionParams) -> None:
     )
     list_of_lists_widget = ListOfListsWidget(list_of_lists_options)
 
-    leon.answer({'widget': list_of_lists_widget})
+    mira.answer({'widget': list_of_lists_widget})

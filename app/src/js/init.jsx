@@ -95,18 +95,18 @@ function SuccessListItem({ children }) {
 
 function Init() {
   const parentRef = useRef(null)
-  const [config, setConfig] = useState(() => ({ ...window.leonConfigInfo }))
+  const [config, setConfig] = useState(() => ({ ...window.miraConfigInfo }))
   const usesLlamaCPP =
     config.llm?.workflowProvider === 'llamacpp' ||
     config.llm?.agentProvider === 'llamacpp'
   const [statusMap, setStatusMap] = useState({
     clientCoreServerHandshake: 'loading',
     tcpServerBoot:
-      window.leonConfigInfo?.tcpServer?.enabled === false ? 'success' : 'loading',
+      window.miraConfigInfo?.tcpServer?.enabled === false ? 'success' : 'loading',
     llm: 'loading',
     llamaServerBoot:
-      window.leonConfigInfo?.llm?.workflowProvider === 'llamacpp' ||
-      window.leonConfigInfo?.llm?.agentProvider === 'llamacpp'
+      window.miraConfigInfo?.llm?.workflowProvider === 'llamacpp' ||
+      window.miraConfigInfo?.llm?.agentProvider === 'llamacpp'
         ? 'loading'
         : 'success',
     llmDutiesWarmUp: 'loading'
@@ -125,12 +125,12 @@ function Init() {
       setStatusMap((prev) => ({ ...prev, [statusName]: statusType }))
     }
 
-    window.leonInitStatusEvent.addEventListener(
+    window.miraInitStatusEvent.addEventListener(
       'initStatusChange',
       handleStatusChange
     )
     return () =>
-      window.leonInitStatusEvent.removeEventListener(
+      window.miraInitStatusEvent.removeEventListener(
         'initStatusChange',
         handleStatusChange
       )
@@ -158,10 +158,10 @@ function Init() {
   const areAllStatusesSuccess = statuses.every((status) => status === 'success')
 
   useEffect(() => {
-    if (window.leonConfigInfo) {
-      setConfig({ ...window.leonConfigInfo })
+    if (window.miraConfigInfo) {
+      setConfig({ ...window.miraConfigInfo })
     }
-  }, [window.leonConfigInfo])
+  }, [window.miraConfigInfo])
 
   return (
     <div
@@ -185,7 +185,7 @@ function Init() {
       >
         <WidgetWrapper noPadding>
           <List>
-            <ListHeader>Leon is getting ready...</ListHeader>
+            <ListHeader>Mira is getting ready...</ListHeader>
             <Item status={statusMap.clientCoreServerHandshake}>
               Client and core server handshaked
             </Item>

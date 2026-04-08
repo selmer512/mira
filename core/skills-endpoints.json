@@ -34,52 +34,52 @@
     },
     {
       "method": "GET",
-      "route": "/api/action/leon/age/run",
+      "route": "/api/action/mira/age/run",
       "params": []
     },
     {
       "method": "GET",
-      "route": "/api/action/leon/good_bye/run",
+      "route": "/api/action/mira/good_bye/run",
       "params": []
     },
     {
       "method": "GET",
-      "route": "/api/action/leon/help/help",
+      "route": "/api/action/mira/help/help",
       "params": []
     },
     {
       "method": "GET",
-      "route": "/api/action/leon/introduction/introduce_leon",
+      "route": "/api/action/mira/introduction/introduce_mira",
       "params": []
     },
     {
       "method": "GET",
-      "route": "/api/action/leon/introduction/gather_basic_info",
+      "route": "/api/action/mira/introduction/gather_basic_info",
       "params": []
     },
     {
       "method": "GET",
-      "route": "/api/action/leon/introduction/remember",
+      "route": "/api/action/mira/introduction/remember",
       "params": []
     },
     {
       "method": "GET",
-      "route": "/api/action/leon/joke/run",
+      "route": "/api/action/mira/joke/run",
       "params": []
     },
     {
       "method": "GET",
-      "route": "/api/action/leon/meaning_of_life/run",
+      "route": "/api/action/mira/meaning_of_life/run",
       "params": []
     },
     {
       "method": "GET",
-      "route": "/api/action/leon/random_number/run",
+      "route": "/api/action/mira/random_number/run",
       "params": []
     },
     {
       "method": "GET",
-      "route": "/api/action/leon/thanks/run",
+      "route": "/api/action/mira/thanks/run",
       "params": []
     },
     {

@@ -1059,7 +1059,7 @@ export class ReActLLMDuty extends LLMDuty {
 
       if (
         !record ||
-        (record['who'] !== 'owner' && record['who'] !== 'leon') ||
+        (record['who'] !== 'owner' && record['who'] !== 'mira') ||
         typeof record['sentAt'] !== 'number' ||
         typeof record['message'] !== 'string'
       ) {
@@ -1301,7 +1301,7 @@ export class ReActLLMDuty extends LLMDuty {
     }
 
     const summaryMessage: MessageLog = {
-      who: 'leon',
+      who: 'mira',
       sentAt: state.summarySentAt ?? state.tail[0]?.sentAt ?? Date.now(),
       message: buildCompactedHistoryMessage(state.summary)
     }

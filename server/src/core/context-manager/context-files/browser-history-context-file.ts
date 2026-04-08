@@ -235,7 +235,7 @@ try {
     process.exit(0)
   }
 
-  tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'leon-browser-history-'))
+  tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'mira-browser-history-'))
   const tempDatabasePath = path.join(tempDirectory, 'history.sqlite')
   fs.copyFileSync(dbPath, tempDatabasePath)
   const walPath = dbPath + '-wal'

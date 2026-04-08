@@ -4,7 +4,7 @@
   "description": "Tools for structured knowledge and facts.",
   "icon_name": "database-2",
   "context_files": [
-    "LEON.md",
+    "MIRA.md",
     "ARCHITECTURE.md"
   ],
   "tools": [

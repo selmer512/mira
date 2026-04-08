@@ -39,7 +39,7 @@ import {
   closeQMDStore
 } from './qmd-store'
 
-const QMD_INDEX_NAME = 'leon-memory'
+const QMD_INDEX_NAME = 'mira-memory'
 const DEFAULT_TOP_K = 12
 const DEFAULT_TOKEN_BUDGET = 480
 const CONTEXT_FULL_CONTENT_CAP = 8_000

@@ -262,7 +262,7 @@ async function runQMDStoreEmbedInSubprocess(params: {
   force?: boolean
 }): Promise<EmbedResult> {
   const outputDir = await fs.promises.mkdtemp(
-    path.join(os.tmpdir(), 'leon-qmd-embed-')
+    path.join(os.tmpdir(), 'mira-qmd-embed-')
   )
   const payloadPath = path.join(outputDir, 'payload.json')
   const outputPath = path.join(outputDir, 'result.json')

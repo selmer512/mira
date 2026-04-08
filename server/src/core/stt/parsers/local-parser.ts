@@ -8,7 +8,7 @@ interface EventHandler {
 }
 
 const STARTED_RECORDING_EVENT = 'asr-started-recording'
-const INTERRUPT_LEON_SPEECH_EVENT = 'asr-interrupt-leon-speech'
+const INTERRUPT_MIRA_SPEECH_EVENT = 'asr-interrupt-mira-speech'
 const NEW_SPEECH_EVENT = 'asr-new-speech'
 const END_OF_OWNER_SPEECH_DETECTED_EVENT = 'asr-end-of-owner-speech-detected'
 const ACTIVE_LISTENING_DURATION_INCREASED_EVENT =
@@ -20,9 +20,9 @@ const EVENT_HANDLERS: EventHandler = {
     //
   },
 
-  [INTERRUPT_LEON_SPEECH_EVENT]: (): void => {
+  [INTERRUPT_MIRA_SPEECH_EVENT]: (): void => {
     /**
-     * If Leon is talking with voice, then interrupt him
+     * If Mira is talking with voice, then interrupt him
      */
     if (BRAIN.isTalkingWithVoice) {
       BRAIN.setIsTalkingWithVoice(false, { shouldInterrupt: true })
@@ -31,7 +31,7 @@ const EVENT_HANDLERS: EventHandler = {
 
   [NEW_SPEECH_EVENT]: (firstEvent): void => {
     /**
-     * If Leon is talking with voice, then interrupt him
+     * If Mira is talking with voice, then interrupt him
      */
     if (BRAIN.isTalkingWithVoice) {
       BRAIN.setIsTalkingWithVoice(false, { shouldInterrupt: true })

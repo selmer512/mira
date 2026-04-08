@@ -2,9 +2,9 @@ import axios from 'axios'
 
 import server from '@/core/http-server/http-server'
 
-const urlPrefix = `${process.env.LEON_HOST}:${process.env.LEON_PORT}/api`
+const urlPrefix = `${process.env.MIRA_HOST}:${process.env.MIRA_PORT}/api`
 const queryUrl = `${urlPrefix}/query`
-const actionSkillUrl = `${urlPrefix}/p/leon/randomnumber/run`
+const actionSkillUrl = `${urlPrefix}/p/mira/randomnumber/run`
 
 /**
  * Test the query endpoint over HTTP
@@ -24,7 +24,7 @@ describe('Over HTTP', () => {
       },
       {
         headers: {
-          'X-API-Key': process.env.LEON_HTTP_API_KEY
+          'X-API-Key': process.env.MIRA_HTTP_API_KEY
         }
       }
     )
@@ -35,7 +35,7 @@ describe('Over HTTP', () => {
   test(`Request an action skill: GET ${actionSkillUrl}`, async () => {
     const { data } = await axios.get(actionSkillUrl, {
       headers: {
-        'X-API-Key': process.env.LEON_HTTP_API_KEY
+        'X-API-Key': process.env.MIRA_HTTP_API_KEY
       }
     })
 

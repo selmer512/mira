@@ -242,7 +242,7 @@ export default class SocketServer {
             try {
               LogHelper.time('Utterance processed in')
 
-              // Always interrupt Leon's voice on answer
+              // Always interrupt Mira's voice on answer
               BRAIN.setIsTalkingWithVoice(false, { shouldInterrupt: true })
 
               BRAIN.isMuted = false
@@ -288,7 +288,7 @@ export default class SocketServer {
               if (method.methodName === 'send_utterance') {
                 const utterance = method.methodParams['utterance']
 
-                if (method.methodParams['from'] === 'leon') {
+                if (method.methodParams['from'] === 'mira') {
                   await BRAIN.talk(utterance as string, true)
                 } else {
                   this.socket?.emit('widget-send-utterance', utterance)

@@ -946,7 +946,7 @@ const withTimeout = async (url) => {
     const response = await fetch(url, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Leon/1.0 (+https://getleon.ai)'
+        'User-Agent': 'Mira/1.0 (+https://getleon.ai)'
       }
     })
     if (!response.ok) {

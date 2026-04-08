@@ -260,7 +260,7 @@ export default class AISDKRemoteLLMProvider {
     if (completionParams.history) {
       for (const message of completionParams.history) {
         messages.push({
-          role: message.who === 'leon' ? 'assistant' : 'user',
+          role: message.who === 'mira' ? 'assistant' : 'user',
           content: [
             {
               type: 'text',

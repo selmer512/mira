@@ -23,12 +23,12 @@ options = {
 executables = [
     Executable(
         script=os.path.join('bridges', 'python', 'src', 'main.py'),
-        target_name='leon-python-bridge'
+        target_name='mira-python-bridge'
     )
 ]
 
 setup(
-    name='leon-python-bridge',
+    name='mira-python-bridge',
     version=__version__,
     executables=executables,
     options=options

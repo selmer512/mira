@@ -3,7 +3,7 @@ import path from 'node:path'
 import { tmpdir } from 'node:os'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
 import YtdlpTool from '@sdk/tools/ytdlp'
@@ -15,7 +15,7 @@ export const run: ActionFunction = async function (
   _params: ActionParams,
   paramsHelper: ParamsHelper
 ) {
-  /*return leon.answer({
+  /*return mira.answer({
     key: 'download_completed',
     core: {
       context_data: {
@@ -46,7 +46,7 @@ export const run: ActionFunction = async function (
     )
     await fs.promises.mkdir(tempDir, { recursive: true })
 
-    await leon.answer({
+    await mira.answer({
       key: 'download_started',
       data: {
         video_url: videoUrl,
@@ -70,7 +70,7 @@ export const run: ActionFunction = async function (
     })
 
     // Show initial progress widget and capture the message ID
-    const progressMessageId = await leon.answer({
+    const progressMessageId = await mira.answer({
       widget: progressWidget
     })
 
@@ -110,7 +110,7 @@ export const run: ActionFunction = async function (
           updatedProgressWidget.id = progressWidget.id
 
           // Replace the previous progress message using the captured message ID
-          await leon.answer({
+          await mira.answer({
             widget: updatedProgressWidget,
             replaceMessageId: progressMessageId
           })
@@ -137,14 +137,14 @@ export const run: ActionFunction = async function (
     completedProgressWidget.id = progressWidget.id
 
     // Replace with final completed state
-    await leon.answer({
+    await mira.answer({
       widget: completedProgressWidget,
       replaceMessageId: progressMessageId
     })
 
     // Verify the downloaded file exists
     if (!fs.existsSync(downloadedVideoPath)) {
-      leon.answer({
+      mira.answer({
         key: 'download_failed',
         data: {
           video_url: videoUrl,
@@ -160,7 +160,7 @@ export const run: ActionFunction = async function (
     const fileSizeMB = Math.round(stats.size / (1_024 * 1_024))
     const targetFolder = path.dirname(downloadedVideoPath)
 
-    leon.answer({
+    mira.answer({
       key: 'download_completed',
       data: {
         video_url: videoUrl,
@@ -181,7 +181,7 @@ export const run: ActionFunction = async function (
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'download_error',
       data: {
         video_url: videoUrl,

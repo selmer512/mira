@@ -1515,7 +1515,7 @@ export async function runToolExecution(
     toolExecutionInput.parsedInput?.['command']
   ) {
     const command = toolExecutionInput.parsedInput['command'] as string
-    const scriptDir = join(tmpdir(), 'leon_bash_scripts')
+    const scriptDir = join(tmpdir(), 'mira_bash_scripts')
     mkdirSync(scriptDir, { recursive: true })
     bashScriptPath = join(
       scriptDir,

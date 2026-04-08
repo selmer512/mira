@@ -3,7 +3,7 @@
   "name": "Greeting",
   "bridge": "python",
   "version": "1.0.0",
-  "description": "Leon greets the owner.",
+  "description": "Mira greets the owner.",
   "author": {
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",

@@ -3,7 +3,7 @@ import path from 'node:path'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
 import type { TranscriptionOutput } from '@sdk/tools/transcription-schema'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import { Settings } from '@sdk/settings'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
@@ -54,14 +54,14 @@ export const run: ActionFunction = async function (
       transcriptionPathArg || paramsHelper.getContextData('transcription_path')
 
     if (!transcriptionPath || !fs.existsSync(transcriptionPath)) {
-      leon.answer({
+      mira.answer({
         key: 'transcription_not_found'
       })
       return
     }
 
     if (!targetLanguage) {
-      leon.answer({
+      mira.answer({
         key: 'target_language_missing'
       })
       return
@@ -75,13 +75,13 @@ export const run: ActionFunction = async function (
     const transcription: TranscriptionOutput = JSON.parse(transcriptionContent)
 
     if (!transcription.segments || transcription.segments.length === 0) {
-      leon.answer({
+      mira.answer({
         key: 'no_segments_found'
       })
       return
     }
 
-    leon.answer({
+    mira.answer({
       key: 'translation_started',
       data: {
         transcription_path: formatFilePath(transcriptionPath),
@@ -128,7 +128,7 @@ Provide ONLY the translated text for each segment, one per line, in the same ord
 
 Do not include any explanations or additional text.`
 
-      leon.answer({
+      mira.answer({
         key: 'translating_batch',
         data: {
           batch_number: (batchIndex + 1).toString(),
@@ -147,7 +147,7 @@ Do not include any explanations or additional text.`
       })
 
       if (!response.success) {
-        leon.answer({
+        mira.answer({
           key: 'translation_api_error',
           data: {
             error: response.error || 'Unknown error',
@@ -230,7 +230,7 @@ Do not include any explanations or additional text.`
       'utf-8'
     )
 
-    leon.answer({
+    mira.answer({
       key: 'translation_completed',
       data: {
         translated_path: formatFilePath(translatedPath),
@@ -248,7 +248,7 @@ Do not include any explanations or additional text.`
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'translation_error',
       data: { error: (error as Error).message },
       core: {

@@ -137,11 +137,11 @@ jobs:
           set -euo pipefail
           ls -la tcp_server/dist
           required=(
-            "tcp_server/dist/leon-tcp-server-linux-aarch64.zip"
-            "tcp_server/dist/leon-tcp-server-linux-x86_64.zip"
-            "tcp_server/dist/leon-tcp-server-macosx-arm64.zip"
-            "tcp_server/dist/leon-tcp-server-macosx-x86_64.zip"
-            "tcp_server/dist/leon-tcp-server-win-amd64.zip"
+            "tcp_server/dist/mira-tcp-server-linux-aarch64.zip"
+            "tcp_server/dist/mira-tcp-server-linux-x86_64.zip"
+            "tcp_server/dist/mira-tcp-server-macosx-arm64.zip"
+            "tcp_server/dist/mira-tcp-server-macosx-x86_64.zip"
+            "tcp_server/dist/mira-tcp-server-win-amd64.zip"
           )
           for asset in "${required[@]}"; do
             [ -f "$asset" ] || { echo "Missing asset: $asset"; exit 1; }

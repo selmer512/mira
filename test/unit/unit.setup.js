@@ -15,9 +15,9 @@ global.audio = {
 
 global.enUtteranceSamples = utterance_samples
 
-process.env.LEON_LANG = 'en-US'
-process.env.LEON_HOST = 'http://localhost'
-process.env.LEON_PORT = 1338
-process.env.LEON_TIME_ZONE = global.date.time_zone
-process.env.LEON_TTS = true.toString()
-process.env.LEON_TTS_PROVIDER = 'flite'
+process.env.MIRA_LANG = 'en-US'
+process.env.MIRA_HOST = 'http://localhost'
+process.env.MIRA_PORT = 1338
+process.env.MIRA_TIME_ZONE = global.date.time_zone
+process.env.MIRA_TTS = true.toString()
+process.env.MIRA_TTS_PROVIDER = 'flite'

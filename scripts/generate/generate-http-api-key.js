@@ -23,7 +23,7 @@ const generateHTTPAPIKey = () =>
       const shasum = crypto.createHash('sha1')
       const str = StringHelper.random(11)
       const dotEnvPath = path.join(process.cwd(), '.env')
-      const envVarKey = 'LEON_HTTP_API_KEY'
+      const envVarKey = 'MIRA_HTTP_API_KEY'
       let content = await fs.promises.readFile(dotEnvPath, 'utf8')
 
       shasum.update(str)
@@ -54,8 +54,8 @@ export default () =>
   new Promise(async (resolve, reject) => {
     try {
       if (
-        !process.env.LEON_HTTP_API_KEY ||
-        process.env.LEON_HTTP_API_KEY === ''
+        !process.env.MIRA_HTTP_API_KEY ||
+        process.env.MIRA_HTTP_API_KEY === ''
       ) {
         await generateHTTPAPIKey()
       } else if (!process.env.IS_DOCKER) {

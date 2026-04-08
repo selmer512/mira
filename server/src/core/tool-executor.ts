@@ -61,8 +61,8 @@ export default class ToolExecutor {
     const toolLogLines = runtimeStderr
       .split('\n')
       .map((line) => line.trim())
-      .filter((line) => line.startsWith('[LEON_TOOL_LOG]'))
-      .map((line) => line.replace('[LEON_TOOL_LOG]', '').trim())
+      .filter((line) => line.startsWith('[MIRA_TOOL_LOG]'))
+      .map((line) => line.replace('[MIRA_TOOL_LOG]', '').trim())
       .filter(Boolean)
 
     for (const line of toolLogLines) {

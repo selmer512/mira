@@ -1,6 +1,6 @@
 # Questions are taken from: http://www.lrjj.cn/encrm1.0/public/upload/MBTI-personality-test.pdf
 
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.network import Network
 from ..lib import memory
@@ -40,13 +40,13 @@ def run(params: ActionParams) -> None:
     session = memory.get_session()
     current_question = session['current_question']
     network = Network({
-        'base_url': f"{os.environ.get('LEON_HOST')}:{os.environ.get('LEON_PORT')}/api/v1"
+        'base_url': f"{os.environ.get('MIRA_HOST')}:{os.environ.get('MIRA_PORT')}/api/v1"
     })
 
     # If waiting for user's answer (not starting/continuing quiz)
     if params['utterance'] and current_question <= 20:
         # Get current question text for context
-        question_text = leon.set_answer_data(str(current_question), {
+        question_text = mira.set_answer_data(str(current_question), {
             'question': current_question
         })
         # Compose prompt for LLM to classify answer
@@ -97,7 +97,7 @@ def run(params: ActionParams) -> None:
                 type_arr.append(group_letter)
 
             final_type = ''.join(type_arr)
-            return leon.answer({
+            return mira.answer({
                 'key': 'result',
                 'data': {
                     'type': final_type,
@@ -109,7 +109,7 @@ def run(params: ActionParams) -> None:
             })
 
         # Send next question
-        return leon.answer({
+        return mira.answer({
             'key': str(next_question),
             'data': {
                 'question': next_question
@@ -118,7 +118,7 @@ def run(params: ActionParams) -> None:
 
     # If just starting quiz, send first question
     if current_question <= 20:
-        return leon.answer({
+        return mira.answer({
             'key': str(current_question),
             'data': {
                 'question': current_question

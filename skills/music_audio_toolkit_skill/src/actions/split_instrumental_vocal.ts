@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
 import UltimateVocalRemoverONNXTool from '@sdk/tools/ultimate_vocal_remover_onnx'
@@ -20,7 +20,7 @@ export const run: ActionFunction = async function (
     const audioPath = audioPathArg || paramsHelper.getContextData('audio_path')
 
     if (!audioPath || !fs.existsSync(audioPath)) {
-      leon.answer({
+      mira.answer({
         key: 'audio_not_found'
       })
       return
@@ -34,7 +34,7 @@ export const run: ActionFunction = async function (
       `${audioName}_instrumental.mp3`
     )
 
-    leon.answer({
+    mira.answer({
       key: 'vocal_separation_started',
       data: {
         audio_path: formatFilePath(audioPath)
@@ -50,14 +50,14 @@ export const run: ActionFunction = async function (
     })
 
     if (!fs.existsSync(vocalPath) || !fs.existsSync(instrumentalPath)) {
-      leon.answer({
+      mira.answer({
         key: 'vocal_separation_error',
         data: { error: 'Vocal or instrumental file not found' }
       })
       return
     }
 
-    leon.answer({
+    mira.answer({
       key: 'vocal_separation_completed',
       data: {
         vocal_path: formatFilePath(vocalPath),
@@ -75,7 +75,7 @@ export const run: ActionFunction = async function (
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'vocal_separation_error',
       data: { error: (error as Error).message },
       core: {

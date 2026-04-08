@@ -1,5 +1,5 @@
 import type { ActionFunction, BuiltInDateRangeEntity } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 
 import { ONE_DAY_MILLISECONDS } from '../lib/constants'
 
@@ -23,7 +23,7 @@ export const run: ActionFunction = async function (params) {
   }
 
   if (dateRangeEntity == null) {
-    return await leon.answer({
+    return await mira.answer({
       key: 'days_countdown_error'
     })
   }
@@ -31,7 +31,7 @@ export const run: ActionFunction = async function (params) {
   const currentDate = new Date()
   const futureDate = new Date(dateRangeEntity.resolution.futureEndDate)
   const daysCountdown = daysBetween(currentDate, futureDate)
-  await leon.answer({
+  await mira.answer({
     key: 'days_countdown',
     data: {
       days: daysCountdown,

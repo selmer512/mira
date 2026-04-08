@@ -152,13 +152,13 @@ export const SKILL_PLAN_SCHEMA = {
   }
 }
 
-export const SKILL_PLAN_SYSTEM_PROMPT = `You are Leon's Skill Writer. Generate a complete skill plan with working code.
+export const SKILL_PLAN_SYSTEM_PROMPT = `You are Mira's Skill Writer. Generate a complete skill plan with working code.
 
-## Leon Skill Architecture
+## Mira Skill Architecture
 
 ### Skill Structure
 - A skill has one or more **actions** (each action is a separate file)
-- Actions respond using \`leon.answer({ key: 'answer_key', data: { ... } })\`
+- Actions respond using \`mira.answer({ key: 'answer_key', data: { ... } })\`
 - Answer keys map to \`locale_answers\` in the output
 - Parameters are retrieved using \`paramsHelper.getActionArgument('param_name')\` (TS) or \`params_helper.get_action_argument('param_name')\` (Python)
 
@@ -180,7 +180,7 @@ Use \`is_loop: true\` when an action needs to **wait for repeated user input**:
 - Confirmation dialogs
 - Multi-turn conversations
 
-To **exit a loop**, include in leon.answer:
+To **exit a loop**, include in mira.answer:
 \`\`\`
 core: {
   is_in_action_loop: false
@@ -222,7 +222,7 @@ Define parameters in the skill.json:
 - For string parameters, you can use \`enum\` to restrict to specific values
 
 ### Missing Parameter Follow-ups
-When a required parameter is missing, Leon will ask the user for it. You can customize these questions in \`missing_param_follow_ups\`:
+When a required parameter is missing, Mira will ask the user for it. You can customize these questions in \`missing_param_follow_ups\`:
 \`\`\`json
 {
   "action_name": {
@@ -234,7 +234,7 @@ When a required parameter is missing, Leon will ask the user for it. You can cus
 ## TypeScript Action Template
 \`\`\`typescript
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 
 export const run: ActionFunction = async function (
@@ -251,16 +251,16 @@ export const run: ActionFunction = async function (
   const utterance = params.utterance
 
   // Simple answer
-  leon.answer({ key: 'result', data: { value: myParam } })
+  mira.answer({ key: 'result', data: { value: myParam } })
 
   // Answer that exits a loop
-  leon.answer({
+  mira.answer({
     key: 'done',
     core: { is_in_action_loop: false }
   })
 
   // Answer that passes data to next action
-  leon.answer({
+  mira.answer({
     key: 'ready',
     core: {
       context_data: { my_key: 'my_value' }
@@ -268,7 +268,7 @@ export const run: ActionFunction = async function (
   })
 
   // Answer that triggers another action
-  leon.answer({
+  mira.answer({
     key: 'replay',
     core: {
       is_in_action_loop: false,
@@ -280,7 +280,7 @@ export const run: ActionFunction = async function (
 
 ## Python Action Template
 \`\`\`python
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.params_helper import ParamsHelper
 
@@ -295,16 +295,16 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
     utterance = params['utterance']
 
     # Simple answer
-    leon.answer({'key': 'result', 'data': {'value': my_param}})
+    mira.answer({'key': 'result', 'data': {'value': my_param}})
 
     # Answer that exits a loop
-    leon.answer({
+    mira.answer({
         'key': 'done',
         'core': {'is_in_action_loop': False}
     })
 
     # Answer that passes data to next action
-    leon.answer({
+    mira.answer({
         'key': 'ready',
         'core': {
             'context_data': {'my_key': 'my_value'}
@@ -312,7 +312,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
     })
 
     # Answer that triggers another action
-    leon.answer({
+    mira.answer({
         'key': 'replay',
         'core': {
             'is_in_action_loop': False,
@@ -332,7 +332,7 @@ This shows flow + loop + next_action + context_data:
   "version": "1.0.0",
   "description": "A guessing game where you try to find the secret number.",
   "author": {
-    "name": "Leon"
+    "name": "Mira"
   },
   "flow": ["set_up", "guess", "replay"],
   "actions": {
@@ -363,14 +363,14 @@ This shows flow + loop + next_action + context_data:
 **set_up.py:**
 \`\`\`python
 import random
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.params_helper import ParamsHelper
 
 def run(params: ActionParams, params_helper: ParamsHelper) -> None:
     secret_number = random.randint(1, 50)
     
-    leon.answer({
+    mira.answer({
         'key': 'ready',
         'data': {'min': 1, 'max': 50},
         'core': {
@@ -384,7 +384,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
 
 **guess.py:**
 \`\`\`python
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.params_helper import ParamsHelper
 
@@ -394,13 +394,13 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
     attempts = params_helper.get_context_data('attempts') + 1
     
     if guess == secret_number:
-        leon.answer({
+        mira.answer({
             'key': 'won',
             'data': {'attempts': attempts},
             'core': {'is_in_action_loop': False}
         })
     elif guess < secret_number:
-        leon.answer({
+        mira.answer({
             'key': 'bigger',
             'data': {'guess': guess},
             'core': {
@@ -411,7 +411,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
             }
         })
     else:
-        leon.answer({
+        mira.answer({
             'key': 'smaller',
             'data': {'guess': guess},
             'core': {
@@ -425,7 +425,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
 
 **replay.py:**
 \`\`\`python
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.params_helper import ParamsHelper
 
@@ -433,7 +433,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
     utterance = params['utterance'].lower()
     
     if 'yes' in utterance or 'sure' in utterance or 'again' in utterance:
-        leon.answer({
+        mira.answer({
             'key': 'replaying',
             'core': {
                 'is_in_action_loop': False,
@@ -441,7 +441,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
             }
         })
     else:
-        leon.answer({
+        mira.answer({
             'key': 'goodbye',
             'core': {'is_in_action_loop': False}
         })

@@ -1,5 +1,5 @@
 import type { ActionFunction, BuiltInDurationEntity } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 
 import { TimerWidget } from '../widgets/timer-widget'
 import { createTimerMemory } from '../lib/memory'
@@ -15,12 +15,12 @@ export const run: ActionFunction = async function (_params, paramsHelper) {
     )?.values ?? []
 
   if (!duration) {
-    return leon.answer({ key: 'cannot_get_duration' })
+    return mira.answer({ key: 'cannot_get_duration' })
   }
 
   const { unit } = duration
   if (!supportedUnits.includes(unit)) {
-    return leon.answer({ key: 'unit_not_supported' })
+    return mira.answer({ key: 'unit_not_supported' })
   }
 
   const { value: durationValue } = duration
@@ -39,7 +39,7 @@ export const run: ActionFunction = async function (_params, paramsHelper) {
 
   await Promise.all([
     createTimerMemory(timerWidget.id, seconds, interval),
-    leon.answer({
+    mira.answer({
       widget: timerWidget,
       key: 'timer_set'
     })

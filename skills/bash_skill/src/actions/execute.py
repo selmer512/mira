@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.settings import Settings
 from bridges.python.src.sdk.tools.bash import BashTool
@@ -11,7 +11,7 @@ def run(params: ActionParams) -> None:
     # Get the user query
     query = params.get("utterance", "").strip()
     if not query:
-        leon.answer({"key": "invalid_command", "data": {"query": "Empty query"}})
+        mira.answer({"key": "invalid_command", "data": {"query": "Empty query"}})
         return
 
     # Load settings
@@ -30,7 +30,7 @@ def run(params: ActionParams) -> None:
     bash_tool = BashTool()
 
     # Show that we're processing the query
-    leon.answer({"key": "understanding_query"})
+    mira.answer({"key": "understanding_query"})
 
     try:
         # Get the preferred model from settings
@@ -88,7 +88,7 @@ IMPORTANT RULES:
         print("OpenRouter response:", response)
 
         if not response["success"]:
-            leon.answer({"key": "llm_error", "data": {"error": response["error"]}})
+            mira.answer({"key": "llm_error", "data": {"error": response["error"]}})
             return
 
         # Extract data from structured response
@@ -103,7 +103,7 @@ IMPORTANT RULES:
 
         # Check if LLM generated a valid command
         if not command or confidence < 20:
-            leon.answer(
+            mira.answer(
                 {
                     "key": "invalid_command",
                     "data": {
@@ -116,7 +116,7 @@ IMPORTANT RULES:
 
         # Additional safety check using bash tool
         if not bash_tool.is_safe_command(command):
-            leon.answer(
+            mira.answer(
                 {
                     "key": "invalid_command",
                     "data": {
@@ -135,7 +135,7 @@ IMPORTANT RULES:
         # and just inform the user about risky commands
         if requires_confirmation:
             risk_description = bash_tool.get_risk_description(command)
-            leon.answer(
+            mira.answer(
                 {
                     "key": "confirmation_needed",
                     "data": {"command": command, "risk_description": risk_description},
@@ -145,11 +145,11 @@ IMPORTANT RULES:
             # For now, we'll only execute low-risk commands automatically
             # Medium/high risk commands will require manual intervention
             if risk_level in ["high", "critical"]:
-                leon.answer({"key": "cancelled"})
+                mira.answer({"key": "cancelled"})
                 return
 
         # Execute the command
-        leon.answer({"key": "executing_command", "data": {"command": command}})
+        mira.answer({"key": "executing_command", "data": {"command": command}})
 
         result = bash_tool.execute_bash_command(command)
 
@@ -158,13 +158,13 @@ IMPORTANT RULES:
             if not output:
                 output = "Command completed successfully (no output)"
 
-            leon.answer({"key": "command_success", "data": {"output": output}})
+            mira.answer({"key": "command_success", "data": {"output": output}})
         else:
             error = (
                 result["stderr"]
                 or f"Command failed with exit code {result['returncode']}"
             )
-            leon.answer({"key": "command_failed", "data": {"error": error}})
+            mira.answer({"key": "command_failed", "data": {"error": error}})
 
     except Exception as e:
-        leon.answer({"key": "llm_error", "data": {"error": str(e)}})
+        mira.answer({"key": "llm_error", "data": {"error": str(e)}})

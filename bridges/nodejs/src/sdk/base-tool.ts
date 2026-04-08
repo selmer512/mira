@@ -173,7 +173,7 @@ export abstract class Tool {
   }
 
   /**
-   * Report tool status or information using leon.answer with automatic toolkit/tool context
+   * Report tool status or information using mira.answer with automatic toolkit/tool context
    */
   protected async report(
     key: string,
@@ -198,7 +198,7 @@ export abstract class Tool {
       })
     } catch (error) {
       console.warn(
-        `[LEON_TOOL_LOG] Failed to report tool output: ${
+        `[MIRA_TOOL_LOG] Failed to report tool output: ${
           (error as Error).message
         }`
       )
@@ -238,7 +238,7 @@ export abstract class Tool {
   }
 
   /**
-   * Execute a command with proper Leon messaging and progress tracking
+   * Execute a command with proper Mira messaging and progress tracking
    */
   protected async executeCommand(
     options: ExecuteCommandOptions
@@ -1237,7 +1237,7 @@ export abstract class Tool {
    */
   protected log(message: string, ...args: unknown[]): void {
     // Use a special prefix that the brain can filter out as non-JSON output
-    const logMessage = `[LEON_TOOL_LOG] ${message}${
+    const logMessage = `[MIRA_TOOL_LOG] ${message}${
       args.length > 0 ? ' ' + args.join(' ') : ''
     }`
     if (Tool.isToolRuntime) {

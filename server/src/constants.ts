@@ -22,10 +22,10 @@ export const { default: LANG_CONFIGS } = await import('@@/core/langs.json', {
 /**
  * Environments
  */
-export const LEON_NODE_ENV = process.env['LEON_NODE_ENV'] || PRODUCTION_ENV
-export const IS_PRODUCTION_ENV = LEON_NODE_ENV === PRODUCTION_ENV
-export const IS_DEVELOPMENT_ENV = LEON_NODE_ENV === DEVELOPMENT_ENV
-export const IS_TESTING_ENV = LEON_NODE_ENV === TESTING_ENV
+export const MIRA_NODE_ENV = process.env['MIRA_NODE_ENV'] || PRODUCTION_ENV
+export const IS_PRODUCTION_ENV = MIRA_NODE_ENV === PRODUCTION_ENV
+export const IS_DEVELOPMENT_ENV = MIRA_NODE_ENV === DEVELOPMENT_ENV
+export const IS_TESTING_ENV = MIRA_NODE_ENV === TESTING_ENV
 
 /**
  * Paths
@@ -52,7 +52,7 @@ export const SERVER_PATH = path.join(
 )
 export const TMP_PATH = path.join(SERVER_PATH, 'tmp')
 export const SERVER_CORE_PATH = path.join(SERVER_PATH, 'core')
-export const LEON_FILE_PATH = path.join(process.cwd(), 'leon.json')
+export const MIRA_FILE_PATH = path.join(process.cwd(), 'mira.json')
 
 /**
  * NVIDIA paths and versions.
@@ -300,9 +300,9 @@ export const [, PYTHON_TCP_SERVER_VERSION] = fs
   .readFileSync(PYTHON_TCP_SERVER_VERSION_FILE_PATH, 'utf8')
   .split('\'')
 
-export const NODEJS_BRIDGE_BIN_NAME = 'leon-nodejs-bridge.cjs'
-export const PYTHON_BRIDGE_BIN_NAME = 'leon-python-bridge'
-export const PYTHON_TCP_SERVER_BIN_NAME = 'leon-tcp-server'
+export const NODEJS_BRIDGE_BIN_NAME = 'mira-nodejs-bridge.cjs'
+export const PYTHON_BRIDGE_BIN_NAME = 'mira-python-bridge'
+export const PYTHON_TCP_SERVER_BIN_NAME = 'mira-tcp-server'
 
 export const PYTHON_TCP_SERVER_BIN_PATH = path.join(
   PYTHON_TCP_SERVER_DIST_PATH,
@@ -329,7 +329,7 @@ export const TSX_CLI_PATH = path.join(
   'cli.mjs'
 )
 
-export const LEON_VERSION = process.env['npm_package_version']
+export const MIRA_VERSION = process.env['npm_package_version']
 
 /**
  * spaCy models
@@ -341,79 +341,79 @@ export const FR_SPACY_MODEL_NAME = 'fr_core_news_md'
 export const FR_SPACY_MODEL_VERSION = '3.4.0'
 
 /**
- * Leon environment preferences
+ * Mira environment preferences
  */
-export const LANG = process.env['LEON_LANG'] as LongLanguageCode
+export const LANG = process.env['MIRA_LANG'] as LongLanguageCode
 
-export const HOST = process.env['LEON_HOST']
-export const PORT = Number(process.env['LEON_PORT'])
+export const HOST = process.env['MIRA_HOST']
+export const PORT = Number(process.env['MIRA_PORT'])
 
-export const TIME_ZONE = process.env['LEON_TIME_ZONE']
+export const TIME_ZONE = process.env['MIRA_TIME_ZONE']
 
-export const HAS_AFTER_SPEECH = process.env['LEON_AFTER_SPEECH'] === 'true'
+export const HAS_AFTER_SPEECH = process.env['MIRA_AFTER_SPEECH'] === 'true'
 
-export const HAS_STT = process.env['LEON_STT'] === 'true'
-export const STT_PROVIDER = process.env['LEON_STT_PROVIDER']
-export const HAS_TTS = process.env['LEON_TTS'] === 'true'
-export const TTS_PROVIDER = process.env['LEON_TTS_PROVIDER']
+export const HAS_STT = process.env['MIRA_STT'] === 'true'
+export const STT_PROVIDER = process.env['MIRA_STT_PROVIDER']
+export const HAS_TTS = process.env['MIRA_TTS'] === 'true'
+export const TTS_PROVIDER = process.env['MIRA_TTS_PROVIDER']
 
 export const HAS_WARM_UP_LLM_DUTIES =
-  process.env['LEON_WARM_UP_LLM_DUTIES'] === 'true'
-export const HAS_OVER_HTTP = process.env['LEON_OVER_HTTP'] === 'true'
-export const HTTP_API_KEY = process.env['LEON_HTTP_API_KEY']
-export const HTTP_API_LANG = process.env['LEON_HTTP_API_LANG']
+  process.env['MIRA_WARM_UP_LLM_DUTIES'] === 'true'
+export const HAS_OVER_HTTP = process.env['MIRA_OVER_HTTP'] === 'true'
+export const HTTP_API_KEY = process.env['MIRA_HTTP_API_KEY']
+export const HTTP_API_LANG = process.env['MIRA_HTTP_API_LANG']
 
-export const PYTHON_TCP_SERVER_HOST = process.env['LEON_PY_TCP_SERVER_HOST']
+export const PYTHON_TCP_SERVER_HOST = process.env['MIRA_PY_TCP_SERVER_HOST']
 export const PYTHON_TCP_SERVER_PORT = Number(
-  process.env['LEON_PY_TCP_SERVER_PORT']
+  process.env['MIRA_PY_TCP_SERVER_PORT']
 )
 
-export const IS_TELEMETRY_ENABLED = process.env['LEON_TELEMETRY'] === 'true'
+export const IS_TELEMETRY_ENABLED = process.env['MIRA_TELEMETRY'] === 'true'
 
 /**
  * NLP models paths
  */
-export const MAIN_NLP_MODEL_PATH = path.join(MODELS_PATH, 'leon-main-model.nlp')
+export const MAIN_NLP_MODEL_PATH = path.join(MODELS_PATH, 'mira-main-model.nlp')
 export const GLOBAL_RESOLVERS_NLP_MODEL_PATH = path.join(
   MODELS_PATH,
-  'leon-global-resolvers-model.nlp'
+  'mira-global-resolvers-model.nlp'
 )
 export const SKILLS_RESOLVERS_NLP_MODEL_PATH = path.join(
   MODELS_PATH,
-  'leon-skills-resolvers-model.nlp'
+  'mira-skills-resolvers-model.nlp'
 )
 export const LLM_ACTIONS_CLASSIFIER_PATH = path.join(
   MODELS_PATH,
-  'leon-llm-actions-classifier.json'
+  'mira-llm-actions-classifier.json'
 )
 export const LLM_SKILL_ROUTER_DUTY_SKILL_LIST_PATH = path.join(
   MODELS_PATH,
-  'leon-skill-list.nlp'
+  'mira-skill-list.nlp'
 )
 
 /**
  * LLMs
  * @see k-quants comparison: https://github.com/ggerganov/llama.cpp/pull/1684
  */
-export const HAS_LLM = process.env['LEON_LLM'] === 'true'
-export const HAS_LLM_NLG = process.env['LEON_LLM_NLG'] === 'true' && HAS_LLM
+export const HAS_LLM = process.env['MIRA_LLM'] === 'true'
+export const HAS_LLM_NLG = process.env['MIRA_LLM_NLG'] === 'true' && HAS_LLM
 export const HAS_LLM_ACTION_RECOGNITION =
-  process.env['LEON_LLM_ACTION_RECOGNITION'] === 'true' && HAS_LLM
-export const LEON_ROUTING_MODE = process.env['LEON_ROUTING_MODE'] || 'smart'
-export const LEON_PULSE_ENABLED = true
-export const LEON_PULSE_INTERVAL_MS = 30 * 60 * 1_000
+  process.env['MIRA_LLM_ACTION_RECOGNITION'] === 'true' && HAS_LLM
+export const MIRA_ROUTING_MODE = process.env['MIRA_ROUTING_MODE'] || 'smart'
+export const MIRA_PULSE_ENABLED = true
+export const MIRA_PULSE_INTERVAL_MS = 30 * 60 * 1_000
 export const SHOULD_START_PYTHON_TCP_SERVER = !(
-  LEON_ROUTING_MODE.toLowerCase() === 'agent' &&
+  MIRA_ROUTING_MODE.toLowerCase() === 'agent' &&
   !HAS_STT &&
   !HAS_TTS
 )
-export const LEON_DISABLED_CONTEXT_FILES =
-  process.env['LEON_DISABLED_CONTEXT_FILES'] || ''
-export const LLM_PROVIDER = process.env['LEON_LLM_PROVIDER'] || 'llamacpp'
+export const MIRA_DISABLED_CONTEXT_FILES =
+  process.env['MIRA_DISABLED_CONTEXT_FILES'] || ''
+export const LLM_PROVIDER = process.env['MIRA_LLM_PROVIDER'] || 'llamacpp'
 export const WORKFLOW_LLM_PROVIDER =
-  process.env['LEON_WORKFLOW_LLM_PROVIDER'] || LLM_PROVIDER
+  process.env['MIRA_WORKFLOW_LLM_PROVIDER'] || LLM_PROVIDER
 export const AGENT_LLM_PROVIDER =
-  process.env['LEON_AGENT_LLM_PROVIDER'] || LLM_PROVIDER
+  process.env['MIRA_AGENT_LLM_PROVIDER'] || LLM_PROVIDER
 // export const LLM_VERSION = 'v0.2.Q4_K_S'
 // export const LLM_VERSION = '8B-Instruct.Q5_K_S'
 // export const LLM_VERSION = '2.9-llama3-8b.Q5_K_S'
@@ -464,14 +464,14 @@ export const LLM_MANIFEST_PATH = path.join(LLM_DIR_PATH, 'manifest.json')
 const LLM_MANIFEST = fs.existsSync(LLM_MANIFEST_PATH)
   ? JSON.parse(fs.readFileSync(LLM_MANIFEST_PATH, 'utf8'))
   : null
-// Keep LEON_LLAMACPP_MODEL_PATH as the first-class override, and fall back to
+// Keep MIRA_LLAMACPP_MODEL_PATH as the first-class override, and fall back to
 // the default model installed by setup when the env var is empty.
 export const DEFAULT_INSTALLED_LLM_PATH =
   typeof LLM_MANIFEST?.defaultInstalledLLMPath === 'string'
     ? LLM_MANIFEST.defaultInstalledLLMPath
     : ''
 const CONFIGURED_LLAMACPP_MODEL_PATH =
-  process.env['LEON_LLAMACPP_MODEL_PATH'] || DEFAULT_INSTALLED_LLM_PATH || ''
+  process.env['MIRA_LLAMACPP_MODEL_PATH'] || DEFAULT_INSTALLED_LLM_PATH || ''
 export const LLM_NAME = LLM_MANIFEST?.name || 'Local LLM'
 export const LLM_VERSION = LLM_MANIFEST?.version || 'unknown'
 export const LLM_FILE_NAME = CONFIGURED_LLAMACPP_MODEL_PATH
@@ -529,8 +529,8 @@ export const LLM_MINIMUM_FREE_VRAM = 6
  * Misc
  */
 export const MINIMUM_REQUIRED_RAM = 4
-export const INSTANCE_ID = fs.existsSync(LEON_FILE_PATH)
-  ? JSON.parse(fs.readFileSync(LEON_FILE_PATH, 'utf8')).instanceID
+export const INSTANCE_ID = fs.existsSync(MIRA_FILE_PATH)
+  ? JSON.parse(fs.readFileSync(MIRA_FILE_PATH, 'utf8')).instanceID
   : null
 export const IS_GITHUB_ACTIONS = process.env['GITHUB_ACTIONS'] !== undefined
 export const IS_GITPOD = process.env['GITPOD_WORKSPACE_URL'] !== undefined

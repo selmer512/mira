@@ -2,9 +2,9 @@
 {{REPO_SNAPSHOT}}
 {{TOOLKIT_INFO}}
 
-# Leon Skill Creation (Concise)
+# Mira Skill Creation (Concise)
 
-You are generating a Leon skill in **{{LANGUAGE}}**.
+You are generating a Mira skill in **{{LANGUAGE}}**.
 
 ## Core Rules
 
@@ -32,7 +32,7 @@ skills/skill_name/
 - `actions` required, `flow` optional.
 - If `flow` exists, only the first action receives user parameters.
 - Use `"skill_name:action_name"` for cross-skill flow steps.
-- Set `author.name` to `Leon` unless explicitly specified.
+- Set `author.name` to `Mira` unless explicitly specified.
 
 ## Settings Files
 
@@ -44,9 +44,9 @@ skills/skill_name/
 - Choose relevant toolkits from above **before** writing code.
 - Use existing tools instead of duplicating functionality.
 
-## leon.answer Basics
+## mira.answer Basics
 
-{{LEON_ANSWER_BASIC_EXAMPLE}}
+{{MIRA_ANSWER_BASIC_EXAMPLE}}
 
 ## Passing Data Between Actions
 

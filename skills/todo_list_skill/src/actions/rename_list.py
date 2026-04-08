@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.params_helper import ParamsHelper
 from ..lib import memory
@@ -16,7 +16,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
     new_list_name = params_helper.get_action_argument('new_list_name').lower()
 
     if not memory.has_todo_list(old_list_name):
-        return leon.answer({
+        return mira.answer({
             'key': 'list_does_not_exist',
             'data': {
                 'list': old_list_name
@@ -24,7 +24,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
         })
 
     if memory.has_todo_list(new_list_name):
-        return leon.answer({
+        return mira.answer({
             'key': 'list_already_exists',
             'data': {
                 'list': new_list_name
@@ -33,7 +33,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
 
     memory.update_todo_list(old_list_name, new_list_name)
 
-    leon.answer({
+    mira.answer({
         'key': 'list_renamed',
         'data': {
             'old_list': old_list_name,

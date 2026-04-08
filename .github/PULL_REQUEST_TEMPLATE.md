@@ -1,6 +1,6 @@
 <!--
 
-Thanks a lot for your interest in contributing to Leon! :heart:
+Thanks a lot for your interest in contributing to Mira! :heart:
 
 Please first discuss the change you wish to make via issue,
 email, or any other method with the owners of this repository before making a change.

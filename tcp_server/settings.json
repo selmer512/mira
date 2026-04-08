@@ -10,7 +10,7 @@
     "device": "auto"
   },
   "wake_word": {
-    "model_file_name": "Hey_Leon.onnx",
+    "model_file_name": "Hey_Mira.onnx",
     "device": "cpu",
     "detection_threshold": 0.5
   }

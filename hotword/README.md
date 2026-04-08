@@ -1,7 +1,7 @@
 # Hotword
 
-This node enables the wake word "Leon". Once this is running, you can
-call Leon by saying his name according to the language you chose.
+This node enables the wake word "Mira". Once this is running, you can
+call Mira by saying her name according to the language you chose.
 
 ## Getting Started
 
@@ -25,6 +25,6 @@ npm run build && npm start
 # Run hotword node
 npm run wake
 
-# Say "Leon" via your microphone
+# Say "Mira" via your microphone
 # Triggered!
 ```

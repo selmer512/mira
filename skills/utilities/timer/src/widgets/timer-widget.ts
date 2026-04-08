@@ -45,7 +45,7 @@ export class TimerWidget extends Widget<Params> {
       totalTimeContent,
       onEnd: (): WidgetEventMethod => {
         return this.sendUtterance('times_up', {
-          from: 'leon'
+          from: 'mira'
         })
       }
     })

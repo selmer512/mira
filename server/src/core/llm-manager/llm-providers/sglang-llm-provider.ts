@@ -10,11 +10,11 @@ export default class SGLangLLMProvider extends AISDKRemoteLLMProvider {
     super({
       name: 'SGLang LLM Provider',
       providerName: 'sglang',
-      apiKeyEnv: 'LEON_SGLANG_API_KEY',
-      workflowModelEnv: 'LEON_SGLANG_MODEL',
-      agentModelEnv: 'LEON_SGLANG_AGENT_LLM',
+      apiKeyEnv: 'MIRA_SGLANG_API_KEY',
+      workflowModelEnv: 'MIRA_SGLANG_MODEL',
+      agentModelEnv: 'MIRA_SGLANG_AGENT_LLM',
       defaultModel: 'Qwen/Qwen3-Coder-Next',
-      baseURL: process.env['LEON_SGLANG_BASE_URL'] || 'http://127.0.0.1:30000/v1',
+      baseURL: process.env['MIRA_SGLANG_BASE_URL'] || 'http://127.0.0.1:30000/v1',
       flavor: 'openai-compatible',
       requiresApiKey: false
     }, role)

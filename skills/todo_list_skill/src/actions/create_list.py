@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.params_helper import ParamsHelper
 from bridges.python.src.sdk.widget import WidgetOptions
@@ -11,7 +11,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
     list_name = params_helper.get_action_argument('list_name').lower()
 
     if memory.has_todo_list(list_name):
-        return leon.answer({
+        return mira.answer({
             'key': 'list_already_exists',
             'data': {
                 'list': list_name
@@ -24,7 +24,7 @@ def run(params: ActionParams, params_helper: ParamsHelper) -> None:
         list_name
     )
 
-    leon.answer({
+    mira.answer({
         'key': 'list_created',
         'data': {
             'list': list_name

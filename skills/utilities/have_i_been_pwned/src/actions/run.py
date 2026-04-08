@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.network import Network, NetworkError
 from bridges.python.src.sdk.settings import Settings
@@ -23,10 +23,10 @@ def run(params: ActionParams) -> None:
         emails = settings.get('emails')
 
         if len(emails) == 0:
-            return leon.answer({'key': 'no_email'})
+            return mira.answer({'key': 'no_email'})
 
     for email in emails:
-        leon.answer({'key': 'checking'})
+        mira.answer({'key': 'checking'})
         # Delay for 5 seconds before making request to accomodate API usage policy
         sleep(5)
         try:
@@ -45,12 +45,12 @@ def run(params: ActionParams) -> None:
             if breached:
                 result: str = ''
                 for breach in breaches:
-                    result += str(leon.set_answer_data('list_element', {
+                    result += str(mira.set_answer_data('list_element', {
                         'url': f'https://{breach["Domain"]}',
                         'name': breach['Name'],
                         'total': breach['PwnCount']
                     }))
-                leon.answer({
+                mira.answer({
                     'key': 'pwned',
                     'data': {
                         'email': email,
@@ -60,28 +60,28 @@ def run(params: ActionParams) -> None:
         except NetworkError as e:
             # Have I Been Pwned API returns a 403 when accessed by unauthorized/banned clients
             if e.response['status_code'] == 403:
-                leon.answer({
+                mira.answer({
                     'key': 'blocked',
                     'data': {
                         'website_name': 'Have I Been Pwned'
                     }
                 })
             elif e.response['status_code'] == 404:
-                leon.answer({
+                mira.answer({
                     'key': 'no_pwnage',
                     'data': {
                         'email': email
                     }
                 })
             elif e.response['status_code'] == 503:
-                leon.answer({
+                mira.answer({
                     'key': 'unavailable',
                     'data': {
                         'website_name': 'Have I Been Pwned'
                     }
                 })
             else:
-                leon.answer({
+                mira.answer({
                     'key': 'errors',
                     'data': {
                         'website_name': 'Have I Been Pwned'

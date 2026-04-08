@@ -147,9 +147,9 @@ export default class LlamaCPPLLMProvider extends AISDKRemoteLLMProvider {
       {
         name: 'llama.cpp LLM Provider',
         providerName: 'llamacpp',
-        apiKeyEnv: 'LEON_LLAMACPP_API_KEY',
-        workflowModelEnv: 'LEON_LLAMACPP_MODEL_PATH',
-        agentModelEnv: 'LEON_LLAMACPP_MODEL_PATH',
+        apiKeyEnv: 'MIRA_LLAMACPP_API_KEY',
+        workflowModelEnv: 'MIRA_LLAMACPP_MODEL_PATH',
+        agentModelEnv: 'MIRA_LLAMACPP_MODEL_PATH',
         defaultModel: DEFAULT_INSTALLED_LLM_PATH,
         baseURL: LLAMACPP_BASE_URL,
         flavor: 'openai-compatible',
@@ -160,7 +160,7 @@ export default class LlamaCPPLLMProvider extends AISDKRemoteLLMProvider {
 
     if (!this.model.trim()) {
       throw new Error(
-        'llama.cpp model path is not defined. Please define LEON_LLAMACPP_MODEL_PATH in the .env file or install a default local LLM.'
+        'llama.cpp model path is not defined. Please define MIRA_LLAMACPP_MODEL_PATH in the .env file or install a default local LLM.'
       )
     }
 
@@ -559,7 +559,7 @@ export default class LlamaCPPLLMProvider extends AISDKRemoteLLMProvider {
     if (completionParams.history) {
       for (const message of completionParams.history) {
         messages.push({
-          role: message.who === 'leon' ? 'assistant' : 'user',
+          role: message.who === 'mira' ? 'assistant' : 'user',
           content: message.message
         })
       }

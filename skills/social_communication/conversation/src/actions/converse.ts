@@ -1,11 +1,11 @@
 import type { ActionFunction } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { Network } from '@sdk/network'
 
 export const run: ActionFunction = async function (params) {
   const ownerMessage = params.new_utterance
   const network = new Network({
-    baseURL: `${process.env['LEON_HOST']}:${process.env['LEON_PORT']}/api/v1`
+    baseURL: `${process.env['MIRA_HOST']}:${process.env['MIRA_PORT']}/api/v1`
   })
 
   /**
@@ -24,7 +24,7 @@ export const run: ActionFunction = async function (params) {
     }
   })
 
-  await leon.answer({
+  await mira.answer({
     key: 'answer_message',
     data: {
       output: response.data.output

@@ -11,9 +11,9 @@
     "play": {
       "suggestions": ["Rock ✊", "Paper ✋", "Scissors ✌"],
       "answers": {
-        "leon_emoji": ["{{ leon_emoji }}"],
+        "mira_emoji": ["{{ mira_emoji }}"],
         "equal": ["No point.", "It's a tie."],
-        "point_for_leon": [
+        "point_for_mira": [
           "I got you. The {{ handsign_1 }} beats the {{ handsign_2 }}.",
           "Yeaaah, I won! The {{ handsign_1 }} beats the {{ handsign_2 }}.",
           "Gotcha! I got the point because the {{ handsign_1 }} beats the {{ handsign_2 }}."

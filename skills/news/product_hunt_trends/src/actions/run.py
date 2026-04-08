@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.network import Network
 from bridges.python.src.sdk.settings import Settings
@@ -12,7 +12,7 @@ def run(params: ActionParams) -> None:
     # Developer token
     settings = Settings()
     if not settings.is_setting_set('developer_token'):
-        return leon.answer({'key': 'invalid_developer_token'})
+        return mira.answer({'key': 'invalid_developer_token'})
     developer_token: str = settings.get('developer_token')
 
     # Number of products
@@ -22,7 +22,7 @@ def run(params: ActionParams) -> None:
         if item['entity'] == 'number':
             limit = item['resolution']['value']
 
-    leon.answer({'key': 'reaching'})
+    mira.answer({'key': 'reaching'})
 
     network = Network({'base_url': 'https://api.producthunt.com/v2/api/graphql'})
     try:
@@ -57,12 +57,12 @@ def run(params: ActionParams) -> None:
         result = ''
 
         if len(posts) == 0:
-            return leon.answer({'key': 'not_found'})
+            return mira.answer({'key': 'not_found'})
 
         for index, post in enumerate(posts):
             node = post['node']
             rank = index + 1
-            result += str(leon.set_answer_data('list_element', {
+            result += str(mira.set_answer_data('list_element', {
                 'rank': rank,
                 'post_url': node['url'],
                 'product_name': node['name'],
@@ -72,7 +72,7 @@ def run(params: ActionParams) -> None:
             if rank == limit:
                 break
 
-        return leon.answer({
+        return mira.answer({
             'key': 'today',
             'data': {
                 'limit': limit,
@@ -81,4 +81,4 @@ def run(params: ActionParams) -> None:
         })
     except Exception as e:
         print(e, flush=True, file=sys.stderr)
-        return leon.answer({'key': 'unreachable'})
+        return mira.answer({'key': 'unreachable'})

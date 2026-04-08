@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import type { ActionFunction, ActionParams } from '@sdk/types'
-import { leon } from '@sdk/leon'
+import { mira } from '@sdk/mira'
 import { ParamsHelper } from '@sdk/params-helper'
 import ToolManager, { isMissingToolSettingsError } from '@sdk/tool-manager'
 import FfmpegTool from '@sdk/tools/ffmpeg'
@@ -26,7 +26,7 @@ export const run: ActionFunction = async function (
     // If video_path is not provided as argument, try to get it from memory
     // If still no video path, cannot proceed
     if (!videoPath) {
-      leon.answer({
+      mira.answer({
         key: 'no_video_info',
         data: {
           error:
@@ -41,7 +41,7 @@ export const run: ActionFunction = async function (
 
     // Verify the input video file exists
     if (!fs.existsSync(videoPath)) {
-      leon.answer({
+      mira.answer({
         key: 'video_file_not_found',
         data: {
           video_path: formatFilePath(videoPath)
@@ -65,7 +65,7 @@ export const run: ActionFunction = async function (
       extractionStartedData['target_language'] = targetLanguage
     }
 
-    leon.answer({
+    mira.answer({
       key: 'extraction_started',
       data: extractionStartedData
     })
@@ -83,7 +83,7 @@ export const run: ActionFunction = async function (
 
     // Verify the extracted audio file exists
     if (!fs.existsSync(extractedAudioPath)) {
-      leon.answer({
+      mira.answer({
         key: 'extraction_failed',
         data: {
           video_path: formatFilePath(path.basename(videoPath)),
@@ -109,7 +109,7 @@ export const run: ActionFunction = async function (
       extractionCompletedData['target_language'] = targetLanguage
     }
 
-    leon.answer({
+    mira.answer({
       key: 'extraction_completed',
       data: extractionCompletedData,
       core: {
@@ -123,7 +123,7 @@ export const run: ActionFunction = async function (
     if (isMissingToolSettingsError(error)) {
       return
     }
-    leon.answer({
+    mira.answer({
       key: 'extraction_error',
       data: {
         video_path: path.basename(videoPath as string),

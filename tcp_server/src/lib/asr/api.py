@@ -15,7 +15,7 @@ class ASR:
                  # @see https://github.com/SYSTRAN/faster-whisper/blob/master/faster_whisper/transcribe.py
                  # auto, cpu, cuda
                  device='auto',
-                 interrupt_leon_speech_callback=None,
+                 interrupt_mira_speech_callback=None,
                  transcribed_callback=None,
                  end_of_owner_speech_callback=None,
                  active_listening_disabled_callback=None):
@@ -45,10 +45,10 @@ class ASR:
         self.is_recording = False
 
         """
-        Thottle the interrupt Leon's speech callback to avoid sending too many messages to the client
+        Throttle the interrupt Mira's speech callback to avoid sending too many messages to the client
         """
-        self.interrupt_leon_speech_callback = ThrottledCallback(
-            interrupt_leon_speech_callback, 0.8
+        self.interrupt_mira_speech_callback = ThrottledCallback(
+            interrupt_mira_speech_callback, 0.8
         )
         self.transcribed_callback = transcribed_callback
         self.end_of_owner_speech_callback = end_of_owner_speech_callback
@@ -132,7 +132,7 @@ class ASR:
                         self.is_active_listening_enabled = True
                         self.is_voice_activity_detected = True
 
-                    self.interrupt_leon_speech_callback()
+                    self.interrupt_mira_speech_callback()
 
                     self.buffer.extend(data)
                     self.silence_frames_count = 0
@@ -155,7 +155,7 @@ class ASR:
                                 'language': 'en',
                                 'task': 'transcribe',
                                 'condition_on_previous_text': False,
-                                'hotwords': 'talking to Leon'
+                                'hotwords': 'talking to Mira'
                             }
                             if self.device == 'cpu':
                                 transcribe_params['temperature'] = 0

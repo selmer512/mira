@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 
 from ..lib import memory
@@ -18,14 +18,14 @@ def run(params: ActionParams) -> None:
 
     # Return no speech if no number has been found
     if given_number == -1:
-        leon.answer({'core': {'is_in_action_loop': False}})
+        mira.answer({'core': {'is_in_action_loop': False}})
         return
 
     counter = memory.get_new_game()['counter'] + 1
     memory.set_counter(counter)
 
     if given_number == number_to_guess:
-        leon.answer({
+        mira.answer({
             'key': 'guessed',
             'data': {
                 'number': number_to_guess,
@@ -36,6 +36,6 @@ def run(params: ActionParams) -> None:
             }
         })
     elif number_to_guess < given_number:
-        leon.answer({'key': 'smaller'})
+        mira.answer({'key': 'smaller'})
     elif number_to_guess > given_number:
-        leon.answer({'key': 'bigger'})
+        mira.answer({'key': 'bigger'})

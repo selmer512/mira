@@ -1,4 +1,4 @@
-from bridges.python.src.sdk.leon import leon
+from bridges.python.src.sdk.mira import mira
 from bridges.python.src.sdk.types import ActionParams
 from bridges.python.src.sdk.network import Network
 
@@ -27,7 +27,7 @@ def run(params: ActionParams) -> None:
         state: Union[Literal['up'], Literal['down']] = 'up'
         website_name = domain[:domain.find('.')].title()
 
-        leon.answer({
+        mira.answer({
             'key': 'checking',
             'data': {
                 'website_name': website_name
@@ -44,7 +44,7 @@ def run(params: ActionParams) -> None:
             if network.is_network_error(e):
                 state = 'down'
             else:
-                leon.answer({
+                mira.answer({
                     'key': 'errors',
                     'data': {
                         'website_name': website_name
@@ -52,7 +52,7 @@ def run(params: ActionParams) -> None:
                 })
                 continue
 
-        leon.answer({
+        mira.answer({
             'key': state,
             'data': {
                 'website_name': website_name
@@ -60,7 +60,7 @@ def run(params: ActionParams) -> None:
         })
 
         if len(domains) == 0:
-            leon.answer({
+            mira.answer({
                 'key': 'invalid_domain_name',
                 'data': {
                     'website_name': website_name

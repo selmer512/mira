@@ -4,7 +4,7 @@
   "description": "Tools for interacting with and controlling the operating system.",
   "icon_name": "terminal-box",
   "context_files": [
-    "LEON.md",
+    "MIRA.md",
     "ARCHITECTURE.md",
     "HOST_SYSTEM.md",
     "ACTIVITY.md",

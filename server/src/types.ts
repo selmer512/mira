@@ -52,7 +52,7 @@ export enum RoutingMode {
  */
 
 export interface MessageLog {
-  who: 'owner' | 'leon'
+  who: 'owner' | 'mira'
   sentAt: number
   message: string
 }

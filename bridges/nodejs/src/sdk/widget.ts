@@ -3,7 +3,7 @@ import { type WidgetWrapperProps } from '@leon-ai/aurora'
 import { INTENT_OBJECT, SKILL_LOCALE_CONFIG } from '@bridge/constants'
 import { WidgetComponent } from '@sdk/widget-component'
 
-type UtteranceSender = 'leon' | 'owner'
+type UtteranceSender = 'mira' | 'owner'
 
 interface SendUtteranceWidgetEventMethodParams {
   from: UtteranceSender

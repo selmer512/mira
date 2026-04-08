@@ -80,10 +80,10 @@ class TCPServer:
                 }
             })
 
-        def interrupt_leon_speech_callback():
-            self.log('Interrupting Leon speech because owner started speaking')
+        def interrupt_mira_speech_callback():
+            self.log('Interrupting Mira speech because owner started speaking')
             self.send_tcp_message({
-                'topic': 'asr-interrupt-leon-speech',
+                'topic': 'asr-interrupt-mira-speech',
                 'data': {}
             })
 
@@ -105,7 +105,7 @@ class TCPServer:
 
         self.asr = ASR(tcp_server=self,
                        device=get_settings('asr')['device'],
-                       interrupt_leon_speech_callback=interrupt_leon_speech_callback,
+                       interrupt_mira_speech_callback=interrupt_mira_speech_callback,
                        transcribed_callback=transcribed_callback,
                        end_of_owner_speech_callback=end_of_owner_speech_callback,
                        active_listening_disabled_callback=active_listening_disabled_callback)
@@ -247,7 +247,7 @@ class TCPServer:
             }
         }
 
-    def leon_speech_audio_ended(self, audio_duration: float) -> dict:
+    def mira_speech_audio_ended(self, audio_duration: float) -> dict:
         if not self.asr:
             self.log('ASR is None, cannot update active listening duration')
 

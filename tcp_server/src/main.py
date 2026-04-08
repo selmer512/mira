@@ -113,7 +113,7 @@ def _configure_external_libraries(
 
 
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Leon TCP server")
+    parser = argparse.ArgumentParser(description="Mira TCP server")
     parser.add_argument(
         "lang", nargs="?", default="en", help="Language code (e.g. en, fr)"
     )
@@ -123,7 +123,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 args = _parse_args()
-os.environ["LEON_PY_TCP_SERVER_LANG"] = args.lang
+os.environ["MIRA_PY_TCP_SERVER_LANG"] = args.lang
 _configure_external_libraries(args.pytorch_path, args.nvidia_path)
 
 """
@@ -138,8 +138,8 @@ from lib.tcp_server import TCPServer
 
 nlp.load_spacy_model()
 
-tcp_server_host = os.environ.get("LEON_PY_TCP_SERVER_HOST", "0.0.0.0")
-tcp_server_port = os.environ.get("LEON_PY_TCP_SERVER_PORT", 1342)
+tcp_server_host = os.environ.get("MIRA_PY_TCP_SERVER_HOST", "0.0.0.0")
+tcp_server_port = os.environ.get("MIRA_PY_TCP_SERVER_PORT", 1342)
 
 tcp_server = TCPServer(tcp_server_host, tcp_server_port)
 

@@ -7,7 +7,7 @@ import { promisify } from 'node:util'
 
 import {
   CONTEXT_PATH,
-  LEON_DISABLED_CONTEXT_FILES,
+  MIRA_DISABLED_CONTEXT_FILES,
   TSX_CLI_PATH
 } from '@/constants'
 import { TOOLKIT_REGISTRY, LLM_PROVIDER } from '@/core'
@@ -29,7 +29,7 @@ const CONTEXT_FILES_SOURCE_DIR = path.join(
 )
 const CONTEXT_MANAGER_DIR = path.dirname(fileURLToPath(import.meta.url))
 const SOURCE_AWARE_STATIC_CONTEXT_FILES = new Set([
-  'LEON.md',
+  'MIRA.md',
   'ARCHITECTURE.md'
 ])
 const BOOT_REFRESH_MIN_DELAY_MS = 6_000
@@ -38,7 +38,7 @@ const BOOT_REFRESH_RETRY_DELAY_MS = 4_000
 const BOOT_REFRESH_MAX_DEFERRAL_MS = 60_000
 const BOOT_REFRESH_DEFER_LOAD_RATIO = 0.85
 const BOOT_REFRESH_PRIORITY_FILENAMES = [
-  'LEON_RUNTIME.md',
+  'MIRA_RUNTIME.md',
   'GPU_COMPUTE.md',
   'HOME.md',
   'HOST_SYSTEM.md'
@@ -91,7 +91,7 @@ export default class ContextManager {
     }
   )
   private readonly disabledContextFiles = this.parseContextFileList(
-    LEON_DISABLED_CONTEXT_FILES
+    MIRA_DISABLED_CONTEXT_FILES
   )
   private readonly contextFiles: ContextFile[] = this.allContextFiles.filter(
     (definition) => !this.disabledContextFiles.has(definition.filename)

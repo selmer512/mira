@@ -34,7 +34,7 @@ export function buildDailyMarkdownSummary(
       continue
     }
 
-    const prefix = log.who === 'owner' ? 'Owner:' : 'Leon:'
+    const prefix = log.who === 'owner' ? 'Owner:' : 'Mira:'
     const bullet = toBullet(`${prefix} ${message}`)
     if (!bullet || bullets.includes(bullet)) {
       continue

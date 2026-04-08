@@ -101,7 +101,7 @@ jobs:
           set -euo pipefail
           ls -la bridges/nodejs/dist
           required=(
-            "bridges/nodejs/dist/leon-nodejs-bridge.zip"
+            "bridges/nodejs/dist/mira-nodejs-bridge.zip"
           )
           for asset in "${required[@]}"; do
             [ -f "$asset" ] || { echo "Missing asset: $asset"; exit 1; }

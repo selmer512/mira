@@ -22,7 +22,7 @@ export default class Client {
     this._answerGenerationId = 'xxx'
     this._activeStreamGenerationId = null
     this._ttsAudioContext = null
-    this._isLeonGeneratingAnswer = false
+    this._isMiraGeneratingAnswer = false
     this._isVoiceModeEnabled = false
     // this._ttsAudioContextes = {}
   }
@@ -46,10 +46,10 @@ export default class Client {
   }
 
   updateMood(mood) {
-    if (window.leonConfigInfo.llm.enabled) {
+    if (window.miraConfigInfo.llm.enabled) {
       const moodContainer = document.querySelector('#mood')
 
-      moodContainer.textContent = `Leon's mood: ${mood.emoji}`
+      moodContainer.textContent = `Mira's mood: ${mood.emoji}`
       moodContainer.setAttribute('title', mood.type)
     }
   }
@@ -62,18 +62,18 @@ export default class Client {
       const typingFactorDelay = Math.floor(Math.random() * 4) + 2
 
       setTimeout(() => {
-        this.chatbot.isTyping('leon', true)
+        this.chatbot.isTyping('mira', true)
       }, sendingDelay / typingFactorDelay)
 
       await new Promise((resolve) => setTimeout(resolve, sendingDelay))
 
-      this.chatbot.receivedFrom('leon', message)
-      this.chatbot.isTyping('leon', false)
+      this.chatbot.receivedFrom('mira', message)
+      this.chatbot.isTyping('mira', false)
     }
   }
 
   setInitStatus(statusName, statusType) {
-    window.leonInitStatusEvent.dispatchEvent(
+    window.miraInitStatusEvent.dispatchEvent(
       new CustomEvent('initStatusChange', {
         detail: {
           statusName,
@@ -84,7 +84,7 @@ export default class Client {
   }
 
   asrStartRecording() {
-    if (!window.leonConfigInfo.stt.enabled) {
+    if (!window.miraConfigInfo.stt.enabled) {
       console.warn('ASR is not enabled')
       return
     }
@@ -102,7 +102,7 @@ export default class Client {
     this.chatbot.init()
     this.voiceEnergy.init()
 
-    if (window.leonConfigInfo?.tcpServer?.enabled === false) {
+    if (window.miraConfigInfo?.tcpServer?.enabled === false) {
       this.setInitStatus('tcpServerBoot', 'success')
     }
 
@@ -145,8 +145,8 @@ export default class Client {
         this.voiceEnergy.status = 'listening'
       }*/
 
-      // Leon has finished to answer
-      this._isLeonGeneratingAnswer = false
+      // Mira has finished answering
+      this._isMiraGeneratingAnswer = false
 
       /**
        * Handle message replacement if replaceMessageId is provided
@@ -173,7 +173,7 @@ export default class Client {
           typeof data === 'string' ? data : JSON.stringify(data)
 
         this.chatbot.createBubble({
-          who: 'leon',
+          who: 'mira',
           string: widgetString,
           messageId: data.widget?.id || data.id || `msg-${Date.now()}`
         })
@@ -195,14 +195,14 @@ export default class Client {
         this._activeStreamGenerationId || this._answerGenerationId
       const streamedBubbleContainerElement = streamGenerationId
         ? document.querySelector(
-            `.bubble-container.leon.${streamGenerationId}`
+            `.bubble-container.mira.${streamGenerationId}`
           )
         : null
       const isBubbleFromStreaming = Boolean(streamedBubbleContainerElement)
 
       if (isBubbleFromStreaming && streamedBubbleContainerElement) {
         this.chatbot.saveBubble(
-          'leon',
+          'mira',
           answerText,
           this.chatbot.formatMessage(answerText),
           null,
@@ -221,7 +221,7 @@ export default class Client {
         }, 2_500)
       } else {
         this.chatbot.createBubble({
-          who: 'leon',
+          who: 'mira',
           string: answerText,
           metrics: llmMetrics
         })
@@ -245,7 +245,7 @@ export default class Client {
     })
 
     this.socket.on('is-typing', (data) => {
-      this.chatbot.isTyping('leon', data)
+      this.chatbot.isTyping('mira', data)
     })
 
     this.socket.on('recognized', (data, cb) => {
@@ -269,7 +269,7 @@ export default class Client {
         this.voiceEnergy.status = 'processing'
       }
 
-      this._isLeonGeneratingAnswer = true
+      this._isMiraGeneratingAnswer = true
       const previousGenerationId = this._answerGenerationId
       const newGenerationId = data.generationId
       this._answerGenerationId = newGenerationId
@@ -279,7 +279,7 @@ export default class Client {
 
       if (!isSameGeneration) {
         bubbleContainerElement = this.chatbot.createBubble({
-          who: 'leon',
+          who: 'mira',
           string: data.token,
           save: false,
           bubbleId: newGenerationId
@@ -315,7 +315,7 @@ export default class Client {
         this.voiceEnergy.status = 'processing'
       }
 
-      this._isLeonGeneratingAnswer = true
+      this._isMiraGeneratingAnswer = true
       this.chatbot.createOrUpdateReasoningBlock(
         data.generationId,
         data.token,
@@ -372,7 +372,7 @@ export default class Client {
     })
 
     /**
-     * When Leon got interrupted by the owner voice
+     * When Mira got interrupted by the owner voice
      * while he is speaking
      */
     this.socket.on('tts-interruption', async () => {
@@ -399,7 +399,7 @@ export default class Client {
          * When the after speech option is enabled and
          * the answer is a final one
          */
-        if (window.leonConfigInfo.after_speech && data.is_final_answer) {
+        if (window.miraConfigInfo.after_speech && data.is_final_answer) {
           // Enable recording after the speech + 500ms
           setTimeout(() => {
             this._recorder.start()
@@ -436,8 +436,8 @@ export default class Client {
   }
 
   send(keyword) {
-    // Prevent from sending utterance if Leon is still generating text (stream)
-    if (keyword === 'utterance' && this._isLeonGeneratingAnswer) {
+    // Prevent from sending utterance if Mira is still generating text (stream)
+    if (keyword === 'utterance' && this._isMiraGeneratingAnswer) {
       return false
     }
 
@@ -446,7 +446,7 @@ export default class Client {
         client: this.client,
         value: this._input.value.trim()
       })
-      this.chatbot.sendTo('leon', this._input.value)
+      this.chatbot.sendTo('mira', this._input.value)
       this.chatbot.scrollDown({ force: true })
 
       this._suggestions.forEach((suggestion) => {
