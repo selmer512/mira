@@ -8,5 +8,11 @@
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",
     "url": "https://github.com/louistiti"
+  },
+  "actions": {
+    "run": {
+      "type": "dialog",
+      "description": "Tell the owner what the meaning of life is."
+    }
   }
 }

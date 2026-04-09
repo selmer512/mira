@@ -8,5 +8,11 @@
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",
     "url": "https://github.com/louistiti"
+  },
+  "actions": {
+    "run": {
+      "type": "logic",
+      "description": "Check if a domain or website is currently up or down."
+    }
   }
 }

@@ -8,5 +8,19 @@
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",
     "url": "https://twitter.com/grenlouis"
+  },
+  "actions": {
+    "setup": {
+      "type": "dialog",
+      "description": "Start a free-form chit-chat conversation loop with Mira."
+    },
+    "chit_chat": {
+      "type": "logic",
+      "description": "Engage in casual small talk and friendly conversation."
+    },
+    "converse": {
+      "type": "logic",
+      "description": "Continue the ongoing conversation and respond naturally."
+    }
   }
 }

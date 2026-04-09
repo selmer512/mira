@@ -8,5 +8,11 @@
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",
     "url": "https://github.com/louistiti"
+  },
+  "actions": {
+    "run": {
+      "type": "logic",
+      "description": "Fetch and display the current trending products on Product Hunt."
+    }
   }
 }

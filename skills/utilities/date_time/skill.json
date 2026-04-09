@@ -8,5 +8,31 @@
     "name": "Théo LUDWIG",
     "email": "contact@theoludwig.fr",
     "url": "https://theoludwig.fr"
+  },
+  "actions": {
+    "current_date_time": {
+      "type": "logic",
+      "description": "Tell the owner the current date and time."
+    },
+    "current_date": {
+      "type": "logic",
+      "description": "Tell the owner today's date."
+    },
+    "current_time": {
+      "type": "logic",
+      "description": "Tell the owner what time it is right now."
+    },
+    "current_week_number": {
+      "type": "logic",
+      "description": "Tell the owner the current week number of the year."
+    },
+    "days_countdown": {
+      "type": "logic",
+      "description": "Count down the number of days until a given date."
+    },
+    "current_date_time_with_time_zone": {
+      "type": "logic",
+      "description": "Tell the current date and time in a specific location's time zone."
+    }
   }
 }

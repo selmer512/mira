@@ -8,5 +8,19 @@
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",
     "url": "https://twitter.com/grenlouis"
+  },
+  "actions": {
+    "setup": {
+      "type": "dialog",
+      "description": "Start an interactive translation loop session."
+    },
+    "ready": {
+      "type": "dialog",
+      "description": "Confirm readiness and begin accepting text for translation."
+    },
+    "translate": {
+      "type": "logic",
+      "description": "Translate the provided text into the target language."
+    }
   }
 }

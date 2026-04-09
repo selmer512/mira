@@ -8,5 +8,19 @@
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",
     "url": "https://github.com/louistiti"
+  },
+  "actions": {
+    "set_timer": {
+      "type": "logic",
+      "description": "Set a countdown timer for a specified duration in minutes or seconds."
+    },
+    "cancel_timer": {
+      "type": "logic",
+      "description": "Cancel the currently running timer."
+    },
+    "check_timer": {
+      "type": "logic",
+      "description": "Check how much time is remaining on the current timer."
+    }
   }
 }

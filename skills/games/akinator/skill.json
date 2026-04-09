@@ -8,5 +8,23 @@
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",
     "url": "https://github.com/louistiti"
+  },
+  "actions": {
+    "choose_thematic": {
+      "type": "dialog",
+      "description": "Start an Akinator game and let the owner choose a thematic category."
+    },
+    "setup": {
+      "type": "logic",
+      "description": "Set up the Akinator game with the chosen thematic and begin questioning."
+    },
+    "guess": {
+      "type": "logic",
+      "description": "Have the Akinator make a guess based on the answers so far."
+    },
+    "retry": {
+      "type": "logic",
+      "description": "Retry the Akinator game after a completed or failed round."
+    }
   }
 }
