@@ -9,7 +9,7 @@ import {
   ListHeader,
   ListItem,
   Loader
-} from '@leon-ai/aurora'
+} from '@mira-ai/aurora'
 
 const container = document.querySelector('#init')
 const root = createRoot(container)

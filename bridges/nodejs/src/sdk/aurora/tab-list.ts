@@ -1,4 +1,4 @@
-import { type TabListProps } from '@leon-ai/aurora'
+import { type TabListProps } from '@mira-ai/aurora'
 
 import { WidgetComponent } from '../widget-component'
 

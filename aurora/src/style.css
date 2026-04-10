@@ -1,0 +1,444 @@
+/* @mira-ai/aurora — Design System Stylesheet */
+
+/* ─── CSS Custom Properties (Theme) ─────────────────────────────────────── */
+
+:root {
+  /* Brand colors */
+  --black-color: #000;
+  --light-black-color: #222426;
+  --white-color: #fff;
+  --grey-color: #323739;
+  --blue-color: #1c75db;
+  --pink-color: #ed297a;
+
+  /* Aurora semantic tokens */
+  --aurora-bg-color: var(--light-black-color);
+  --aurora-surface-color: #2a2e30;
+  --aurora-border-color: #3a3e40;
+  --aurora-text-color: var(--white-color);
+  --aurora-text-secondary-color: rgba(255, 255, 255, 0.5);
+  --aurora-accent-color: var(--blue-color);
+  --aurora-danger-color: #e53e3e;
+  --aurora-success-color: #38a169;
+  --aurora-warning-color: #d69e2e;
+  --aurora-info-color: var(--blue-color);
+
+  /* Named color aliases used by Icon bgColor / color props */
+  --aurora-color-blue: var(--blue-color);
+  --aurora-color-red: #e53e3e;
+  --aurora-color-green: #38a169;
+  --aurora-color-yellow: #d69e2e;
+  --aurora-color-secondary-blue: #4a9de8;
+  --aurora-color-transparent-red: rgba(229, 62, 62, 0.15);
+  --aurora-color-transparent-yellow: rgba(214, 158, 46, 0.15);
+  --aurora-color-transparent-green: rgba(56, 161, 105, 0.15);
+
+  /* Progress */
+  --aurora-progress-color: var(--blue-color);
+  --aurora-progress-track-color: rgba(255, 255, 255, 0.1);
+
+  /* Loader */
+  --a-loader-size-sm: 14px;
+  --a-loader-size-md: 20px;
+  --a-loader-size-lg: 28px;
+
+  /* Spacing scale */
+  --aurora-space-xs: 4px;
+  --aurora-space-sm: 8px;
+  --aurora-space-md: 16px;
+  --aurora-space-lg: 24px;
+  --aurora-space-xl: 32px;
+
+  /* Border radius */
+  --aurora-radius-sm: 4px;
+  --aurora-radius-md: 8px;
+  --aurora-radius-lg: 12px;
+}
+
+/* ─── Widget Wrapper ────────────────────────────────────────────────────── */
+
+.aurora-widget-wrapper {
+  background-color: var(--aurora-surface-color);
+  border: 1px solid var(--aurora-border-color);
+  border-radius: var(--aurora-radius-lg);
+  padding: var(--aurora-space-md);
+  color: var(--aurora-text-color);
+  font-family: inherit;
+}
+
+.aurora-widget-wrapper--no-padding {
+  padding: 0;
+}
+
+/* ─── Flexbox ───────────────────────────────────────────────────────────── */
+
+.aurora-flexbox {
+  display: flex;
+}
+
+/* ─── Text ──────────────────────────────────────────────────────────────── */
+
+.aurora-text {
+  color: var(--aurora-text-color);
+  line-height: 1.5;
+}
+
+.aurora-text--secondary {
+  color: var(--aurora-text-secondary-color);
+}
+
+/* ─── Button ────────────────────────────────────────────────────────────── */
+
+.aurora-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--aurora-radius-md);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+  outline: none;
+}
+
+.aurora-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.aurora-button--sm { padding: 4px 10px; font-size: 12px; }
+.aurora-button--md { padding: 8px 16px; font-size: 14px; }
+.aurora-button--lg { padding: 12px 24px; font-size: 16px; }
+
+.aurora-button--primary {
+  background-color: var(--aurora-accent-color);
+  color: var(--white-color);
+}
+.aurora-button--primary:hover:not(:disabled) { opacity: 0.85; }
+
+.aurora-button--secondary {
+  background-color: var(--aurora-surface-color);
+  color: var(--aurora-text-color);
+  border: 1px solid var(--aurora-border-color);
+}
+.aurora-button--secondary:hover:not(:disabled) { background-color: var(--aurora-border-color); }
+
+.aurora-button--ghost {
+  background-color: transparent;
+  color: var(--aurora-accent-color);
+}
+.aurora-button--ghost:hover:not(:disabled) { background-color: rgba(28, 117, 219, 0.1); }
+
+/* ─── Icon ──────────────────────────────────────────────────────────────── */
+
+.aurora-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ─── Icon Button ───────────────────────────────────────────────────────── */
+
+.aurora-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--aurora-radius-sm);
+  cursor: pointer;
+  color: var(--aurora-text-color);
+  padding: var(--aurora-space-xs);
+  transition: background-color 0.15s ease;
+}
+.aurora-icon-button:hover:not(:disabled) { background-color: var(--aurora-border-color); }
+.aurora-icon-button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ─── Card ──────────────────────────────────────────────────────────────── */
+
+.aurora-card {
+  background-color: var(--aurora-surface-color);
+  border: 1px solid var(--aurora-border-color);
+  border-radius: var(--aurora-radius-lg);
+  padding: var(--aurora-space-md);
+}
+.aurora-card--no-padding { padding: 0; }
+
+/* ─── List ──────────────────────────────────────────────────────────────── */
+
+.aurora-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.aurora-list-header {
+  list-style: none;
+  padding: var(--aurora-space-xs) var(--aurora-space-sm);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--aurora-text-secondary-color);
+}
+
+.aurora-list-item {
+  list-style: none;
+  padding: var(--aurora-space-sm) var(--aurora-space-sm);
+  color: var(--aurora-text-color);
+  border-radius: var(--aurora-radius-sm);
+  transition: background-color 0.12s ease;
+}
+
+.aurora-list-item--center {
+  display: flex;
+  align-items: center;
+}
+
+.aurora-list-item--clickable:hover {
+  background-color: var(--aurora-border-color);
+}
+
+/* ─── Loader ────────────────────────────────────────────────────────────── */
+
+.aurora-loader {
+  display: inline-block;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--aurora-accent-color);
+  animation: aurora-spin 0.7s linear infinite;
+}
+
+@keyframes aurora-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Progress ──────────────────────────────────────────────────────────── */
+
+.aurora-progress {
+  background-color: var(--aurora-progress-track-color);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.aurora-progress--sm { height: 4px; }
+.aurora-progress--md { height: 6px; }
+.aurora-progress--lg { height: 8px; }
+
+.aurora-progress__bar {
+  height: 100%;
+  background-color: var(--aurora-progress-color);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* ─── Circular Progress ─────────────────────────────────────────────────── */
+
+.aurora-circular-progress {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* ─── Input ─────────────────────────────────────────────────────────────── */
+
+.aurora-input {
+  background-color: var(--aurora-surface-color);
+  border: 1px solid var(--aurora-border-color);
+  border-radius: var(--aurora-radius-md);
+  color: var(--aurora-text-color);
+  padding: var(--aurora-space-sm) var(--aurora-space-md);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+.aurora-input:focus { border-color: var(--aurora-accent-color); }
+.aurora-input::placeholder { color: var(--aurora-text-secondary-color); }
+
+/* ─── Checkbox ──────────────────────────────────────────────────────────── */
+
+.aurora-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aurora-space-sm);
+  cursor: pointer;
+  color: var(--aurora-text-color);
+  font-size: 14px;
+}
+.aurora-checkbox input[type="checkbox"] {
+  accent-color: var(--aurora-accent-color);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+.aurora-checkbox__label { line-height: 1; }
+
+/* ─── Radio ─────────────────────────────────────────────────────────────── */
+
+.aurora-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aurora-space-sm);
+  cursor: pointer;
+  color: var(--aurora-text-color);
+  font-size: 14px;
+}
+.aurora-radio input[type="radio"] {
+  accent-color: var(--aurora-accent-color);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+.aurora-radio__label { line-height: 1; }
+
+.aurora-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aurora-space-sm);
+}
+
+/* ─── Range Slider ──────────────────────────────────────────────────────── */
+
+.aurora-range-slider {
+  width: 100%;
+  accent-color: var(--aurora-accent-color);
+  cursor: pointer;
+}
+
+/* ─── Select ────────────────────────────────────────────────────────────── */
+
+.aurora-select {
+  background-color: var(--aurora-surface-color);
+  border: 1px solid var(--aurora-border-color);
+  border-radius: var(--aurora-radius-md);
+  color: var(--aurora-text-color);
+  padding: var(--aurora-space-sm) var(--aurora-space-md);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  transition: border-color 0.15s ease;
+}
+.aurora-select:focus { border-color: var(--aurora-accent-color); }
+
+/* ─── Switch ────────────────────────────────────────────────────────────── */
+
+.aurora-switch {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+.aurora-switch input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.aurora-switch__track {
+  width: 36px;
+  height: 20px;
+  background-color: var(--aurora-border-color);
+  border-radius: 999px;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+.aurora-switch__track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--white-color);
+  transition: transform 0.2s ease;
+}
+.aurora-switch input:checked + .aurora-switch__track {
+  background-color: var(--aurora-accent-color);
+}
+.aurora-switch input:checked + .aurora-switch__track::after {
+  transform: translateX(16px);
+}
+
+/* ─── Status ────────────────────────────────────────────────────────────── */
+
+.aurora-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--aurora-space-xs);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.aurora-status--success { color: var(--aurora-success-color); background-color: rgba(56, 161, 105, 0.15); }
+.aurora-status--error   { color: var(--aurora-danger-color);  background-color: rgba(229, 62, 62, 0.15); }
+.aurora-status--warning { color: var(--aurora-warning-color); background-color: rgba(214, 158, 46, 0.15); }
+.aurora-status--info    { color: var(--aurora-info-color);    background-color: rgba(28, 117, 219, 0.15); }
+
+/* ─── Link ──────────────────────────────────────────────────────────────── */
+
+.aurora-link {
+  color: var(--aurora-accent-color);
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+.aurora-link:hover { opacity: 0.8; text-decoration: underline; }
+
+/* ─── Image ─────────────────────────────────────────────────────────────── */
+
+.aurora-image {
+  display: block;
+  max-width: 100%;
+}
+
+/* ─── Scroll Container ──────────────────────────────────────────────────── */
+
+.aurora-scroll-container {
+  overflow-y: auto;
+}
+.aurora-scroll-container::-webkit-scrollbar { width: 4px; }
+.aurora-scroll-container::-webkit-scrollbar-track { background: transparent; }
+.aurora-scroll-container::-webkit-scrollbar-thumb { background: var(--aurora-border-color); border-radius: 2px; }
+
+/* ─── Form ──────────────────────────────────────────────────────────────── */
+
+.aurora-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aurora-space-md);
+}
+
+/* ─── Tabs ──────────────────────────────────────────────────────────────── */
+
+.aurora-tab-group { display: flex; flex-direction: column; }
+
+.aurora-tab-list {
+  display: flex;
+  gap: var(--aurora-space-xs);
+  border-bottom: 1px solid var(--aurora-border-color);
+  margin-bottom: var(--aurora-space-md);
+}
+
+.aurora-tab {
+  padding: var(--aurora-space-sm) var(--aurora-space-md);
+  color: var(--aurora-text-secondary-color);
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.aurora-tab--selected {
+  color: var(--aurora-text-color);
+  border-bottom-color: var(--aurora-accent-color);
+}
+
+.aurora-tab-content { flex: 1; }

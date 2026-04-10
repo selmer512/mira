@@ -1,4 +1,4 @@
-import { type LinkProps } from '@leon-ai/aurora'
+import { type LinkProps } from '@mira-ai/aurora'
 
 import { WidgetComponent } from '../widget-component'
 

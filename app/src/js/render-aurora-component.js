@@ -1,5 +1,5 @@
 import { createElement } from 'react'
-import * as auroraComponents from '@leon-ai/aurora'
+import * as auroraComponents from '@mira-ai/aurora'
 
 import * as customAuroraComponents from '../custom-aurora-components'
 

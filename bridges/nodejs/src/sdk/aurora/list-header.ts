@@ -1,4 +1,4 @@
-import { type ListHeaderProps } from '@leon-ai/aurora'
+import { type ListHeaderProps } from '@mira-ai/aurora'
 
 import { WidgetComponent } from '../widget-component'
 
