@@ -10,9 +10,6 @@ import {
   NODEJS_BRIDGE_DIST_PATH,
   PYTHON_BRIDGE_DIST_PATH,
   PYTHON_TCP_SERVER_DIST_PATH,
-  NODEJS_BRIDGE_BIN_NAME,
-  PYTHON_BRIDGE_BIN_NAME,
-  PYTHON_TCP_SERVER_BIN_NAME,
   NODEJS_BRIDGE_VERSION,
   PYTHON_BRIDGE_VERSION,
   PYTHON_TCP_SERVER_VERSION
@@ -33,7 +30,7 @@ TARGETS.set('nodejs-bridge', {
   name: 'Node.js bridge',
   distPath: NODEJS_BRIDGE_DIST_PATH,
   manifestPath: path.join(NODEJS_BRIDGE_DIST_PATH, 'manifest.json'),
-  archiveName: `${NODEJS_BRIDGE_BIN_NAME.split('.')[0]}.zip`,
+  archiveName: `leon-nodejs-bridge.zip`,
   version: NODEJS_BRIDGE_VERSION,
   isPlatformDependent: false // Need to be built for the target platform or not
 })
@@ -41,7 +38,7 @@ TARGETS.set('python-bridge', {
   name: 'Python bridge',
   distPath: PYTHON_BRIDGE_DIST_PATH,
   manifestPath: path.join(PYTHON_BRIDGE_DIST_PATH, 'manifest.json'),
-  archiveName: `${PYTHON_BRIDGE_BIN_NAME}-${BINARIES_FOLDER_NAME}.zip`,
+  archiveName: `leon-python-bridge-${BINARIES_FOLDER_NAME}.zip`,
   version: PYTHON_BRIDGE_VERSION,
   isPlatformDependent: true
 })
@@ -49,7 +46,7 @@ TARGETS.set('tcp-server', {
   name: 'Python TCP server',
   distPath: PYTHON_TCP_SERVER_DIST_PATH,
   manifestPath: path.join(PYTHON_TCP_SERVER_DIST_PATH, 'manifest.json'),
-  archiveName: `${PYTHON_TCP_SERVER_BIN_NAME}-${BINARIES_FOLDER_NAME}.zip`,
+  archiveName: `leon-tcp-server-${BINARIES_FOLDER_NAME}.zip`,
   version: PYTHON_TCP_SERVER_VERSION,
   isPlatformDependent: true
 })
