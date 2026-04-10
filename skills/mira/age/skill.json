@@ -8,11 +8,5 @@
     "name": "Théo LUDWIG",
     "email": "contact@theoludwig.fr",
     "url": "https://theoludwig.fr"
-  },
-  "actions": {
-    "run": {
-      "type": "logic",
-      "description": "Tell the owner how old Mira is and when she was born."
-    }
   }
 }

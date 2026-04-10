@@ -8,19 +8,5 @@
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",
     "url": "https://github.com/louistiti"
-  },
-  "actions": {
-    "introduce_mira": {
-      "type": "logic",
-      "description": "Introduce Mira to the owner and explain what she can do."
-    },
-    "gather_basic_info": {
-      "type": "dialog",
-      "description": "Ask the owner for their name and remember it for future interactions."
-    },
-    "remember": {
-      "type": "logic",
-      "description": "Remember the basic information provided by the owner."
-    }
   }
 }

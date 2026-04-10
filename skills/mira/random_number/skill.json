@@ -8,11 +8,5 @@
     "name": "Louis Grenard",
     "email": "louis@getleon.ai",
     "url": "https://github.com/louistiti"
-  },
-  "actions": {
-    "run": {
-      "type": "logic",
-      "description": "Generate and return a random number to the owner."
-    }
   }
 }
