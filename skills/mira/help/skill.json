@@ -8,5 +8,11 @@
     "name": "Théo LUDWIG",
     "email": "contact@theoludwig.fr",
     "url": "https://theoludwig.fr"
+  },
+  "actions": {
+    "help": {
+      "type": "logic",
+      "description": "List the skills available and help the owner get started with Mira."
+    }
   }
 }
