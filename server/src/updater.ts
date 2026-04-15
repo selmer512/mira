@@ -32,8 +32,6 @@ export class Updater {
 
         SOCKET_SERVER.socket?.emit('new-update', latestVersion)
       } else {
-        const releaseMode = this.isDevelopment ? 'development' : 'stable'
-
         LogHelper.success(
           `You are using the latest version of Mira`
         )
