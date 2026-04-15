@@ -581,20 +581,9 @@ dotenv.config()
         SystemHelper.sanitizeUsername(JSON.stringify(reportDataInput))
       )
 
-      LogHelper.title('REPORT URL')
+      LogHelper.title('REPORT')
 
-      LogHelper.info('Sending report...')
-
-      try {
-        const { data } = await axios.post('https://getleon.ai/api/report', {
-          report: reportDataInput
-        })
-        const { data: responseReportData } = data
-
-        LogHelper.success(`Report URL: ${responseReportData.reportUrl}`)
-      } catch (e) {
-        LogHelper.error(`Failed to send report: ${e}`)
-      }
+      LogHelper.info(JSON.stringify(reportDataInput, null, 2))
 
       process.exit(0)
     })
