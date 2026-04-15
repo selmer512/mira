@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+import { getMiraCachePath } from './download-cache.js'
 import {
   NVIDIA_LIBS_PATH,
   PYTORCH_PATH,
@@ -110,44 +111,46 @@ async function installPyTorch(requiredVersion, targetPath, manifestPath) {
   }
 
   if (!manifest || manifest.version !== requiredVersion) {
-    const wheelPath = path.join(PYTORCH_PATH, `torch-${requiredVersion}.whl`)
+    const wheelFilename = `torch-${requiredVersion}.whl`
+    const cachedWheelPath = await getMiraCachePath('pytorch', wheelFilename)
 
-    // Clean up old version
+    // Clean up old version in project (the cached wheel is kept)
     await fs.promises.rm(targetPath, { recursive: true, force: true })
-    await fs.promises.rm(wheelPath, { force: true })
 
     // Create target directory
     await fs.promises.mkdir(targetPath, { recursive: true })
 
     try {
-      const downloadURL = getPyTorchDownloadURL(requiredVersion)
+      if (!fs.existsSync(cachedWheelPath)) {
+        const downloadURL = getPyTorchDownloadURL(requiredVersion)
 
-      LogHelper.info(`Downloading PyTorch ${requiredVersion}...`)
+        LogHelper.info(`Downloading PyTorch ${requiredVersion}...`)
 
-      await FileHelper.downloadFile(downloadURL, wheelPath, {
-        cliProgress: true,
-        parallelStreams: 3,
-        skipExisting: false
-      })
+        await FileHelper.downloadFile(downloadURL, cachedWheelPath, {
+          cliProgress: true,
+          parallelStreams: 3,
+          skipExisting: false
+        })
 
-      LogHelper.success('PyTorch downloaded')
+        LogHelper.success('PyTorch downloaded and cached')
+      } else {
+        LogHelper.info(`Using cached PyTorch ${requiredVersion} wheel`)
+      }
+
       LogHelper.info('Extracting PyTorch wheel...')
 
       // Extract wheel (wheels are just ZIP files)
-      await FileHelper.extractArchive(wheelPath, targetPath, {
+      await FileHelper.extractArchive(cachedWheelPath, targetPath, {
         stripComponents: 0
       })
 
       LogHelper.success('PyTorch extracted')
 
-      // Clean up and create manifest
-      await Promise.all([
-        fs.promises.rm(wheelPath, { force: true }),
-        FileHelper.createManifestFile(manifestPath, 'torch', requiredVersion, {
-          os: SystemHelper.getInformation().type,
-          architecture: SystemHelper.getInformation().cpuArchitecture
-        })
-      ])
+      // Create manifest (cached wheel is kept for future installs)
+      await FileHelper.createManifestFile(manifestPath, 'torch', requiredVersion, {
+        os: SystemHelper.getInformation().type,
+        architecture: SystemHelper.getInformation().cpuArchitecture
+      })
 
       LogHelper.success('PyTorch manifest file created')
 

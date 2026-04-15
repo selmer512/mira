@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+import { getMiraCachePath } from './download-cache.js'
 import { CPUArchitectures } from '@/types'
 import {
   CMAKE_PATH,
@@ -81,23 +82,29 @@ export default async function setupCMake() {
     return
   }
 
-  const archivePath = path.join(CMAKE_PATH, `cmake-${CMAKE_VERSION}.tar.gz`)
+  const archiveFilename = `cmake-${CMAKE_VERSION}.tar.gz`
+  const cachedArchivePath = await getMiraCachePath('cmake', archiveFilename)
 
   await cleanInstallDirectory()
 
   try {
-    LogHelper.info(`Downloading CMake ${CMAKE_VERSION}...`)
+    if (!fs.existsSync(cachedArchivePath)) {
+      LogHelper.info(`Downloading CMake ${CMAKE_VERSION}...`)
 
-    await FileHelper.downloadFile(getDownloadURL(), archivePath, {
-      cliProgress: true,
-      parallelStreams: 3,
-      skipExisting: false
-    })
+      await FileHelper.downloadFile(getDownloadURL(), cachedArchivePath, {
+        cliProgress: true,
+        parallelStreams: 3,
+        skipExisting: false
+      })
 
-    LogHelper.success('CMake downloaded')
+      LogHelper.success('CMake downloaded and cached')
+    } else {
+      LogHelper.info(`Using cached CMake ${CMAKE_VERSION}`)
+    }
+
     LogHelper.info('Extracting CMake...')
 
-    await FileHelper.extractArchive(archivePath, CMAKE_INSTALL_PATH, {
+    await FileHelper.extractArchive(cachedArchivePath, CMAKE_INSTALL_PATH, {
       stripComponents: 1
     })
 
@@ -105,17 +112,13 @@ export default async function setupCMake() {
       throw new Error(`Cannot find CMake binary at "${CMAKE_BIN_PATH}"`)
     }
 
-    await Promise.all([
-      fs.promises.rm(archivePath, { force: true }),
-      FileHelper.createManifestFile(CMAKE_MANIFEST_PATH, 'cmake', CMAKE_VERSION, {
-        os: SystemHelper.getInformation().type,
-        architecture: SystemHelper.getInformation().cpuArchitecture
-      })
-    ])
+    await FileHelper.createManifestFile(CMAKE_MANIFEST_PATH, 'cmake', CMAKE_VERSION, {
+      os: SystemHelper.getInformation().type,
+      architecture: SystemHelper.getInformation().cpuArchitecture
+    })
 
     LogHelper.success(`CMake ${CMAKE_VERSION} ready`)
   } catch (error) {
-    await fs.promises.rm(archivePath, { force: true })
     throw new Error(`Failed to set up CMake: ${error}`)
   }
 }

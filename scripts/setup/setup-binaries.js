@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import { command } from 'execa'
+import { getMiraCachePath } from './download-cache.js'
 
 import {
   BINARIES_FOLDER_NAME,
@@ -73,12 +74,10 @@ const setupBinaries = async (key) => {
     const buildPath = isPlatformDependent
       ? path.join(distPath, BINARIES_FOLDER_NAME)
       : path.join(distPath, 'bin')
-    const archivePath = path.join(distPath, archiveName)
+    const cachedArchivePath = await getMiraCachePath('binaries', archiveName)
 
-    await Promise.all([
-      fs.promises.rm(buildPath, { recursive: true, force: true }),
-      fs.promises.rm(archivePath, { recursive: true, force: true })
-    ])
+    // Clean up old extracted version in project (cached archive is kept)
+    await fs.promises.rm(buildPath, { recursive: true, force: true })
 
     if (key === 'nodejs-bridge') {
       try {
@@ -98,23 +97,26 @@ const setupBinaries = async (key) => {
     }
 
     try {
-      LogHelper.info(`Downloading ${name}...`)
+      if (!fs.existsSync(cachedArchivePath)) {
+        LogHelper.info(`Downloading ${name}...`)
 
-      const latestReleaseAssetURL = `${GITHUB_URL}/releases/download/${key}_v${version}/${archiveName}`
+        const latestReleaseAssetURL = `${GITHUB_URL}/releases/download/${key}_v${version}/${archiveName}`
 
-      await FileHelper.downloadFile(latestReleaseAssetURL, archivePath)
+        await FileHelper.downloadFile(latestReleaseAssetURL, cachedArchivePath)
 
-      LogHelper.success(`${name} downloaded`)
+        LogHelper.success(`${name} downloaded and cached`)
+      } else {
+        LogHelper.info(`Using cached ${name} ${version}`)
+      }
+
       LogHelper.info(`Extracting ${name}...`)
 
-      await FileHelper.extractArchive(archivePath, distPath)
+      await FileHelper.extractArchive(cachedArchivePath, distPath)
 
       LogHelper.success(`${name} extracted`)
 
-      await Promise.all([
-        fs.promises.rm(archivePath, { recursive: true, force: true }),
-        FileHelper.createManifestFile(manifestPath, name, version)
-      ])
+      // Create manifest (cached archive is kept for future installs)
+      await FileHelper.createManifestFile(manifestPath, name, version)
 
       LogHelper.success(`${name} manifest file created`)
       LogHelper.success(`${name} ${version} ready`)

@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+import { getMiraCachePath } from './download-cache.js'
 import { CPUArchitectures } from '@/types'
 import {
   LLM_DIR_PATH,
@@ -144,15 +145,26 @@ async function downloadLLM(selectedModel) {
   await removePreviousDefaultModel(manifest?.defaultInstalledLLMPath, defaultInstalledLLMPath)
   await fs.promises.rm(targetPath, { force: true })
 
-  const llmDownloadURL = await NetworkHelper.setHuggingFaceURL(
-    selectedModel.downloadURL
-  )
+  const cachedPath = await getMiraCachePath('llm', selectedModel.fileName)
 
-  LogHelper.info(
-    `Downloading ${selectedModel.name} (${selectedModel.version}) from ${llmDownloadURL}...`
-  )
+  if (!fs.existsSync(cachedPath)) {
+    const llmDownloadURL = await NetworkHelper.setHuggingFaceURL(
+      selectedModel.downloadURL
+    )
 
-  await FileHelper.downloadFile(llmDownloadURL, targetPath)
+    LogHelper.info(
+      `Downloading ${selectedModel.name} (${selectedModel.version}) from ${llmDownloadURL}...`
+    )
+
+    await FileHelper.downloadFile(llmDownloadURL, cachedPath)
+    LogHelper.success(`${selectedModel.name} saved to global cache`)
+  } else {
+    LogHelper.success(
+      `Using cached ${selectedModel.name} (${selectedModel.version})`
+    )
+  }
+
+  await fs.promises.symlink(cachedPath, targetPath)
 
   await FileHelper.createManifestFile(
     LLM_MANIFEST_PATH,

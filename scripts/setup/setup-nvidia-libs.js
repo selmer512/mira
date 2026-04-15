@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+import { getMiraCachePath } from './download-cache.js'
 import {
   NVIDIA_LIBS_PATH,
   NVIDIA_CUBLAS_PATH,
@@ -158,47 +159,46 @@ async function installNVIDIALibrary(
 
   if (!manifest || manifest.version !== requiredVersion) {
     const ext = SystemHelper.isWindows() ? 'zip' : 'tar.xz'
-    const archivePath = path.join(
-      NVIDIA_LIBS_PATH,
-      `${library}-${requiredVersion}.${ext}`
-    )
+    const archiveFilename = `${library}-${requiredVersion}.${ext}`
+    const cachedArchivePath = await getMiraCachePath('nvidia', archiveFilename)
 
-    // Clean up old version
+    // Clean up old extracted version in project (cached archive is kept)
     await fs.promises.rm(targetPath, { recursive: true, force: true })
-    await fs.promises.rm(archivePath, { force: true })
 
     // Create target directory
     await fs.promises.mkdir(targetPath, { recursive: true })
 
     try {
-      const downloadURL = getNVIDIADownloadURL(library, requiredVersion)
+      if (!fs.existsSync(cachedArchivePath)) {
+        const downloadURL = getNVIDIADownloadURL(library, requiredVersion)
 
-      LogHelper.info(`Downloading ${library}...`)
+        LogHelper.info(`Downloading ${library}...`)
 
-      await FileHelper.downloadFile(downloadURL, archivePath, {
-        cliProgress: true,
-        parallelStreams: 3,
-        skipExisting: false
-      })
+        await FileHelper.downloadFile(downloadURL, cachedArchivePath, {
+          cliProgress: true,
+          parallelStreams: 3,
+          skipExisting: false
+        })
 
-      LogHelper.success(`${library} downloaded`)
+        LogHelper.success(`${library} downloaded and cached`)
+      } else {
+        LogHelper.info(`Using cached ${library} ${requiredVersion}`)
+      }
+
       LogHelper.info(`Extracting ${library}...`)
 
       // Extract archive using unified method
-      await FileHelper.extractArchive(archivePath, targetPath, {
+      await FileHelper.extractArchive(cachedArchivePath, targetPath, {
         stripComponents: 1
       })
 
       LogHelper.success(`${library} extracted`)
 
-      // Clean up and create manifest
-      await Promise.all([
-        fs.promises.rm(archivePath, { force: true }),
-        FileHelper.createManifestFile(manifestPath, library, requiredVersion, {
-          os: SystemHelper.getInformation().type,
-          architecture: SystemHelper.getInformation().cpuArchitecture
-        })
-      ])
+      // Create manifest (cached archive is kept for future installs)
+      await FileHelper.createManifestFile(manifestPath, library, requiredVersion, {
+        os: SystemHelper.getInformation().type,
+        architecture: SystemHelper.getInformation().cpuArchitecture
+      })
 
       LogHelper.success(`${library} manifest file created`)
       LogHelper.success(`${library} ${requiredVersion} ready`)

@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+import { getMiraCachePath } from './download-cache.js'
 import { CPUArchitectures } from '@/types'
 import {
   NINJA_BIN_PATH,
@@ -81,40 +82,42 @@ export default async function setupNinja() {
     return
   }
 
-  const archivePath = path.join(NINJA_PATH, `ninja-${NINJA_VERSION}.zip`)
+  const archiveFilename = `ninja-${NINJA_VERSION}.zip`
+  const cachedArchivePath = await getMiraCachePath('ninja', archiveFilename)
 
   await cleanInstallDirectory()
 
   try {
-    LogHelper.info(`Downloading Ninja ${NINJA_VERSION}...`)
+    if (!fs.existsSync(cachedArchivePath)) {
+      LogHelper.info(`Downloading Ninja ${NINJA_VERSION}...`)
 
-    await FileHelper.downloadFile(getDownloadURL(), archivePath, {
-      cliProgress: true,
-      parallelStreams: 3,
-      skipExisting: false
-    })
+      await FileHelper.downloadFile(getDownloadURL(), cachedArchivePath, {
+        cliProgress: true,
+        parallelStreams: 3,
+        skipExisting: false
+      })
 
-    LogHelper.success('Ninja downloaded')
+      LogHelper.success('Ninja downloaded and cached')
+    } else {
+      LogHelper.info(`Using cached Ninja ${NINJA_VERSION}`)
+    }
+
     LogHelper.info('Extracting Ninja...')
 
-    await FileHelper.extractArchive(archivePath, NINJA_INSTALL_PATH)
+    await FileHelper.extractArchive(cachedArchivePath, NINJA_INSTALL_PATH)
     await fs.promises.chmod(NINJA_BIN_PATH, 0o755)
 
     if (!fs.existsSync(NINJA_BIN_PATH)) {
       throw new Error(`Cannot find Ninja binary at "${NINJA_BIN_PATH}"`)
     }
 
-    await Promise.all([
-      fs.promises.rm(archivePath, { force: true }),
-      FileHelper.createManifestFile(NINJA_MANIFEST_PATH, 'ninja', NINJA_VERSION, {
-        os: SystemHelper.getInformation().type,
-        architecture: SystemHelper.getInformation().cpuArchitecture
-      })
-    ])
+    await FileHelper.createManifestFile(NINJA_MANIFEST_PATH, 'ninja', NINJA_VERSION, {
+      os: SystemHelper.getInformation().type,
+      architecture: SystemHelper.getInformation().cpuArchitecture
+    })
 
     LogHelper.success(`Ninja ${NINJA_VERSION} ready`)
   } catch (error) {
-    await fs.promises.rm(archivePath, { force: true })
     throw new Error(`Failed to set up Ninja: ${error}`)
   }
 }
