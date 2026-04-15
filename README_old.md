@@ -159,7 +159,7 @@ To install these prerequisites, you can follow the [How To section](https://docs
 
 ```sh
 # Install the Mira CLI
-npm install --global @leon-ai/cli
+npm install --global https://github.com/selmer512/mira-cli
 
 # Install Mira (stable branch)
 mira create birth
