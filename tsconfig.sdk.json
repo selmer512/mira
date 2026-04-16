@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ESNext"],
+    "types": ["node"],
+    "skipLibCheck": true,
+    "declaration": false,
+    "strict": false,
+    "noImplicitAny": false,
+    "outDir": "./.sdk-out",
+    "rootDir": "./bridges/nodejs/src/sdk/tools/memory"
+  },
+  "include": [
+    "bridges/nodejs/src/sdk/tools/memory/qmd-retrieval.ts",
+    "bridges/nodejs/src/sdk/tools/memory/qmd-store.ts"
+  ],
+  "exclude": ["node_modules"]
+}
