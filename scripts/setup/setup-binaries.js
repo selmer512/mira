@@ -63,6 +63,10 @@ const setupBinaries = async (key) => {
   } = TARGETS.get(key)
   let manifest = null
 
+  const buildPath = isPlatformDependent
+    ? path.join(distPath, BINARIES_FOLDER_NAME)
+    : path.join(distPath, 'bin')
+
   if (fs.existsSync(manifestPath)) {
     manifest = JSON.parse(await fs.promises.readFile(manifestPath, 'utf8'))
 
@@ -70,11 +74,15 @@ const setupBinaries = async (key) => {
     LogHelper.info(`Latest version is ${version}`)
   }
 
-  if (!manifest || manifest.version !== version) {
-    const buildPath = isPlatformDependent
-      ? path.join(distPath, BINARIES_FOLDER_NAME)
-      : path.join(distPath, 'bin')
+  const isBinaryMissing = !fs.existsSync(buildPath)
+  const isVersionMismatch = !manifest || manifest.version !== version
+
+  if (isVersionMismatch || isBinaryMissing) {
     const cachedArchivePath = await getMiraCachePath('binaries', archiveName)
+
+    if (isBinaryMissing && !isVersionMismatch) {
+      LogHelper.warning(`${name} binary directory missing despite matching manifest — re-extracting`)
+    }
 
     // Clean up old extracted version in project (cached archive is kept)
     await fs.promises.rm(buildPath, { recursive: true, force: true })
