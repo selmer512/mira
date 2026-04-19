@@ -300,9 +300,9 @@ export const [, PYTHON_TCP_SERVER_VERSION] = fs
   .readFileSync(PYTHON_TCP_SERVER_VERSION_FILE_PATH, 'utf8')
   .split('\'')
 
-export const NODEJS_BRIDGE_BIN_NAME = 'mira-nodejs-bridge.cjs'
-export const PYTHON_BRIDGE_BIN_NAME = 'mira-python-bridge'
-export const PYTHON_TCP_SERVER_BIN_NAME = 'mira-tcp-server'
+export const NODEJS_BRIDGE_BIN_NAME = 'leon-nodejs-bridge.cjs'
+export const PYTHON_BRIDGE_BIN_NAME = 'leon-python-bridge'
+export const PYTHON_TCP_SERVER_BIN_NAME = 'leon-tcp-server'
 
 export const PYTHON_TCP_SERVER_BIN_PATH = path.join(
   PYTHON_TCP_SERVER_DIST_PATH,
