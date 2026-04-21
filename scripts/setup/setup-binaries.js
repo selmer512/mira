@@ -133,6 +133,18 @@ const setupBinaries = async (key) => {
       if (fs.existsSync(buildPath)) {
         const entries = fs.readdirSync(buildPath)
         LogHelper.info(`${name} binary dir contents: [${entries.join(', ')}]`)
+
+        // Ensure all files in the binary dir are executable on non-Windows
+        if (process.platform !== 'win32') {
+          for (const entry of entries) {
+            const entryPath = path.join(buildPath, entry)
+            const stat = fs.statSync(entryPath)
+            if (stat.isFile()) {
+              await fs.promises.chmod(entryPath, 0o755)
+            }
+          }
+          LogHelper.success(`${name} binary permissions set`)
+        }
       } else {
         LogHelper.warning(`${name} binary dir still missing after extraction: ${buildPath}`)
         // Show what IS in distPath to help diagnose layout mismatches
