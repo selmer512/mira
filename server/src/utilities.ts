@@ -33,6 +33,7 @@ const TCP_SERVER_WARNINGS_TO_IGNORE = [
   'CUDNN_STATUS_NOT_SUPPORTED',
   'cls.seq_relationship.weight',
   'ALSA lib',
+  'Unknown PCM',
   'jack',
   'server request channel',
   '[W:onnxruntime:Default'
