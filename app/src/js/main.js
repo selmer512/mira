@@ -60,9 +60,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     client.updateMood(window.miraConfigInfo.mood)
     client.init()
 
-    infoButton.addEventListener('click', () => {
-      alert(JSON.stringify(infoToDisplay, null, 2))
-    })
+    const infoPanel = document.querySelector('#info-panel')
+    const infoPanelContent = document.querySelector('#info-panel-content')
+    const infoPanelBackdrop = document.querySelector('#info-panel-backdrop')
+    const infoPanelClose = document.querySelector('#info-panel-close')
+
+    function openInfoPanel() {
+      infoPanelContent.textContent = JSON.stringify(infoToDisplay, null, 2)
+      infoPanel.classList.add('open')
+      infoPanelBackdrop.classList.add('visible')
+    }
+    function closeInfoPanel() {
+      infoPanel.classList.remove('open')
+      infoPanelBackdrop.classList.remove('visible')
+    }
+
+    infoButton.addEventListener('click', openInfoPanel)
+    infoPanelClose.addEventListener('click', closeInfoPanel)
+    infoPanelBackdrop.addEventListener('click', closeInfoPanel)
 
     /*if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices

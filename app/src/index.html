@@ -296,11 +296,15 @@
         <p id="voice-speech"></p>
       </div>
     </div>
-    <main>
-      <div id="top-container">
+    <header id="app-header">
+      <div id="logo"></div>
+      <div id="header-right">
         <div id="mood"></div>
+        <span id="version"><small>v</small></span>
         <button id="info">Info</button>
       </div>
+    </header>
+    <main>
       <div id="feed">
         <p id="no-bubble" class="hide">
           You can start to interact with Mira, don't be shy.
@@ -329,20 +333,14 @@
         </ul>
       </div>
     </main>
-    <footer>
-      <div id="logo"></div>
-      <br />
-      <div id="version">
-        <small>v</small>
+    <aside id="info-panel">
+      <div id="info-panel-header">
+        <span>System Info</span>
+        <button id="info-panel-close">&#x2715;</button>
       </div>
-      <div id="discord">
-        <small class="italic">
-          <a href="https://discord.gg/MNQqqKg" target="_blank"
-            >Join us on Discord</a
-          >
-        </small>
-      </div>
-    </footer>
+      <pre id="info-panel-content"></pre>
+    </aside>
+    <div id="info-panel-backdrop"></div>
     <script type="module" src="/js/main.js"></script>
   </body>
 </html>

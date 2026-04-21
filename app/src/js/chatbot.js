@@ -331,6 +331,18 @@ export default class Chatbot {
       container.appendChild(this.createMetricsElement(metrics))
     }
 
+    if (!isCreatingFromLoadingFeed && !widgetPayload) {
+      const timeEl = document.createElement('time')
+      const now = new Date()
+      timeEl.className = 'bubble-time'
+      timeEl.dateTime = now.toISOString()
+      timeEl.textContent = now.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+      container.appendChild(timeEl)
+    }
+
     let widgetComponentTree = null
     let widgetSupportedEvents = null
 
