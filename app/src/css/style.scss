@@ -299,11 +299,11 @@ textarea::-webkit-scrollbar-thumb {
   gap: 14px;
 }
 
-#logo {
-  background: no-repeat url(../img/logo.svg);
-  background-size: contain;
-  width: 80px;
-  height: 28px;
+#mira-logo-root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 #mood {

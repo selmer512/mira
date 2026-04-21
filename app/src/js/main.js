@@ -1,5 +1,8 @@
 import axios from 'axios'
 import '@mira-ai/aurora/style.css'
+import { createElement } from 'react'
+import { createRoot } from 'react-dom/client'
+import MiraLogo from './mira-logo.jsx'
 
 window.miraInitStatusEvent = new EventTarget()
 
@@ -22,6 +25,11 @@ const serverUrl =
     : `${config.server_host}:${config.server_port}`
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const logoEl = document.querySelector('#mira-logo-root')
+  if (logoEl) {
+    createRoot(logoEl).render(createElement(MiraLogo))
+  }
+
   try {
     const response = await axios.get(`${serverUrl}/api/v1/info`)
     const input = document.querySelector('#utterance')

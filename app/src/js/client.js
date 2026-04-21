@@ -45,6 +45,10 @@ export default class Client {
     return this._recorder
   }
 
+  setPresenceMode(mode) {
+    window.dispatchEvent(new CustomEvent('mira-mode-change', { detail: { mode } }))
+  }
+
   updateMood(mood) {
     if (window.miraConfigInfo.llm.enabled) {
       const moodContainer = document.querySelector('#mood')
@@ -93,6 +97,7 @@ export default class Client {
       this.enableVoiceMode()
 
       this.voiceEnergy.status = 'listening'
+      this.setPresenceMode('listening')
 
       this.socket.emit('asr-start-record')
     }
@@ -130,6 +135,8 @@ export default class Client {
     })
 
     this.socket.on('ready', () => {
+      this.setPresenceMode('idle')
+
       setTimeout(() => {
         const body = document.querySelector('body')
         body.classList.remove('settingup')
@@ -147,6 +154,7 @@ export default class Client {
 
       // Mira has finished answering
       this._isMiraGeneratingAnswer = false
+      this.setPresenceMode('idle')
 
       /**
        * Handle message replacement if replaceMessageId is provided
@@ -246,6 +254,7 @@ export default class Client {
 
     this.socket.on('is-typing', (data) => {
       this.chatbot.isTyping('mira', data)
+      if (data) this.setPresenceMode('thinking')
     })
 
     this.socket.on('recognized', (data, cb) => {
@@ -356,6 +365,7 @@ export default class Client {
      */
     this.socket.on('tts-stream', (data) => {
       this.voiceEnergy.status = 'talking'
+      this.setPresenceMode('talking')
 
       // const { audioId, chunk } = data
       const { chunk } = data
@@ -383,6 +393,7 @@ export default class Client {
 
     this.socket.on('tts-end-of-speech', async () => {
       this.voiceEnergy.status = 'listening'
+      this.setPresenceMode('idle')
     })
 
     this.socket.on('audio-forwarded', (data, cb) => {
@@ -448,6 +459,7 @@ export default class Client {
       })
       this.chatbot.sendTo('mira', this._input.value)
       this.chatbot.scrollDown({ force: true })
+      this.setPresenceMode('thinking')
 
       this._suggestions.forEach((suggestion) => {
         // Remove all event listeners of the suggestion
