@@ -28,8 +28,14 @@ import { LogHelper } from '@/helpers/log-helper'
 import { SystemHelper } from '@/helpers/system-helper'
 
 const LLAMACPP_BASE_URL = 'http://0.0.0.0:8080/v1'
-const LLAMACPP_READY_TIMEOUT_MS = 120_000
+const LLAMACPP_READY_TIMEOUT_MS = 300_000
 const LLAMACPP_READY_POLL_INTERVAL_MS = 250
+// Number of layers to offload to GPU. Default 99 = all layers (fast GPU path).
+// Set MIRA_LLAMACPP_GPU_LAYERS=0 in .env to force CPU-only.
+const LLAMACPP_GPU_LAYERS = parseInt(
+  process.env['MIRA_LLAMACPP_GPU_LAYERS'] ?? '99',
+  10
+)
 const LLAMA_SERVER_LOG_RESET_INTERVAL_MS = 12 * 60 * 60 * 1_000
 const LLAMACPP_SERVER_URL = new URL(LLAMACPP_BASE_URL)
 const LLAMACPP_MODELS_URL = new URL(
@@ -657,9 +663,10 @@ export default class LlamaCPPLLMProvider extends AISDKRemoteLLMProvider {
 
     LogHelper.title('llama.cpp LLM Provider')
     LogHelper.info(`Starting llama-server with model "${modelPath}"...`)
+    LogHelper.info(`GPU layers: ${LLAMACPP_GPU_LAYERS} (set MIRA_LLAMACPP_GPU_LAYERS=0 to disable)`)
 
     this.writeServerLogLine(
-      `Starting llama-server with model "${modelPath}".`
+      `Starting llama-server with model "${modelPath}" --n-gpu-layers ${LLAMACPP_GPU_LAYERS}.`
     )
 
     const serverProcess = spawn(
@@ -680,7 +687,9 @@ export default class LlamaCPPLLMProvider extends AISDKRemoteLLMProvider {
         '--cache-type-v',
         'q8_0',
         '--parallel',
-        '1'
+        '1',
+        '--n-gpu-layers',
+        String(LLAMACPP_GPU_LAYERS)
       ],
       {
         cwd: process.cwd(),

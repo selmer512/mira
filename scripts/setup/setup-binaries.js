@@ -77,8 +77,14 @@ const setupBinaries = async (key) => {
   const isBinaryMissing = !fs.existsSync(buildPath)
   const isVersionMismatch = !manifest || manifest.version !== version
 
+  LogHelper.info(`${name} expected binary dir: ${buildPath}`)
+  LogHelper.info(`${name} binary dir exists: ${!isBinaryMissing}`)
+
   if (isVersionMismatch || isBinaryMissing) {
     const cachedArchivePath = await getMiraCachePath('binaries', archiveName)
+
+    LogHelper.info(`${name} archive: ${archiveName}`)
+    LogHelper.info(`${name} cache path: ${cachedArchivePath}`)
 
     if (isBinaryMissing && !isVersionMismatch) {
       LogHelper.warning(`${name} binary directory missing despite matching manifest — re-extracting`)
@@ -117,11 +123,24 @@ const setupBinaries = async (key) => {
         LogHelper.info(`Using cached ${name} ${version}`)
       }
 
-      LogHelper.info(`Extracting ${name}...`)
+      LogHelper.info(`Extracting ${name} to ${distPath}...`)
 
       await FileHelper.extractArchive(cachedArchivePath, distPath)
 
       LogHelper.success(`${name} extracted`)
+
+      // Debug: show what landed in the binary directory
+      if (fs.existsSync(buildPath)) {
+        const entries = fs.readdirSync(buildPath)
+        LogHelper.info(`${name} binary dir contents: [${entries.join(', ')}]`)
+      } else {
+        LogHelper.warning(`${name} binary dir still missing after extraction: ${buildPath}`)
+        // Show what IS in distPath to help diagnose layout mismatches
+        if (fs.existsSync(distPath)) {
+          const distEntries = fs.readdirSync(distPath)
+          LogHelper.info(`${name} dist dir contents: [${distEntries.join(', ')}]`)
+        }
+      }
 
       // Create manifest (cached archive is kept for future installs)
       await FileHelper.createManifestFile(manifestPath, name, version)
