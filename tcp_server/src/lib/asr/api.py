@@ -26,6 +26,8 @@ class ASR:
             if torch.cuda.is_available():
                 device = 'cuda'
                 self.log('Using CUDA (Compute Unified Device Architecture)')
+            else:
+                device = 'cpu'
 
         if 'cuda' in device:
             assert torch.cuda.is_available()
@@ -33,10 +35,7 @@ class ASR:
         self.log(f'Device: {device}')
 
         compute_type = 'float16'
-        if is_macos():
-            compute_type = 'int8_float32'
-
-        if device == 'cpu':
+        if is_macos() or device == 'cpu':
             compute_type = 'int8_float32'
 
         self.tcp_server = tcp_server
