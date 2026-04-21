@@ -21,6 +21,7 @@ import setupNLTKData from './setup-nltk-data'
 import setupTCPServerModels from './setup-tcp-server-models'
 import createInstanceID from './create-instance-id'
 import setFfprobePermissions from './set-ffprobe-permissions'
+import buildApp from '../app/build-app'
 
 // Do not load ".env" file because it is not created yet
 
@@ -57,6 +58,7 @@ import setFfprobePermissions from './set-ffprobe-permissions'
     await train()
     await setFfprobePermissions()
     await createInstanceID()
+    await buildApp()
 
     LogHelper.default('')
     LogHelper.success('Hooray! Mira is installed and ready to go!')
