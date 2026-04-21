@@ -814,3 +814,9 @@ textarea::-webkit-scrollbar-thumb {
 #info-panel-backdrop.visible {
   display: block;
 }
+
+#voice-presence-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

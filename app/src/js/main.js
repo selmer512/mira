@@ -2,7 +2,7 @@ import axios from 'axios'
 import '@mira-ai/aurora/style.css'
 import { createElement } from 'react'
 import { createRoot } from 'react-dom/client'
-import MiraLogo from './mira-logo.jsx'
+import MiraLogo, { MiraVoicePresence } from './mira-logo.jsx'
 
 window.miraInitStatusEvent = new EventTarget()
 
@@ -28,6 +28,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const logoEl = document.querySelector('#mira-logo-root')
   if (logoEl) {
     createRoot(logoEl).render(createElement(MiraLogo))
+  }
+
+  const voiceEl = document.querySelector('#voice-presence-root')
+  if (voiceEl) {
+    createRoot(voiceEl).render(createElement(MiraVoicePresence))
   }
 
   try {
