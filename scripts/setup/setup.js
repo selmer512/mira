@@ -17,6 +17,7 @@ import setupQMDLLM from './setup-qmd-llm'
 import setupNVIDIALibs from './setup-nvidia-libs.js'
 import setupPyTorch from './setup-pytorch.js'
 import setupBinaries from './setup-binaries'
+import setupNLTKData from './setup-nltk-data'
 import setupTCPServerModels from './setup-tcp-server-models'
 import createInstanceID from './create-instance-id'
 import setFfprobePermissions from './set-ffprobe-permissions'
@@ -48,6 +49,7 @@ import setFfprobePermissions from './set-ffprobe-permissions'
     }
 
     await setupBinaries()
+    await setupNLTKData()
     await setupTCPServerModels()
     await generateHTTPAPIKey()
     await generateJSONSchemas()
