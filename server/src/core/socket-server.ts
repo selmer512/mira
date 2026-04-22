@@ -139,11 +139,20 @@ export default class SocketServer {
   }
 
   public async init(): Promise<void> {
-    const io = IS_DEVELOPMENT_ENV
-      ? new SocketIOServer(HTTP_SERVER.httpServer, {
-          cors: { origin: `${HTTP_SERVER.host}:3000` }
-        })
-      : new SocketIOServer(HTTP_SERVER.httpServer)
+    const allowedOrigins: string[] = []
+    if (IS_DEVELOPMENT_ENV) allowedOrigins.push(`${HTTP_SERVER.host}:3000`)
+    const extraOrigin = process.env['MIRA_ALLOWED_ORIGIN']
+    if (extraOrigin) allowedOrigins.push(extraOrigin)
+
+    const io =
+      allowedOrigins.length > 0
+        ? new SocketIOServer(HTTP_SERVER.httpServer, {
+            cors: {
+              origin:
+                allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins
+            }
+          })
+        : new SocketIOServer(HTTP_SERVER.httpServer)
 
     let sttState = 'disabled'
     let ttsState = 'disabled'
