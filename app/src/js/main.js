@@ -8,8 +8,7 @@ window.miraInitStatusEvent = new EventTarget()
 
 import './init'
 import Client from './client'
-// import Recorder from './recorder'
-// import listener from './listener'
+import Recorder from './recorder'
 import { onkeydownstartrecording, onkeydowninput } from './onkeydown'
 
 const config = {
@@ -42,8 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const v = document.querySelector('#version small')
     const infoButton = document.querySelector('#info')
     const client = new Client(config.app, serverUrl, input)
-    // let rec = {}
-    // let chunks = []
+    let chunks = []
 
     window.miraConfigInfo = response.data
     const infoKeys = [
@@ -92,20 +90,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     infoPanelClose.addEventListener('click', closeInfoPanel)
     infoPanelBackdrop.addEventListener('click', closeInfoPanel)
 
-    /*if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    if (navigator.mediaDevices?.getUserMedia) {
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then((stream) => {
-          if (MediaRecorder) {
-            rec = new Recorder(stream, mic, window.miraConfigInfo)
+          if (typeof MediaRecorder !== 'undefined') {
+            const rec = new Recorder(stream, mic, window.miraConfigInfo)
             client.recorder = rec
 
             rec.ondataavailable((e) => {
               chunks.push(e.data)
-            })
-
-            rec.onstart(() => {
-              /!* *!/
             })
 
             rec.onstop(() => {
@@ -113,56 +107,18 @@ document.addEventListener('DOMContentLoaded', async () => {
               chunks = []
               rec.enabled = false
 
-              // Ensure there are some data
               if (blob.size >= 1_000) {
                 client.socket.emit('recognize', blob)
               }
             })
-
-            listener.listening(
-              stream,
-              config.min_decibels,
-              config.max_blank_time,
-              () => {
-                // Noise detected
-                rec.noiseDetected = true
-              },
-              () => {
-                // Noise ended
-
-                rec.noiseDetected = false
-                if (rec.enabled && !rec.hotwordTriggered) {
-                  rec.stop()
-                  rec.enabled = false
-                  rec.hotwordTriggered = false
-                  rec.countSilenceAfterTalk = 0
-                }
-              }
-            )
-
-            client.socket.on('enable-record', () => {
-              rec.hotwordTriggered = true
-              rec.start()
-              setTimeout(() => {
-                rec.hotwordTriggered = false
-              }, config.max_blank_time)
-              rec.enabled = true
-            })
           } else {
-            console.error('MediaRecorder is not supported on your browser.')
+            console.warn('MediaRecorder is not supported on this browser.')
           }
         })
         .catch((err) => {
-          console.error(
-            'MediaDevices.getUserMedia() threw the following error:',
-            err
-          )
+          console.warn('Microphone access denied or unavailable:', err)
         })
-    } else {
-      console.error(
-        'MediaDevices.getUserMedia() is not supported on your browser.'
-      )
-    }*/
+    }
 
     document.addEventListener('keydown', (e) => {
       onkeydownstartrecording(e, () => {

@@ -17,7 +17,7 @@ export default class Client {
     this.parsedHistory = []
     this.chatbot = new Chatbot(this.socket, this.serverUrl)
     this.voiceEnergy = new VoiceEnergy(this)
-    this._recorder = {}
+    this._recorder = null
     this._suggestions = []
     this._answerGenerationId = 'xxx'
     this._activeStreamGenerationId = null
@@ -87,18 +87,37 @@ export default class Client {
     )
   }
 
+  set recorder(rec) {
+    this._recorder = rec
+  }
+
+  get recorder() {
+    return this._recorder
+  }
+
   asrStartRecording() {
     if (!window.miraConfigInfo.stt.enabled) {
       console.warn('ASR is not enabled')
       return
     }
 
-    if (!this._isVoiceModeEnabled) {
+    if (this._recorder) {
+      if (!this._recorder.enabled) {
+        this.enableVoiceMode()
+        this.voiceEnergy.status = 'listening'
+        this.setPresenceMode('listening')
+        this._recorder.start()
+        this._recorder.enabled = true
+      } else {
+        this._recorder.stop()
+        this._recorder.enabled = false
+        this.voiceEnergy.status = 'processing'
+        this.setPresenceMode('thinking')
+      }
+    } else if (!this._isVoiceModeEnabled) {
       this.enableVoiceMode()
-
       this.voiceEnergy.status = 'listening'
       this.setPresenceMode('listening')
-
       this.socket.emit('asr-start-record')
     }
   }
@@ -346,8 +365,15 @@ export default class Client {
       }
     })
 
-    this.socket.on('asr-end-of-owner-speech', () => {
+    this.socket.on('asr-end-of-owner-speech', (data) => {
       this.voiceEnergy.status = 'processing'
+
+      if (data?.completeSpeech) {
+        this._input.value = data.completeSpeech
+        if (this.voiceSpeechElement) {
+          this.voiceSpeechElement.textContent = data.completeSpeech
+        }
+      }
 
       setTimeout(() => {
         this.send('utterance')

@@ -5,7 +5,7 @@ import ffmpegStatic from 'ffmpeg-static'
 import ffmpeg from 'fluent-ffmpeg'
 
 import { TMP_PATH } from '@/constants'
-import { STT } from '@/core'
+import { PYTHON_TCP_CLIENT } from '@/core'
 import { LogHelper } from '@/helpers/log-helper'
 
 export default class ASR {
@@ -56,13 +56,10 @@ export default class ASR {
             })
             .on('end', () => {
               LogHelper.success('Encoding done')
-
-              if (!STT.isParserReady) {
-                reject(new Error('The speech recognition is not ready yet'))
-              } else {
-                STT.transcribe(this.audioPaths.wav)
-                resolve()
-              }
+              PYTHON_TCP_CLIENT.emit('transcribe-audio-file', {
+                path: this.audioPaths.wav
+              })
+              resolve()
             })
             .on('error', (err) => {
               reject(new Error(`Encoding error ${err}`))

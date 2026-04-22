@@ -203,6 +203,28 @@ class TCPServer:
             'data': {}
         }
 
+    def transcribe_audio_file(self, data: dict) -> dict:
+        audio_path = data.get('path', '')
+
+        if not self.asr or not self.asr.model:
+            self.log('ASR model not ready for file transcription')
+            return {
+                'topic': 'asr-end-of-owner-speech-detected',
+                'data': {'utterance': ''}
+            }
+
+        try:
+            text = self.asr.transcribe_file(audio_path)
+            self.log(f'File transcription result: {text}')
+        except Exception as e:
+            self.log(f'File transcription error: {e}')
+            text = ''
+
+        return {
+            'topic': 'asr-end-of-owner-speech-detected',
+            'data': {'utterance': text}
+        }
+
     def tts_synthesize(self, speech: str) -> dict:
         # If TTS is not initialized yet, then wait for 2 seconds before synthesizing
         if not self.tts:

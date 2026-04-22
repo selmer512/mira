@@ -190,6 +190,30 @@ class ASR:
         except Exception as e:
             self.log('Error:', e)
 
+    def transcribe_file(self, audio_path: str) -> str:
+        import wave
+        import numpy as np
+
+        with wave.open(audio_path, 'rb') as wf:
+            frames = wf.readframes(wf.getnframes())
+
+        audio_data = np.frombuffer(frames, dtype=np.int16)
+        if self.compute_type == 'int8_float32':
+            audio_data = audio_data.astype(np.float32) / 32768.0
+
+        transcribe_params = {
+            'beam_size': 5,
+            'language': 'en',
+            'task': 'transcribe',
+            'condition_on_previous_text': False,
+            'hotwords': 'talking to Mira'
+        }
+        if self.device == 'cpu':
+            transcribe_params['temperature'] = 0
+
+        segments, _ = self.model.transcribe(audio_data, **transcribe_params)
+        return ''.join(segment.text for segment in segments).strip()
+
     def stop_recording(self):
         self.log('Recording stopped')
 
