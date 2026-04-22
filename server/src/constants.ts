@@ -347,6 +347,8 @@ export const LANG = process.env['MIRA_LANG'] as LongLanguageCode
 
 export const HOST = process.env['MIRA_HOST']
 export const PORT = Number(process.env['MIRA_PORT'])
+export const TLS_CERT_PATH = process.env['MIRA_TLS_CERT_PATH'] || ''
+export const TLS_KEY_PATH = process.env['MIRA_TLS_KEY_PATH'] || ''
 
 export const TIME_ZONE = process.env['MIRA_TIME_ZONE']
 

@@ -1,6 +1,8 @@
 import { join } from 'node:path'
+import fs from 'node:fs'
 
 import Fastify from 'fastify'
+import type { FastifyInstance } from 'fastify'
 import fastifyStatic from '@fastify/static'
 
 import {
@@ -10,7 +12,9 @@ import {
   MIRA_NODE_ENV,
   HAS_OVER_HTTP,
   IS_TELEMETRY_ENABLED,
-  WORKFLOW_LLM_PROVIDER
+  WORKFLOW_LLM_PROVIDER,
+  TLS_CERT_PATH,
+  TLS_KEY_PATH
 } from '@/constants'
 import { LogHelper } from '@/helpers/log-helper'
 import { DateHelper } from '@/helpers/date-helper'
@@ -33,9 +37,8 @@ export interface APIOptions {
 export default class HTTPServer {
   private static instance: HTTPServer
 
-  private fastify = Fastify()
-
-  public httpServer = this.fastify.server
+  private fastify: FastifyInstance
+  public httpServer: FastifyInstance['server']
 
   constructor(
     public readonly host: string,
@@ -48,8 +51,26 @@ export default class HTTPServer {
       HTTPServer.instance = this
     }
 
-    this.host = host
-    this.port = port
+    const hasTLS =
+      TLS_CERT_PATH &&
+      TLS_KEY_PATH &&
+      fs.existsSync(TLS_CERT_PATH) &&
+      fs.existsSync(TLS_KEY_PATH)
+
+    if (hasTLS) {
+      this.fastify = Fastify({
+        https: {
+          cert: fs.readFileSync(TLS_CERT_PATH),
+          key: fs.readFileSync(TLS_KEY_PATH)
+        }
+      })
+      LogHelper.title('HTTP Server')
+      LogHelper.info('HTTPS mode enabled')
+    } else {
+      this.fastify = Fastify()
+    }
+
+    this.httpServer = this.fastify.server
   }
 
   /**
