@@ -103,10 +103,10 @@ class ASR:
                                               channels=self.channels,
                                               rate=self.rate,
                                               frames_per_buffer=self.frames_per_buffer,
-                                              input=True,
-                                              input_device_index=self.audio.get_default_input_device_info()['index'])  # Use the default input device
+                                              input=True)
         except Exception as e:
-            self.log('Error to open mic stream:', e)
+            self.mic_stream = None
+            self.log('Error opening mic stream:', e)
 
     def start_recording(self):
         if self.wake_word:
@@ -114,6 +114,14 @@ class ASR:
             # otherwise it will loop for the wake word and create conflict
             # on the audio stream
             self.wake_word.stop_listening()
+
+        if self.mic_stream is None:
+            self.log('Mic stream unavailable, attempting to reopen...')
+            self.open_mic_stream()
+
+        if self.mic_stream is None:
+            self.log('Cannot record: no mic stream available')
+            return
 
         self.is_recording = True
         # Convert the silence duration to the number of audio frames required to detect the silence
