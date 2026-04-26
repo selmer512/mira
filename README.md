@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/mira-logo.png" width="120" alt="Mira Logo"/>
+  <img src="./assets/mira-logo.png" width="1254" alt="Mira Logo"/>
 </p>
 
 <h1 align="center">Mira</h1>
