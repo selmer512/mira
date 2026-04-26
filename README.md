@@ -1,287 +1,54 @@
 <p align="center">
-  <a href="https://getleon.ai"><img width="800" src="https://getleon.ai/img/hero-animation.gif" /></a>
+  <img src="./assets/mira-logo.png" width="120" alt="Mira Logo"/>
 </p>
 
-<h1 align="center">
-  <a href="https://getleon.ai"><img width="96" src="https://getleon.ai/img/logo.svg" alt="Mira"></a><br>
-  Mira
-</h1>
-
-_<p align="center">Your open-source personal assistant.</p>_
+<h1 align="center">Mira</h1>
 
 <p align="center">
-  <a href="https://github.com/leon-ai/mira/blob/develop/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg?label=License&style=flat" /></a>
-  <a href="https://github.com/leon-ai/mira/blob/develop/.github/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" /></a>
-  <br>
-  <a href="https://github.com/leon-ai/mira/actions/workflows/build.yml"><img src="https://github.com/leon-ai/mira/actions/workflows/build.yml/badge.svg?branch=develop" /></a>
-  <a href="https://github.com/leon-ai/mira/actions/workflows/tests.yml"><img src="https://github.com/leon-ai/mira/actions/workflows/tests.yml/badge.svg?branch=develop" /></a>
-  <a href="https://github.com/leon-ai/mira/actions/workflows/lint.yml"><img src="https://github.com/leon-ai/mira/actions/workflows/lint.yml/badge.svg?branch=develop" /></a>
-  <br>
-  <a href="https://discord.gg/MNQqqKg"><img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" /></a>
-</p>
-
-<p align="center">
-  <a href="https://getleon.ai">Website</a> ::
-  <a href="https://docs.getleon.ai">Documentation</a> ::
-  <a href="http://roadmap.getleon.ai">Roadmap</a> ::
-  <a href="https://github.com/leon-ai/mira/blob/develop/.github/CONTRIBUTING.md">Contributing</a> ::
-  <a href="https://blog.getleon.ai/the-story-behind-mira/">Story</a>
+  A system that reflects you.<br/>
+  Memory. Context. Intelligence — unified.
 </p>
 
 ---
 
-## Important Notice (as of 2026-01-11)
+## ⬛ Overview
 
-> [!IMPORTANT]
-> **Mira is currently undergoing a massive architectural rewrite.**
->
-> The `develop` branch is highly experimental and may be unstable as I implement the new agentic core.
-> 
-> - If you are looking for the legacy, stable version (pre-LLM), please use the `master` branch.
-> - If you want to contribute to the future of Mira (LLMs, Agents, Automation), you are in the right place.
+Mira is an AI-driven system designed to ingest, connect, and act on data in real time.
 
-### Outdated Documentation
+It is built around a simple idea:
 
-Please note that the current documentation and this README are outdated regarding the technical architecture. We are moving away from simple classification toward a hybrid approach involving Local LLMs, Transformers, and Atomic Tools. Updated documentation will be released alongside the new core stability.
+> Your system should not just store information — it should understand and respond to it.
 
-### Project Evolution and Future Plans
-
-**I have been working on Mira since 2017**. While development has been inconsistent in the past, the current era of AI unlocks capabilities that were previously impossible. I'm now transitioning Mira from a standard assistant to a fully **autonomous personal AI assistant** designed to be used by technical hobbyists to non-tech users.
-
-I'm currently building the foundation for the next generation of Mira, focusing on 3 key milestones:
-
-**1. Workflow Architecture and Atomic Tools**
-
-We are restructuring Mira around a robust flow: `Skills > Actions > Tools > Functions (> Binaries)`.
-Instead of monolithic scripts, Mira will use atomic components (e.g. compiled binaries using ONNX runtime) to execute complex workflows.
-
-- Example: a "Video Translator" skill won't just be a script; it will be a workflow where Mira orchestrates tools like vocal isolation, zero-shot voice cloning, ASR, audio gender recognition, etc. to achieve the result.
-
-**2. Autonomous Skill Generation (self-coding)**
-
-We are developing a meta-skill capable of writing code for new skills automatically.
-
-- Mira will analyze a request, check if a skill exists, and if not, write the code itself following our strict architectural standards.
-- It will leverage existing tools and inject the new skill directly into its memory for future reuse.
-
-**3. Agentic Behavior (ReAct) and Local LLM Optimization**
-
-The ultimate phase will be to adopt the ReAct (Reason + Act) approach.
-
-- Mira will be provided with low-level **tools** (organized in toolkits, e.g., `music_audio` containing FFmpeg).
-- Using Local LLMs, Mira will loop through thoughts and actions to solve problems dynamically.
-- Optimization: we are implementing strict context filtering to save tokens, reduce hallucinations, and ensure high performance on local hardware.
-
-**Get Involved**
-
-[Join us on Discord](https://discord.gg/MNQqqKg) to ask questions, or express interest in becoming an active contributor.
-
-- Check out [the roadmap](http://roadmap.getleon.ai/) for more information on our upcoming plans.
-- Watch a [preview of our last progress](https://www.youtube.com/watch?v=6CInSt6pTVA) to see what we've been working on.
+Mira combines:
+- Data ingestion pipelines
+- Context-aware processing
+- Event-driven automation
+- Persistent memory systems
 
 ---
 
-### Why is there a small amount of contributors?
+## ⬛ Core Capabilities
 
-I'm taking a lot of time to work on the new core of Mira due to personal reasons. I can only work on it during my spare time. Hence, I'm blocking any contribution as the whole core of Mira is coming with many breaking changes. Many of you are willing to contribute in Mira (create new skills, help to improve the core, translations and so on...), a big thanks to every one of you!
+- **Ingestion Engine**  
+  Capture data from multiple sources (APIs, streams, files)
 
-While I would love to devote more time to Mira, I'm currently unable to do so because I have bills to pay. I have some ideas about how to monetize Mira in the future (Mira's core will always remain open source), but before to get there there is still a long way to go.
+- **Context Linking**  
+  Build relationships between events, entities, and history
 
-Until then, any financial support by [sponsoring Mira](http://sponsor.getleon.ai) is much appreciated 🙂
+- **Memory Layer**  
+  Store and retrieve both structured and unstructured data
+
+- **Automation Engine**  
+  Trigger actions based on events and context
+
+- **Extensible Architecture**  
+  Modular components for rapid expansion
 
 ---
 
-## Latest Release
+## ⬛ Architecture
 
-Check out the [latest release blog post](https://blog.getleon.ai/binaries-and-typescript-rewrite-1-0-0-beta-8/).
-
-<a href="https://blog.getleon.ai/binaries-and-typescript-rewrite-1-0-0-beta-8/"><img width="400" src="https://blog.getleon.ai/static/a0d1cbafd1968e7531dc17e229f8cc61/aa440/beta-8.png" /></a>
-
----
-
-## 👋 Introduction
-
-**Mira** is an **open-source personal assistant** who can live **on your server**.
-
-He **does stuff** when you **ask him to**.
-
-You can **talk to him** and he can **talk to you**.
-You can also **text him** and he can also **text you**.
-If you want to, Mira can communicate with you by being **offline to protect your privacy**.
-
-### Why?
-
-> 1. If you are a developer (or not), you may want to build many things that could help in your daily life.
->    Instead of building a dedicated project for each of those ideas, Mira can help you with his
->    Skills structure.
-> 2. With this generic structure, everyone can create their own skills and share them with others.
->    Therefore there is only one core (to rule them all).
-> 3. Mira uses AI concepts, which is cool.
-> 4. Privacy matters, you can configure Mira to talk with him offline. You can already text with him without any third party services.
-> 5. Open source is great.
-
-### What is this repository for?
-
-> This repository contains the following nodes of Mira:
->
-> - The server
-> - Skills
-> - The web app
-> - The hotword node
-> - The TCP server (for inter-process communication between Mira and third-party nodes such as spaCy)
-> - The Python bridge (the connector between the core and skills made with Python)
-
-### What is Mira able to do?
-
-> Today, the most interesting part is about his core and the way he can scale up. He is pretty young but can easily scale to have new features (skills).
-> You can find what he is able to do by browsing the [skills list](https://github.com/leon-ai/mira/tree/develop/skills).<br>
-> Please do know that after the official release, we will build many skills along with the community. Feel free to [join us on Discord](https://discord.gg/MNQqqKg) to be part of the journey.
-
-Sounds good to you? Then let's get started!
-
-## ☁️ Try with a Single-Click
-
-Gitpod will automatically set up an environment and run an instance for you.
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/leon-ai/mira)
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) >= 24.0.0
-- [npm](https://npmjs.com/) >= 11.3.0
-- Supported OSes: Linux, macOS and Windows
-
-To install these prerequisites, you can follow the [How To section](https://docs.getleon.ai/how-to/) of the documentation.
-
-### Installation
-
-```sh
-# Install the Mira CLI
-npm install --global @leon-ai/cli
-
-# Install Mira (stable branch)
-mira create birth
-# OR install from the develop branch: mira create birth --develop
-```
-
-### Usage
-
-```sh
-# Check the setup went well
-mira check
-
-# Run
-mira start
-
-# Go to http://localhost:1337
-# Hooray! Mira is running
-```
-
-## 📚 Documentation
-
-For full documentation, visit [docs.getleon.ai](https://docs.getleon.ai).
-
-## 🇫🇷 Documenting the Journey on YouTube
-
-[I'm documenting the journey on YouTube](https://www.youtube.com/@louisgyt) in developing our dear Mira. I also take you along in my daily life here in China.
-
-For non-French speakers, translated English subtitles are available.
-
-## 📺 Video
-
-[Watch a demo](https://www.youtube.com/watch?v=p7GRGiicO1c).
-
-## 🧭 Roadmap
-
-To know what is going on, follow [roadmap.getleon.ai](http://roadmap.getleon.ai).
-
-## ❤️ Contributing
-
-If you have an idea for improving Mira, do not hesitate.
-
-**Mira needs open source to live**, the more skills he has, the more skillful he becomes.
-
-## 📖 The Story Behind Mira
-
-You'll find a write-up on this [blog post](https://blog.getleon.ai/the-story-behind-mira/).
-
-## 🔔 Stay Tuned
-
-- [Twitter](https://twitter.com/grenlouis)
-- [Newsletter](https://newsletter.getleon.ai/subscription/form)
-- [Blog](https://blog.getleon.ai)
-- [GitHub issues](https://github.com/leon-ai/mira/issues)
-- [YouTube](https://www.youtube.com/channel/UCW6mk6j6nQUzFYY97r47emQ)
-- [#MiraAI](<https://twitter.com/search?f=live&q=%23MiraAI%20(from%3Agrenlouis%20OR%20from%3Alouistiti_fr)&src=typed_query>)
-
-## 👨 Author
-
-**Louis Grenard** ([@grenlouis](https://twitter.com/grenlouis))
-
-## 👍 Sponsors
-
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="middle" width="128">
-        <a href="https://github.com/Appwrite">
-          <img src="https://github.com/Appwrite.png?size=128" />
-          Appwrite
-        </a><br>
-        <sub><sup>250 USD / month</sup></sub>
-      </td>
-      <td align="center" valign="middle" width="128">
-        <img src="https://getleon.ai/img/anonymous.svg" width="128" />
-        Anonymous
-        <br>
-        <sub><sup>100 USD / month</sup></sub>
-      </td>
-      <td align="center" valign="middle" width="128">
-        <a href="https://github.com/herbundkraut">
-          <img src="https://github.com/herbundkraut.png?size=128" />
-          herbundkraut
-        </a><br>
-        <sub><sup>10 USD / month</sup></sub>
-      </td>
-      <td align="center" valign="middle" width="128">
-        <a href="http://sponsor.getleon.ai/">
-          You?
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-You can also contribute by [sponsoring Mira](http://sponsor.getleon.ai).
-
-Please note that I dedicate most of my free time to Mira.
-
-By sponsoring the project you make the project sustainable and faster to develop features.
-
-The focus is not only limited to the activity you see on GitHub but also a lot of thinking about the direction of the project. Which is naturally related to the overall design, architecture, vision, learning process and so on...
-
-### Special Thanks
-
-<a href="https://vercel.com/?utm_source=leon-ai&utm_campaign=oss">
-  <img src="https://i.imgur.com/S5olXWh.png" alt="Vercel" width="128" />
-</a>
-&nbsp; &nbsp; &nbsp;
-<a href="https://www.macstadium.com/">
-  <img src="https://getleon.ai/img/thanks/mac-stadium.svg" alt="MacStadium" width="128" />
-</a>
-&nbsp; &nbsp; &nbsp;
-<a href="https://www.aoz.studio">
-  <img src="https://getleon.ai/_next/image?url=%2Fimg%2Fthanks%2Faoz-studio.png&w=384&q=75" alt="AOZ Studio" width="128" />
-</a>
-
-## 📝 License
-
-[MIT License](https://github.com/leon-ai/mira/blob/develop/LICENSE.md)
-
-Copyright (c) 2019-present, Louis Grenard <louis@getleon.ai>
-
-## Cheers!
-
-![Cheers!](https://github.githubassets.com/images/icons/emoji/unicode/1f379.png 'Cheers!')
+```text
+[ Sources ] → [ Ingestion ] → [ Processing ] → [ Memory ]
+                                         ↓
+                                   [ Automation ]
