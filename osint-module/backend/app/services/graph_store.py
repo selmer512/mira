@@ -1,7 +1,10 @@
 from typing import Optional
+
 from neo4j import AsyncGraphDatabase
+
 from app.core.config import settings
 from app.models.osint import CorrelationResult, ProfileResponse
+
 
 class GraphStore:
     def __init__(self):
@@ -13,8 +16,14 @@ class GraphStore:
     async def close(self):
         await self.driver.close()
 
+    async def healthcheck(self) -> bool:
+        async with self.driver.session(database=settings.neo4j_db) as session:
+            res = await session.run("RETURN 1 AS ok")
+            row = await res.single()
+        return bool(row and row.get("ok") == 1)
+
     async def upsert_correlation(self, correlation: CorrelationResult):
-        async with self.driver.session() as session:
+        async with self.driver.session(database=settings.neo4j_db) as session:
             await session.execute_write(self._upsert_profile_tx, correlation)
 
     @staticmethod
@@ -48,7 +57,7 @@ class GraphStore:
             )
 
     async def get_profile(self, profile_id: str) -> Optional[ProfileResponse]:
-        async with self.driver.session() as session:
+        async with self.driver.session(database=settings.neo4j_db) as session:
             rows = await session.execute_read(self._get_profile_tx, profile_id)
         if not rows:
             return None
@@ -94,8 +103,19 @@ class GraphStore:
         return [record async for record in result]
 
     async def safe_query(self, payload: dict):
-        # Keep this restricted. Do not expose arbitrary Cypher in production.
         profile_id = payload.get("profile_id")
-        if not profile_id:
-            return {"error": "Only profile_id lookup is enabled in the starter scaffold."}
-        return await self.get_profile(profile_id)
+        entity_value = payload.get("entity_value")
+        if profile_id:
+            return await self.get_profile(profile_id)
+        if entity_value:
+            async with self.driver.session(database=settings.neo4j_db) as session:
+                result = await session.run(
+                    """
+                    MATCH (p:Profile)-[:HAS_ENTITY]->(e:Entity {value: $value})
+                    RETURN p.id AS profile_id
+                    LIMIT 25
+                    """,
+                    value=entity_value,
+                )
+                return {"profiles": [r["profile_id"] async for r in result]}
+        return {"error": "Allowed keys: profile_id or entity_value"}
