@@ -65,8 +65,12 @@ docker compose up --build
 ## Main API Endpoints
 
 ```http
+GET  /api/osint/ui
 POST /api/osint/ingest
+POST /api/osint/ingest/async
+GET  /api/osint/jobs/{job_id}
 GET  /api/osint/profile/{profile_id}
+POST /api/osint/search
 POST /api/osint/query
 POST /api/osint/enrich/{entity_id}
 GET  /health
