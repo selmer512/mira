@@ -21,6 +21,7 @@ async def lifespan(app: FastAPI):
         maxsize=settings.pipeline_queue_size,
     )
 
+    await graph.ensure_schema()
     await event_bus.start()
     await pipeline.start()
 
