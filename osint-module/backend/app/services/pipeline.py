@@ -8,6 +8,7 @@ from app.collectors.domain import DomainCollector
 from app.collectors.email import EmailCollector
 from app.collectors.image_metadata import ImageMetadataCollector
 from app.collectors.username import UsernameCollector
+from app.core.config import settings
 from app.models.osint import CorrelationResult
 from app.services.correlation import correlate_entities
 from app.services.graph_store import GraphStore
@@ -95,7 +96,13 @@ async def run_ingest_pipeline(graph: GraphStore, vector: VectorStore, input_type
 
     await publish_event("osint.raw", {"type": input_type, "value": value, "source_label": source_label}, key=value)
 
-    collected_entities = await collector.collect(value=value, source_label=source_label)
+    try:
+        collected_entities = await asyncio.wait_for(
+            collector.collect(value=value, source_label=source_label),
+            timeout=settings.collector_timeout_seconds,
+        )
+    except asyncio.TimeoutError as exc:
+        raise TimeoutError(f"Collector timed out after {settings.collector_timeout_seconds}s: {input_type}") from exc
     correlation = correlate_entities(collected_entities)
 
     await publish_event("osint.enriched", correlation.model_dump(), key=correlation.profile_id)

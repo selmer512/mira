@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 from typing import List
 
 from app.collectors.base import BaseCollector
+from app.core.config import settings
 from app.models.osint import Entity, SourceRecord
 
 
@@ -29,7 +30,10 @@ class DomainCollector(BaseCollector):
     async def _resolve_domain(self, domain: str) -> List[str]:
         loop = asyncio.get_running_loop()
         try:
-            addr_info = await loop.getaddrinfo(domain, None, proto=0)
+            addr_info = await asyncio.wait_for(
+                loop.getaddrinfo(domain, None, proto=0),
+                timeout=settings.collector_timeout_seconds,
+            )
         except Exception:
             return []
 

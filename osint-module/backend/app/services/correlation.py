@@ -10,6 +10,27 @@ WEIGHTS = {
     "website": 0.20,
 }
 
+def deduplicate_entities(entities: List[Entity]) -> List[Entity]:
+    deduped: dict[tuple[str, str], Entity] = {}
+    for entity in entities:
+        key = (entity.entity_type.lower(), entity.value.strip().lower())
+        existing = deduped.get(key)
+        if existing is None:
+            entity.entity_type = entity.entity_type.lower()
+            entity.value = entity.value.strip()
+            deduped[key] = entity
+            continue
+
+        existing.attributes = {**existing.attributes, **entity.attributes}
+        seen_sources = {(source.name, source.url, source.method) for source in existing.sources}
+        for source in entity.sources:
+            source_key = (source.name, source.url, source.method)
+            if source_key not in seen_sources:
+                existing.sources.append(source)
+                seen_sources.add(source_key)
+
+    return list(deduped.values())
+
 def stable_profile_id(entities: List[Entity]) -> str:
     seed = "|".join(sorted([f"{e.entity_type}:{e.value.lower()}" for e in entities]))
     return hashlib.sha256(seed.encode("utf-8")).hexdigest()[:24]
@@ -24,6 +45,7 @@ def confidence_for_entities(entities: List[Entity]) -> float:
     return min(round(score, 2), 0.99)
 
 def correlate_entities(entities: List[Entity]) -> CorrelationResult:
+    entities = deduplicate_entities(entities)
     profile_id = stable_profile_id(entities)
     confidence = confidence_for_entities(entities)
 

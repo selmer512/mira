@@ -55,7 +55,18 @@ class EventBus:
         }
         key_bytes = key.encode("utf-8") if key else None
         assert self._producer is not None
-        await self._producer.send_and_wait(topic, enriched_payload, key=key_bytes)
+        delay = settings.kafka_publish_backoff_seconds
+        for attempt in range(1, settings.kafka_publish_retries + 1):
+            try:
+                await self._producer.send_and_wait(topic, enriched_payload, key=key_bytes)
+                return
+            except Exception:
+                if attempt >= settings.kafka_publish_retries:
+                    logger.exception("Event publish failed after retries", extra={"topic": topic, "attempt": attempt})
+                    raise
+                logger.warning("Event publish failed; retrying", extra={"topic": topic, "attempt": attempt})
+                await asyncio.sleep(delay)
+                delay = min(delay * 2, settings.kafka_publish_backoff_max_seconds)
 
 
 event_bus = EventBus()
