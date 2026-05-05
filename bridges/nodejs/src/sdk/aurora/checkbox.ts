@@ -1,4 +1,4 @@
-import { type CheckboxProps } from '@leon-ai/aurora'
+import { type CheckboxProps } from '@mira-ai/aurora'
 
 import { WidgetComponent } from '../widget-component'
 

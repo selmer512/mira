@@ -1,4 +1,4 @@
-import { type CircularProgressProps } from '@leon-ai/aurora'
+import { type CircularProgressProps } from '@mira-ai/aurora'
 
 import { WidgetComponent } from '../widget-component'
 

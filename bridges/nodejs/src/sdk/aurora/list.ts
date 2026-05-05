@@ -1,4 +1,4 @@
-import { type ListProps } from '@leon-ai/aurora'
+import { type ListProps } from '@mira-ai/aurora'
 
 import { WidgetComponent } from '../widget-component'
 

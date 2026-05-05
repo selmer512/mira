@@ -1,5 +1,5 @@
 import axios from 'axios'
-import '@leon-ai/aurora/style.css'
+import '@mira-ai/aurora/style.css'
 
 window.miraInitStatusEvent = new EventTarget()
 

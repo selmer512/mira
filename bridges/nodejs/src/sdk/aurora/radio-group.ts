@@ -1,4 +1,4 @@
-import { type RadioGroupProps } from '@leon-ai/aurora'
+import { type RadioGroupProps } from '@mira-ai/aurora'
 
 import { WidgetComponent } from '../widget-component'
 

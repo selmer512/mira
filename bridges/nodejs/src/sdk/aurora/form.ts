@@ -1,4 +1,4 @@
-import { type FormProps } from '@leon-ai/aurora'
+import { type FormProps } from '@mira-ai/aurora'
 
 import { WidgetComponent } from '../widget-component'
 
