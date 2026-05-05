@@ -1,0 +1,24 @@
+{
+  "$schema": "../../../schemas/skill-schemas/skill.json",
+  "name": "OSINT",
+  "bridge": "python",
+  "version": "1.0.0",
+  "description": "Collect, correlate, and retrieve open-source intelligence on usernames, emails, domains, and images.",
+  "author": {
+    "name": "Mira"
+  },
+  "actions": {
+    "investigate": {
+      "type": "logic",
+      "description": "Investigate a username, email address, domain, or image and build an intelligence profile."
+    },
+    "search": {
+      "type": "logic",
+      "description": "Search stored OSINT profiles by text similarity."
+    },
+    "get_profile": {
+      "type": "logic",
+      "description": "Retrieve a previously collected OSINT profile by its profile ID."
+    }
+  }
+}
