@@ -1,0 +1,93 @@
+{
+  "$schema": "../../../../schemas/skill-schemas/skill-config.json",
+  "actions": {
+    "investigate": {
+      "type": "logic",
+      "utterance_samples": [
+        "Investigate @target",
+        "Run OSINT on @target",
+        "Look up @target",
+        "Find information about @target",
+        "Do a background check on @target",
+        "Gather intelligence on @target",
+        "Profile @target for me",
+        "What do you know about @target",
+        "Investigate the username @target",
+        "Investigate the domain @target",
+        "Run OSINT on the email @target"
+      ]
+    },
+    "search": {
+      "type": "logic",
+      "utterance_samples": [
+        "Search OSINT profiles for @query",
+        "Find profiles similar to @query",
+        "Search for @query in intelligence database",
+        "Look for profiles matching @query"
+      ]
+    },
+    "get_profile": {
+      "type": "logic",
+      "utterance_samples": [
+        "Show me OSINT profile @profile_id",
+        "Get the profile @profile_id",
+        "Retrieve profile @profile_id",
+        "Load OSINT profile @profile_id"
+      ]
+    }
+  },
+  "answers": {
+    "investigating": [
+      "Running OSINT collection on %target%...",
+      "Gathering intelligence on %target%, this may take a moment..."
+    ],
+    "queuing_investigation": [
+      "Sync collector busy, queuing the investigation for %target%...",
+      "Queuing OSINT job for %target%..."
+    ],
+    "investigation_complete": [
+      "Investigation of %target% complete.\n\nProfile ID: %profile_id%\n%summary%",
+      "I found a profile for %target%.\n\nProfile ID: %profile_id%\n%summary%"
+    ],
+    "investigation_failed": [
+      "I was unable to complete the investigation for %target%.",
+      "The OSINT collection for %target% failed."
+    ],
+    "investigation_timeout": [
+      "Timed out waiting for OSINT results for %target%. The job may still be running.",
+      "The investigation of %target% is taking longer than expected."
+    ],
+    "no_results": [
+      "No profiles matched \"%query%\" in the intelligence database.",
+      "I found nothing matching \"%query%\"."
+    ],
+    "search_results": [
+      "Found %count% profile(s) matching \"%query%\":\n\n%results%"
+    ],
+    "search_failed": [
+      "The vector search for \"%query%\" failed. Please try again."
+    ],
+    "profile_found": [
+      "Profile %profile_id% (confidence: %confidence%):\n• Aliases: %aliases%\n• Emails: %emails%\n• Domains: %domains%\n• Sources: %sources%"
+    ],
+    "profile_not_found": [
+      "No profile with ID \"%profile_id%\" was found. It may not have been ingested yet."
+    ],
+    "profile_fetch_failed": [
+      "I encountered an error retrieving profile %profile_id%."
+    ],
+    "service_unavailable": [
+      "The OSINT service is not reachable. Start it with 'docker-compose up -d' inside the osint-module directory.",
+      "I cannot connect to the OSINT service. Please make sure it's running."
+    ],
+    "no_target": [
+      "Please tell me what to investigate — a username, email address, domain, or image path."
+    ],
+    "no_query": [
+      "What would you like to search for in the intelligence database?"
+    ],
+    "no_profile_id": [
+      "Please provide the profile ID you want to retrieve."
+    ]
+  }
+}

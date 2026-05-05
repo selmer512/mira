@@ -1,0 +1,6 @@
+{
+  "osint_service_url": "http://localhost:8000",
+  "request_timeout_seconds": 30,
+  "async_poll_interval_seconds": 2,
+  "async_poll_max_attempts": 15
+}

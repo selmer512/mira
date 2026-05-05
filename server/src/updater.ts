@@ -33,7 +33,7 @@ export class Updater {
         SOCKET_SERVER.socket?.emit('new-update', latestVersion)
       } else {
         LogHelper.success(
-          `You are using the latest version of Mira`
+          'You are using the latest version of Mira'
         )
       }
     } catch (e) {
