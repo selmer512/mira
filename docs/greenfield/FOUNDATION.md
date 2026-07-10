@@ -17,7 +17,7 @@ This document records the implementation boundary for Mira's first authenticated
 | Complete in-memory causal envelope | IMPLEMENTED | `GreenfieldRequestOrchestrator` |
 | Contract, policy, runtime, credential, and HTTP tests | IMPLEMENTED | `test/greenfield/*.spec.ts` |
 | Pull-request validation workflow | IMPLEMENTED | `.github/workflows/greenfield-ci.yml` |
-| Test execution | BLOCKED | CI must complete successfully and output must be observed |
+| Server type-check and greenfield tests | TESTED | GitHub Actions run `29113478438`: type-check succeeded; 6 files and 26 tests passed |
 | Durable trace persistence | NOT YET STARTED | Envelope is returned but not stored |
 | MiniCPM5 natural-language provider | NOT YET STARTED | Provider interface exists; deterministic router is active |
 | Server-model escalation | NOT YET STARTED | Contract fields exist; no adapter is mounted |
@@ -31,6 +31,7 @@ This document records the implementation boundary for Mira's first authenticated
 - Base branch: `develop`
 - Base commit: `059d5b5fea878620160c61320c4cc4a8f7253426`
 - Development branch: `greenfield/vertical-slice-foundation-20260710`
+- Validated implementation commit: `3701a080b796f6a62f9fb828a979f9833be96cf5`
 - Target: Node.js 24+, npm 11.3+, TypeScript, Fastify, React/Vite, and the existing Python bridge
 
 ## Implemented owner journey
@@ -145,33 +146,46 @@ Content-Type: application/json
 
 A successful response includes the grounded `answer`, the validated `envelope`, and source `evidence_payloads` keyed by evidence ID.
 
-## Validation commands
+## Validation evidence
 
-The repository has no root lockfile, so CI uses an explicit side-effect-free install and builds Aurora declarations before server type-checking:
+The repository has no root lockfile, so CI uses an explicit side-effect-free install and builds Aurora declarations before server type-checking.
+
+Observed in GitHub Actions run `29113478438`:
 
 ```bash
 npm install --ignore-scripts --legacy-peer-deps --no-audit --no-fund
 npm run build --workspace aurora
 npx tsc --noEmit --project tsconfig.json
 npm run test:greenfield
+```
+
+Results:
+
+- Node.js 24 setup: TESTED
+- Dependency installation: TESTED
+- Aurora type declaration build: TESTED
+- Full server TypeScript type-check: TESTED
+- Greenfield Vitest suites: TESTED — 6 files passed, 26 tests passed
+
+Still required on a connected runner:
+
+```bash
 npm run lint
 npm run build:server
 npm run test:agentic-loop:unit
 npm run test:over-http
 ```
 
-No command is reported as passing until its output is observed.
-
 ## Deployment plan
 
 1. Review the branch diff and unresolved review threads.
-2. Run the validation commands using Node.js 24+ and npm 11.3+.
+2. Run the remaining validation commands using Node.js 24+ and npm 11.3+.
 3. Start Mira with `MIRA_GREENFIELD_ENABLED=false` and verify legacy startup.
 4. Configure a non-production owner, paired device, credential, permission, and privacy zone.
 5. Enable the route and call it from the paired test device.
 6. Verify evidence validity, owner/device binding, four-span continuity, operational states, and null action/memory fields.
 7. Exercise disabled, missing-key, incorrect-key, unpaired-device, undeclared-field, evidence-failure, and degraded-provider paths.
-8. Keep the pull request in draft until CI and deployment evidence are attached.
+8. Keep the pull request in draft until deployment and remaining regression evidence are attached.
 
 ## Rollback
 
@@ -183,7 +197,7 @@ No data rollback is required because this increment adds no migration or persist
 
 ## Known limitations
 
-- Deployment, startup, lint, full build, legacy HTTP, and agentic-loop outputs have not been observed for this branch.
+- Deployment, startup, lint, full production build, legacy HTTP, and agentic-loop outputs have not been observed for this branch.
 - Identity is limited to one configured owner/device and one long-lived HTTP credential.
 - The local cognition implementation is deterministic and does not invoke MiniCPM5-1B.
 - Trace and evidence payloads are returned but not durably stored or encrypted by this slice.
