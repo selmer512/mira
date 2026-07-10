@@ -8,7 +8,7 @@ import {
   getDefaultGreenfieldIdentityResolver,
   getDefaultTraceMaintenanceService,
   type IdentityResolver,
-  type TraceMaintenanceService
+  type TraceMaintenanceHealth
 } from '@/core/greenfield'
 
 const traceHealthSchema = {
@@ -24,13 +24,17 @@ interface TraceHealthSchema {
   querystring: Static<typeof traceHealthSchema.querystring>
 }
 
+interface TraceHealthReader {
+  getHealth(): Promise<TraceMaintenanceHealth>
+}
+
 function readCredential(header: string | string[] | undefined): string {
   return Array.isArray(header) ? header[0] || '' : header || ''
 }
 
 export function createTraceHealthRoute(
   identityResolver: IdentityResolver,
-  maintenanceService: TraceMaintenanceService
+  maintenanceService: TraceHealthReader
 ): FastifyPluginAsync<APIOptions> {
   return async (fastify, options) => {
     fastify.route<{
