@@ -23,7 +23,11 @@ const planSchema = {
         uniqueItems: true
       }),
       reason_code: Type.Optional(
-        Type.String({ minLength: 1, maxLength: 128 })
+        Type.String({
+          minLength: 1,
+          maxLength: 128,
+          pattern: '^[a-z0-9][a-z0-9._-]{0,127}$'
+        })
       )
     },
     { additionalProperties: false }
