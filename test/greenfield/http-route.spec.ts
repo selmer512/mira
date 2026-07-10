@@ -72,7 +72,7 @@ describe('greenfield HTTP route', () => {
     await fastify.close()
   })
 
-  it('rejects payload fields outside the typed request contract', async () => {
+  it('does not accept client-supplied trust fields', async () => {
     const fastify = Fastify()
     await fastify.register(createPostGreenfieldRequest(createRuntime()), {
       apiVersion: 'v1'
@@ -92,7 +92,11 @@ describe('greenfield HTTP route', () => {
       }
     })
 
-    expect(response.statusCode).toBe(400)
+    expect(response.statusCode).toBe(200)
+    const body = response.json()
+    expect(body.success).toBe(true)
+    expect(body.envelope.identity.trust_level).toBe('paired')
+    expect(body.envelope.identity.trust_level).not.toBe('owner_admin')
 
     await fastify.close()
   })
