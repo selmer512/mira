@@ -43,8 +43,42 @@ jobs:
       - name: Install dependencies without setup side effects
         run: npm install --ignore-scripts --legacy-peer-deps --no-audit --no-fund
 
+      - name: Create diagnostic directory
+        run: mkdir -p greenfield-ci-output
+
       - name: Type-check server
-        run: npx tsc --noEmit --project tsconfig.json
+        id: typecheck
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npx tsc --noEmit --project tsconfig.json 2>&1 | tee greenfield-ci-output/typecheck.log
 
       - name: Run greenfield tests
-        run: npm run test:greenfield
+        id: tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run test:greenfield 2>&1 | tee greenfield-ci-output/tests.log
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: greenfield-ci-output
+          path: greenfield-ci-output
+          if-no-files-found: error
+
+      - name: Enforce validation results
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${{ steps.typecheck.outcome }}" != "success" ]]; then
+            echo "Type-check failed. See greenfield-ci-output/typecheck.log."
+            exit 1
+          fi
+          if [[ "${{ steps.tests.outcome }}" != "success" ]]; then
+            echo "Greenfield tests failed. See greenfield-ci-output/tests.log."
+            exit 1
+          fi
