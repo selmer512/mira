@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest'
 import {
   CapabilityLocalCognitionProvider,
   EnvironmentIdentityResolver,
-  GreenfieldExecutionError,
   GreenfieldRequestOrchestrator,
   SYSTEM_STATUS_CAPABILITY,
   SystemStatusEvidenceProvider,
@@ -130,9 +129,7 @@ describe('greenfield request runtime', () => {
       credential: 'test-api-key'
     })
 
-    await expect(execution).rejects.toMatchObject<
-      Partial<GreenfieldExecutionError>
-    >({
+    await expect(execution).rejects.toMatchObject({
       code: 'identity.device_not_paired',
       statusCode: 403
     })
@@ -152,9 +149,7 @@ describe('greenfield request runtime', () => {
       credential: 'test-api-key'
     })
 
-    await expect(execution).rejects.toMatchObject<
-      Partial<GreenfieldExecutionError>
-    >({
+    await expect(execution).rejects.toMatchObject({
       code: 'greenfield.disabled',
       statusCode: 503
     })
