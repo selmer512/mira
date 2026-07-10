@@ -103,7 +103,9 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          npm run test:over-http 2>&1 | tee greenfield-regression-output/over-http.log
+          NODE_OPTIONS=--experimental-vm-modules \
+            npm run test:over-http \
+            2>&1 | tee greenfield-regression-output/over-http.log
 
       - name: Upload regression diagnostics
         if: always()
