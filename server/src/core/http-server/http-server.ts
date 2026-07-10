@@ -24,6 +24,7 @@ import { keyMidd } from '@/core/http-server/plugins/key'
 import { utterancePlugin } from '@/core/http-server/api/utterance'
 import { greenfieldRequestPlugin } from '@/core/http-server/api/greenfield'
 import { openPathPlugin } from '@/core/http-server/api/open-path'
+import { startDefaultTraceMaintenance } from '@/core/greenfield'
 import { LLM_MANAGER, PERSONA } from '@/core'
 import { SystemHelper } from '@/helpers/system-helper'
 
@@ -86,6 +87,15 @@ export default class HTTPServer {
 
     const isTelemetryEnabled = IS_TELEMETRY_ENABLED ? 'enabled' : 'disabled'
     LogHelper.info(`Telemetry: ${isTelemetryEnabled}`)
+
+    const traceHealth = await startDefaultTraceMaintenance()
+    if (traceHealth) {
+      LogHelper.info(
+        `Greenfield trace maintenance: ${traceHealth.traceCount} trace(s), chain ${
+          traceHealth.chain.valid ? 'valid' : 'invalid'
+        }`
+      )
+    }
 
     await this.bootstrap()
   }
