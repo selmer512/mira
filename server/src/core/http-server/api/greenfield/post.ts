@@ -6,7 +6,9 @@ import {
   GreenfieldExecutionError,
   SYSTEM_STATUS_CAPABILITY,
   createDefaultGreenfieldRuntime,
-  type GreenfieldRequestOrchestrator
+  type GreenfieldExecutionInput,
+  type GreenfieldExecutionResult,
+  type TracePersistenceReceipt
 } from '@/core/greenfield'
 
 const postGreenfieldRequestSchema = {
@@ -24,12 +26,22 @@ interface PostGreenfieldRequestSchema {
   body: Static<typeof postGreenfieldRequestSchema.body>
 }
 
+interface GreenfieldRequestExecutor {
+  execute(
+    request: GreenfieldExecutionInput
+  ): Promise<
+    GreenfieldExecutionResult & {
+      trace_persistence?: TracePersistenceReceipt
+    }
+  >
+}
+
 function readCredential(header: string | string[] | undefined): string {
   return Array.isArray(header) ? header[0] || '' : header || ''
 }
 
 export function createPostGreenfieldRequest(
-  orchestrator: GreenfieldRequestOrchestrator
+  orchestrator: GreenfieldRequestExecutor
 ): FastifyPluginAsync<APIOptions> {
   return async (fastify, options) => {
     fastify.route<{
@@ -49,7 +61,8 @@ export function createPostGreenfieldRequest(
             success: true,
             answer: result.answer,
             envelope: result.envelope,
-            evidence_payloads: result.evidence_payloads
+            evidence_payloads: result.evidence_payloads,
+            trace_persistence: result.trace_persistence || null
           })
         } catch (error) {
           if (error instanceof GreenfieldExecutionError) {
