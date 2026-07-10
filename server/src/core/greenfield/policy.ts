@@ -45,6 +45,13 @@ function hasAllPermissions(
   return requiredPermissions.every((permission) => granted.has(permission))
 }
 
+function canAccessPrivacyZone(
+  identity: IdentityContext,
+  privacyZone: string
+): boolean {
+  return privacyZone === 'public' || identity.privacy_zones.includes(privacyZone)
+}
+
 export function evaluateIdentity(identity: IdentityContext): PolicyDecision {
   if (
     identity.trust_level !== 'paired' &&
@@ -95,6 +102,13 @@ export function evaluateEvidenceForRoute(
     return denied(
       'evidence.owner_mismatch',
       'Evidence belongs to a different owner.'
+    )
+  }
+
+  if (!canAccessPrivacyZone(identity, evidence.privacy_classification)) {
+    return denied(
+      'evidence.privacy_zone_denied',
+      'The owner session cannot access this evidence privacy zone.'
     )
   }
 
@@ -191,6 +205,13 @@ export function evaluateActionProposal(
     )
   }
 
+  if (!identity.permissions.includes(action.capability)) {
+    return denied(
+      'action.capability_not_allowed',
+      'The requested capability is not allowlisted for this owner session.'
+    )
+  }
+
   if (!hasAllPermissions(identity, action.required_permissions)) {
     return denied(
       'action.permission_missing',
@@ -284,6 +305,13 @@ export function evaluateMemoryPersistence(
     return denied(
       'memory.owner_mismatch',
       'The memory candidate belongs to a different owner.'
+    )
+  }
+
+  if (!canAccessPrivacyZone(identity, candidate.privacy_zone)) {
+    return denied(
+      'memory.privacy_zone_denied',
+      'The owner session cannot write to this memory privacy zone.'
     )
   }
 
