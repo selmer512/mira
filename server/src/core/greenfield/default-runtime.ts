@@ -2,12 +2,14 @@ import { CredentialVerifyingIdentityResolver } from './credential-identity'
 import {
   CapabilityLocalCognitionProvider,
   EnvironmentIdentityResolver,
-  GreenfieldRequestOrchestrator,
   SystemStatusEvidenceProvider,
   SystemStatusResponseComposer,
+  type GreenfieldRuntimeDependencies,
   type RuntimeStatusReader,
   type RuntimeStatusSnapshot
 } from './runtime'
+import { PersistingGreenfieldRequestOrchestrator } from './trace-persistence'
+import { EncryptedSqliteTraceStore } from './trace-store'
 
 class MiraRuntimeStatusReader implements RuntimeStatusReader {
   public async read(observedAt: Date): Promise<RuntimeStatusSnapshot> {
@@ -35,19 +37,23 @@ class MiraRuntimeStatusReader implements RuntimeStatusReader {
   }
 }
 
-export function createDefaultGreenfieldRuntime(): GreenfieldRequestOrchestrator {
+export function createDefaultGreenfieldRuntime(): PersistingGreenfieldRequestOrchestrator {
   const configuredIdentity = EnvironmentIdentityResolver.fromProcessEnv()
   const identityResolver = new CredentialVerifyingIdentityResolver(
     process.env['MIRA_HTTP_API_KEY'] || '',
     configuredIdentity
   )
-
-  return new GreenfieldRequestOrchestrator({
+  const dependencies: GreenfieldRuntimeDependencies = {
     identityResolver,
     localCognitionProvider: new CapabilityLocalCognitionProvider(),
     evidenceProvider: new SystemStatusEvidenceProvider(
       new MiraRuntimeStatusReader()
     ),
     responseComposer: new SystemStatusResponseComposer()
-  })
+  }
+
+  return new PersistingGreenfieldRequestOrchestrator(
+    dependencies,
+    EncryptedSqliteTraceStore.fromProcessEnv()
+  )
 }
