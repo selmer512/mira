@@ -1,3 +1,4 @@
+import { CredentialVerifyingIdentityResolver } from './credential-identity'
 import {
   CapabilityLocalCognitionProvider,
   EnvironmentIdentityResolver,
@@ -35,8 +36,14 @@ class MiraRuntimeStatusReader implements RuntimeStatusReader {
 }
 
 export function createDefaultGreenfieldRuntime(): GreenfieldRequestOrchestrator {
+  const configuredIdentity = EnvironmentIdentityResolver.fromProcessEnv()
+  const identityResolver = new CredentialVerifyingIdentityResolver(
+    process.env['MIRA_HTTP_API_KEY'] || '',
+    configuredIdentity
+  )
+
   return new GreenfieldRequestOrchestrator({
-    identityResolver: EnvironmentIdentityResolver.fromProcessEnv(),
+    identityResolver,
     localCognitionProvider: new CapabilityLocalCognitionProvider(),
     evidenceProvider: new SystemStatusEvidenceProvider(
       new MiraRuntimeStatusReader()
