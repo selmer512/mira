@@ -1,0 +1,114 @@
+name: Greenfield regression validation
+
+on:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - '.github/workflows/greenfield-regression-ci.yml'
+      - '.env.sample'
+      - 'app/**'
+      - 'aurora/**'
+      - 'bridges/**'
+      - 'package.json'
+      - 'scripts/**'
+      - 'server/src/**'
+      - 'skills/**'
+      - 'test/**'
+      - 'tsconfig.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: greenfield-regression-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    name: Lint, build, agentic, and legacy HTTP
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies without setup side effects
+        run: npm install --ignore-scripts --legacy-peer-deps --no-audit --no-fund
+
+      - name: Build Aurora type declarations
+        run: npm run build --workspace aurora
+
+      - name: Create diagnostic directory
+        run: mkdir -p greenfield-regression-output
+
+      - name: Run repository lint without accepting rewrites
+        id: lint
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run lint 2>&1 | tee greenfield-regression-output/lint.log
+          git diff -- . ':!package-lock.json' > greenfield-regression-output/lint.patch
+          if [[ -s greenfield-regression-output/lint.patch ]]; then
+            echo 'Lint rewrote tracked files; see lint.patch.'
+            exit 1
+          fi
+
+      - name: Build production server
+        id: build_server
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run build:server 2>&1 | tee greenfield-regression-output/build-server.log
+
+      - name: Run agentic-loop unit suite
+        id: agentic_unit
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run test:agentic-loop:unit 2>&1 | tee greenfield-regression-output/agentic-unit.log
+
+      - name: Run legacy over-HTTP suite
+        id: over_http
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run test:over-http 2>&1 | tee greenfield-regression-output/over-http.log
+
+      - name: Upload regression diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: greenfield-regression-output
+          path: greenfield-regression-output
+          if-no-files-found: error
+
+      - name: Enforce regression results
+        if: always()
+        shell: bash
+        run: |
+          failed=0
+          for result in \
+            "lint:${{ steps.lint.outcome }}" \
+            "build_server:${{ steps.build_server.outcome }}" \
+            "agentic_unit:${{ steps.agentic_unit.outcome }}" \
+            "over_http:${{ steps.over_http.outcome }}"; do
+            name="${result%%:*}"
+            outcome="${result#*:}"
+            if [[ "$outcome" != 'success' ]]; then
+              echo "$name failed; inspect the uploaded diagnostics."
+              failed=1
+            fi
+          done
+          exit "$failed"
