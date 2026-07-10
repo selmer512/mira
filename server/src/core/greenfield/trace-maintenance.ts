@@ -5,6 +5,15 @@ import {
   type TracePurgeReceipt
 } from './trace-store'
 
+export interface TraceMaintenanceHealth {
+  ownerId: string
+  observedAt: string
+  chain: TraceChainVerification
+  traceCount: number
+  purgeReceiptCount: number
+  migrationVersions: number[]
+}
+
 export interface TraceMaintenanceReport {
   ownerId: string
   startedAt: string
@@ -53,6 +62,22 @@ export class TraceMaintenanceService {
       ),
       runOnStartup:
         env['MIRA_GREENFIELD_TRACE_MAINTENANCE_ON_STARTUP'] !== 'false'
+    }
+  }
+
+  public async getHealth(): Promise<TraceMaintenanceHealth> {
+    this.assertOwnerConfigured()
+    const observedAt = this.now()
+
+    return {
+      ownerId: this.config.ownerId,
+      observedAt: observedAt.toISOString(),
+      chain: await this.store.verifyOwnerChain(this.config.ownerId),
+      traceCount: await this.store.countOwnerTraces(this.config.ownerId),
+      purgeReceiptCount: (
+        await this.store.listPurgeReceipts(this.config.ownerId)
+      ).length,
+      migrationVersions: this.store.getAppliedMigrationVersions()
     }
   }
 
@@ -105,14 +130,7 @@ export class TraceMaintenanceService {
   }
 
   private async executeMaintenance(): Promise<TraceMaintenanceReport> {
-    if (!this.config.ownerId) {
-      throw new TraceStoreError(
-        'trace.maintenance_owner_missing',
-        'Trace maintenance requires a configured owner ID.',
-        503
-      )
-    }
-
+    this.assertOwnerConfigured()
     const startedAt = this.now()
     const chainBefore = await this.store.verifyOwnerChain(this.config.ownerId)
     if (!chainBefore.valid) {
@@ -157,6 +175,16 @@ export class TraceMaintenanceService {
       purgeReceiptsAfter,
       retentionPurges,
       migrationVersions: this.store.getAppliedMigrationVersions()
+    }
+  }
+
+  private assertOwnerConfigured(): void {
+    if (!this.config.ownerId) {
+      throw new TraceStoreError(
+        'trace.maintenance_owner_missing',
+        'Trace maintenance requires a configured owner ID.',
+        503
+      )
     }
   }
 }
