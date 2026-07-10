@@ -89,17 +89,6 @@ interface TraceRecordRow {
   created_at: number
 }
 
-interface PurgeReceiptRow {
-  receipt_id: string
-  owner_hash: string
-  scope_hash: string
-  reason_code: string
-  purged_at: number
-  record_count: number
-  purged_record_hashes_json: string
-  receipt_hash: string
-}
-
 function parseRetentionDays(value: string | undefined): number {
   const parsed = Number(value || 30)
   if (!Number.isInteger(parsed) || parsed < 1 || parsed > 3_650) {
