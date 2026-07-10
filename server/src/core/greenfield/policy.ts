@@ -29,11 +29,7 @@ const ALLOWED: PolicyDecision = {
 }
 
 function denied(code: string, ...reasons: string[]): PolicyDecision {
-  return {
-    allowed: false,
-    code,
-    reasons
-  }
+  return { allowed: false, code, reasons }
 }
 
 function hasAllPermissions(
@@ -41,7 +37,6 @@ function hasAllPermissions(
   requiredPermissions: string[]
 ): boolean {
   const granted = new Set(identity.permissions)
-
   return requiredPermissions.every((permission) => granted.has(permission))
 }
 
@@ -86,6 +81,8 @@ export function isEvidenceFreshAt(
     : Number.POSITIVE_INFINITY
 
   return (
+    Number.isFinite(observedAt) &&
+    Number.isFinite(validFrom) &&
     observedAt <= referenceTimestamp &&
     validFrom <= referenceTimestamp &&
     referenceTimestamp <= validUntil
@@ -156,14 +153,13 @@ export function evaluateCurrentStateEvidenceSet(
     )
   }
 
-  const usableEvidence = evidence.filter(
-    (observation) =>
-      evaluateEvidenceForRoute(
-        observation,
-        identity,
-        routing,
-        referenceTime
-      ).allowed
+  const usableEvidence = evidence.filter((observation) =>
+    evaluateEvidenceForRoute(
+      observation,
+      identity,
+      routing,
+      referenceTime
+    ).allowed
   )
 
   if (usableEvidence.length === 0) {
@@ -182,6 +178,33 @@ function actionRequiresApproval(action: ActionProposal): boolean {
     action.risk === 'high' ||
     action.risk === 'critical'
   )
+}
+
+function evaluateAttachedApproval(
+  action: ActionProposal,
+  identity: IdentityContext,
+  approval: ActionApproval
+): PolicyDecision {
+  if (
+    approval.action_id !== action.action_id ||
+    approval.trace_id !== action.trace_id ||
+    approval.owner_id !== identity.owner_id ||
+    approval.auth_session_id !== identity.auth_session_id
+  ) {
+    return denied(
+      'action.approval_mismatch',
+      'The approval does not match the proposed action and authenticated session.'
+    )
+  }
+
+  if (approval.decision !== 'approved') {
+    return denied(
+      'action.owner_rejected',
+      'The owner rejected the proposed action.'
+    )
+  }
+
+  return ALLOWED
 }
 
 export function evaluateActionProposal(
@@ -229,32 +252,15 @@ export function evaluateActionProposal(
     )
   }
 
+  if (approval) {
+    return evaluateAttachedApproval(action, identity, approval)
+  }
+
   if (actionRequiresApproval(action)) {
-    if (!approval) {
-      return denied(
-        'action.approval_missing',
-        'The action requires an explicit owner approval.'
-      )
-    }
-
-    if (
-      approval.action_id !== action.action_id ||
-      approval.trace_id !== action.trace_id ||
-      approval.owner_id !== identity.owner_id ||
-      approval.auth_session_id !== identity.auth_session_id
-    ) {
-      return denied(
-        'action.approval_mismatch',
-        'The approval does not match the proposed action and authenticated session.'
-      )
-    }
-
-    if (approval.decision !== 'approved') {
-      return denied(
-        'action.owner_rejected',
-        'The owner rejected the proposed action.'
-      )
-    }
+    return denied(
+      'action.approval_missing',
+      'The action requires an explicit owner approval.'
+    )
   }
 
   return ALLOWED
@@ -271,6 +277,28 @@ export function evaluateVerificationReceipt(
     return denied(
       'receipt.action_mismatch',
       'The receipt does not belong to the proposed action and trace.'
+    )
+  }
+
+  if (
+    receipt.execution_status === 'succeeded' &&
+    action.status !== 'succeeded'
+  ) {
+    return denied(
+      'receipt.status_mismatch',
+      'The action status must be succeeded when the receipt reports successful execution.'
+    )
+  }
+
+  if (
+    (receipt.execution_status === 'failed' ||
+      receipt.execution_status === 'cancelled') &&
+    action.status !== 'failed' &&
+    action.status !== 'rolled_back'
+  ) {
+    return denied(
+      'receipt.status_mismatch',
+      'The action status must be failed or rolled_back when the receipt reports failed or cancelled execution.'
     )
   }
 
@@ -372,6 +400,8 @@ export function evaluateTraceContinuity(
     )
   }
 
+  const root = roots[0]!
+
   for (const span of spans) {
     if (span.trace_id !== expectedTraceId) {
       return denied(
@@ -411,7 +441,7 @@ export function evaluateTraceContinuity(
         : undefined
     }
 
-    if (!visited.has(roots[0]!.span_id)) {
+    if (!visited.has(root.span_id)) {
       return denied(
         'trace.disconnected_span',
         `Span ${span.span_id} does not reach the origin root.`
