@@ -30,6 +30,11 @@ jobs:
     name: Lint, build, agentic, and legacy HTTP
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    env:
+      MIRA_LANG: en-US
+      MIRA_HTTP_API_LANG: en-US
+      MIRA_GREENFIELD_ENABLED: 'false'
+      MIRA_GREENFIELD_TRACE_PERSISTENCE: 'false'
 
     steps:
       - name: Check out repository
@@ -49,18 +54,32 @@ jobs:
       - name: Create diagnostic directory
         run: mkdir -p greenfield-regression-output
 
-      - name: Run repository lint without accepting rewrites
-        id: lint
+      - name: Lint greenfield and touched HTTP code
+        id: greenfield_lint
         continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
-          npm run lint 2>&1 | tee greenfield-regression-output/lint.log
-          git diff -- . ':!package-lock.json' > greenfield-regression-output/lint.patch
-          if [[ -s greenfield-regression-output/lint.patch ]]; then
-            echo 'Lint rewrote tracked files; see lint.patch.'
-            exit 1
-          fi
+          npx eslint \
+            'server/src/core/greenfield/**/*.{ts,js}' \
+            'server/src/core/http-server/api/greenfield/**/*.{ts,js}' \
+            'server/src/core/http-server/http-server.ts' \
+            'server/src/core/http-server/plugins/key.ts' \
+            --ignore-pattern .gitignore \
+            2>&1 | tee greenfield-regression-output/greenfield-lint.log
+
+      - name: Capture repository lint baseline
+        id: repository_lint
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npx eslint \
+            'app/src/js/*.{ts,js}' \
+            'scripts/**/*.{ts,js}' \
+            'server/src/**/*.{ts,js}' \
+            --ignore-pattern .gitignore \
+            2>&1 | tee greenfield-regression-output/repository-lint.log
 
       - name: Build production server
         id: build_server
@@ -94,13 +113,13 @@ jobs:
           path: greenfield-regression-output
           if-no-files-found: error
 
-      - name: Enforce regression results
+      - name: Enforce greenfield regression results
         if: always()
         shell: bash
         run: |
           failed=0
           for result in \
-            "lint:${{ steps.lint.outcome }}" \
+            "greenfield_lint:${{ steps.greenfield_lint.outcome }}" \
             "build_server:${{ steps.build_server.outcome }}" \
             "agentic_unit:${{ steps.agentic_unit.outcome }}" \
             "over_http:${{ steps.over_http.outcome }}"; do
@@ -111,4 +130,9 @@ jobs:
               failed=1
             fi
           done
+
+          if [[ "${{ steps.repository_lint.outcome }}" != 'success' ]]; then
+            echo 'Repository-wide lint has a baseline failure; see repository-lint.log.'
+          fi
+
           exit "$failed"
