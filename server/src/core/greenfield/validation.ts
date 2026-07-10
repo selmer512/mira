@@ -1,4 +1,5 @@
-import Ajv, { type ErrorObject } from 'ajv'
+import Ajv from 'ajv'
+import type { ErrorObject } from 'ajv'
 import addFormats from 'ajv-formats'
 
 import {
@@ -101,6 +102,20 @@ function validateIdentityAndTrace(
     )
   )
 
+  for (const [index, span] of envelope.spans.entries()) {
+    if (
+      span.owner_id !== envelope.identity.owner_id ||
+      span.device_id !== envelope.identity.device_id
+    ) {
+      issues.push({
+        code: 'trace.identity_mismatch',
+        path: `/spans/${index}`,
+        message:
+          'Every trace span must remain bound to the authenticated owner and requesting device.'
+      })
+    }
+  }
+
   if (envelope.routing.trace_id !== envelope.origin.trace_id) {
     issues.push({
       code: 'routing.trace_mismatch',
@@ -173,11 +188,7 @@ function validateEvidence(
       envelope.response.limitations.length > 0
 
     if (!isExplicitLimitation) {
-      appendPolicyDecision(
-        issues,
-        '/response',
-        currentStateDecision
-      )
+      appendPolicyDecision(issues, '/response', currentStateDecision)
     }
   }
 }
@@ -312,6 +323,17 @@ function validateOperationalStateEvents(
       envelope.origin.trace_id
     )
   )
+
+  for (const [index, event] of envelope.operational_states.entries()) {
+    if (event.device_id !== envelope.identity.device_id) {
+      issues.push({
+        code: 'ui_state.device_mismatch',
+        path: `/operational_states/${index}/device_id`,
+        message:
+          'Operational state events must target the authenticated requesting device.'
+      })
+    }
+  }
 }
 
 export function validateVerticalSliceEnvelope(
