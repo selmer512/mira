@@ -413,7 +413,7 @@ export class GreenfieldRequestOrchestrator {
   private readonly createId: () => string
 
   public constructor(private readonly dependencies: GreenfieldRuntimeDependencies) {
-    this.now = dependencies.now || (() => new Date())
+    this.now = dependencies.now || ((): Date => new Date())
     this.createId = dependencies.createId || randomUUID
   }
 
