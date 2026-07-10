@@ -5,11 +5,15 @@ import {
   SystemStatusEvidenceProvider,
   SystemStatusResponseComposer,
   type GreenfieldRuntimeDependencies,
+  type IdentityResolver,
   type RuntimeStatusReader,
   type RuntimeStatusSnapshot
 } from './runtime'
 import { PersistingGreenfieldRequestOrchestrator } from './trace-persistence'
 import { EncryptedSqliteTraceStore } from './trace-store'
+
+let defaultTraceStore: EncryptedSqliteTraceStore | null = null
+let defaultIdentityResolver: IdentityResolver | null = null
 
 class MiraRuntimeStatusReader implements RuntimeStatusReader {
   public async read(observedAt: Date): Promise<RuntimeStatusSnapshot> {
@@ -37,14 +41,28 @@ class MiraRuntimeStatusReader implements RuntimeStatusReader {
   }
 }
 
+export function getDefaultGreenfieldIdentityResolver(): IdentityResolver {
+  if (!defaultIdentityResolver) {
+    defaultIdentityResolver = new CredentialVerifyingIdentityResolver(
+      process.env['MIRA_HTTP_API_KEY'] || '',
+      EnvironmentIdentityResolver.fromProcessEnv()
+    )
+  }
+
+  return defaultIdentityResolver
+}
+
+export function getDefaultGreenfieldTraceStore(): EncryptedSqliteTraceStore {
+  if (!defaultTraceStore) {
+    defaultTraceStore = EncryptedSqliteTraceStore.fromProcessEnv()
+  }
+
+  return defaultTraceStore
+}
+
 export function createDefaultGreenfieldRuntime(): PersistingGreenfieldRequestOrchestrator {
-  const configuredIdentity = EnvironmentIdentityResolver.fromProcessEnv()
-  const identityResolver = new CredentialVerifyingIdentityResolver(
-    process.env['MIRA_HTTP_API_KEY'] || '',
-    configuredIdentity
-  )
   const dependencies: GreenfieldRuntimeDependencies = {
-    identityResolver,
+    identityResolver: getDefaultGreenfieldIdentityResolver(),
     localCognitionProvider: new CapabilityLocalCognitionProvider(),
     evidenceProvider: new SystemStatusEvidenceProvider(
       new MiraRuntimeStatusReader()
@@ -54,6 +72,6 @@ export function createDefaultGreenfieldRuntime(): PersistingGreenfieldRequestOrc
 
   return new PersistingGreenfieldRequestOrchestrator(
     dependencies,
-    EncryptedSqliteTraceStore.fromProcessEnv()
+    getDefaultGreenfieldTraceStore()
   )
 }
