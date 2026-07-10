@@ -22,6 +22,7 @@ import { runActionPlugin } from '@/core/http-server/api/run-action'
 import { fetchWidgetPlugin } from '@/core/http-server/api/fetch-widget'
 import { keyMidd } from '@/core/http-server/plugins/key'
 import { utterancePlugin } from '@/core/http-server/api/utterance'
+import { greenfieldRequestPlugin } from '@/core/http-server/api/greenfield'
 import { openPathPlugin } from '@/core/http-server/api/open-path'
 import { LLM_MANAGER, PERSONA } from '@/core'
 import { SystemHelper } from '@/helpers/system-helper'
@@ -112,6 +113,9 @@ export default class HTTPServer {
       this.fastify.register((instance, _opts, next) => {
         instance.addHook('preHandler', keyMidd)
 
+        instance.register(greenfieldRequestPlugin, {
+          apiVersion: API_VERSION
+        })
         instance.register(utterancePlugin, { apiVersion: API_VERSION })
 
         // TODO: reimplement skills routes once the new core is ready
