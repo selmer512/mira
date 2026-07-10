@@ -2,6 +2,7 @@ import Fastify from 'fastify'
 import { describe, expect, it, vi } from 'vitest'
 
 import {
+  CredentialVerifyingIdentityResolver,
   GreenfieldExecutionError,
   TRACE_EXPORT_CAPABILITY,
   TRACE_PURGE_CAPABILITY,
@@ -183,6 +184,63 @@ describe('owner-authorized trace operation routes', () => {
     } else {
       expect(operationService.createPlan).not.toHaveBeenCalled()
     }
+    await fastify.close()
+  })
+
+  it('rejects an invalid reason identifier before invoking the service', async () => {
+    const fastify = Fastify()
+    const operationService = service()
+    await fastify.register(
+      createTraceOperationsRoute(identityResolver(), operationService),
+      { apiVersion: 'v1' }
+    )
+
+    const response = await fastify.inject({
+      method: 'POST',
+      url: '/api/v1/greenfield/trace-operations/plan',
+      headers: { 'x-api-key': 'test-key' },
+      payload: {
+        device_id: 'device-1',
+        operation: 'export',
+        trace_ids: ['trace-1'],
+        reason_code: 'Owner Requested Export'
+      }
+    })
+
+    expect(response.statusCode).toBe(400)
+    expect(operationService.createPlan).not.toHaveBeenCalled()
+    await fastify.close()
+  })
+
+  it('re-verifies the API credential at the identity boundary', async () => {
+    const fastify = Fastify()
+    const operationService = service()
+    const resolver = new CredentialVerifyingIdentityResolver(
+      'expected-key',
+      identityResolver()
+    )
+    await fastify.register(
+      createTraceOperationsRoute(resolver, operationService),
+      { apiVersion: 'v1' }
+    )
+
+    const response = await fastify.inject({
+      method: 'POST',
+      url: '/api/v1/greenfield/trace-operations/plan',
+      headers: { 'x-api-key': 'wrong-key' },
+      payload: {
+        device_id: 'device-1',
+        operation: 'export',
+        trace_ids: ['trace-1']
+      }
+    })
+
+    expect(response.statusCode).toBe(401)
+    expect(response.json()).toMatchObject({
+      success: false,
+      code: 'identity.credential_invalid'
+    })
+    expect(operationService.createPlan).not.toHaveBeenCalled()
     await fastify.close()
   })
 
