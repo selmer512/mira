@@ -16,6 +16,7 @@ on:
       - 'skills/**'
       - 'test/**'
       - 'tsconfig.json'
+      - 'vitest.http.config.ts'
   workflow_dispatch:
 
 permissions:
@@ -97,15 +98,13 @@ jobs:
           set -o pipefail
           npm run test:agentic-loop:unit 2>&1 | tee greenfield-regression-output/agentic-unit.log
 
-      - name: Run legacy over-HTTP suite
+      - name: Run current authenticated HTTP suite
         id: over_http
         continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
-          NODE_OPTIONS=--experimental-vm-modules \
-            npm run test:over-http \
-            2>&1 | tee greenfield-regression-output/over-http.log
+          npm run test:over-http 2>&1 | tee greenfield-regression-output/over-http.log
 
       - name: Upload regression diagnostics
         if: always()
