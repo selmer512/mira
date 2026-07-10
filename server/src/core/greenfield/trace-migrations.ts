@@ -9,11 +9,6 @@ export const TRACE_MIGRATIONS: TraceMigration[] = [
     version: 1,
     name: 'create_encrypted_append_only_trace_store',
     sql: `
-      PRAGMA journal_mode = WAL;
-      PRAGMA foreign_keys = ON;
-      PRAGMA synchronous = FULL;
-      PRAGMA secure_delete = ON;
-
       CREATE TABLE IF NOT EXISTS greenfield_trace_records (
         trace_id TEXT PRIMARY KEY,
         owner_hash TEXT NOT NULL,
