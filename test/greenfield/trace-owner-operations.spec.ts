@@ -368,6 +368,51 @@ describe('owner-authorized trace operations', () => {
     harness.traceStore.close()
   })
 
+  it('requires the operation permission before a plan is created', async () => {
+    const harness = await createHarness()
+    await expect(
+      harness.service.createPlan({
+        identity: identity({ permissions: [SYSTEM_STATUS_CAPABILITY] }),
+        operation: 'export',
+        traceIds: [harness.traceIds[0]!],
+        reasonCode: 'owner_requested_export'
+      })
+    ).rejects.toMatchObject({ code: 'trace_operation.permission_missing' })
+
+    harness.operationStore.close()
+    harness.traceStore.close()
+  })
+
+  it('allows only one immutable approval decision per plan', async () => {
+    const harness = await createHarness()
+    const planned = await harness.service.createPlan({
+      identity: identity(),
+      operation: 'export',
+      traceIds: [harness.traceIds[0]!],
+      reasonCode: 'owner_requested_export'
+    })
+    await harness.service.approve({
+      identity: identity(),
+      planId: planned.plan.plan_id,
+      approvalToken: planned.approval_token,
+      decision: 'approved'
+    })
+
+    await expect(
+      harness.service.approve({
+        identity: identity(),
+        planId: planned.plan.plan_id,
+        approvalToken: planned.approval_token,
+        decision: 'rejected'
+      })
+    ).rejects.toMatchObject({
+      code: 'trace_operation.approval_already_recorded'
+    })
+
+    harness.operationStore.close()
+    harness.traceStore.close()
+  })
+
   it('binds plans to the exact owner, device, session, permission, and expiry', async () => {
     const harness = await createHarness(60)
     const planned = await harness.service.createPlan({
