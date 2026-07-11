@@ -171,7 +171,7 @@ describe('trace operations dashboard route', () => {
     await fastify.close()
   })
 
-  it('rejects undeclared query fields through the Fastify schema', async () => {
+  it('strips undeclared query fields before identity and dashboard access', async () => {
     const fastify = Fastify()
     const getDashboard = vi.fn(async () => dashboard())
     await fastify.register(
@@ -185,8 +185,9 @@ describe('trace operations dashboard route', () => {
       headers: { 'x-api-key': 'correct-key' }
     })
 
-    expect(response.statusCode).toBe(400)
-    expect(getDashboard).not.toHaveBeenCalled()
+    expect(response.statusCode).toBe(200)
+    expect(response.json()).toEqual({ success: true, dashboard: dashboard() })
+    expect(getDashboard).toHaveBeenCalledTimes(1)
     await fastify.close()
   })
 })
