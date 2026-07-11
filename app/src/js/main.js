@@ -5,6 +5,7 @@ window.miraInitStatusEvent = new EventTarget()
 
 import './init'
 import Client from './client'
+import './trace-operations-panel'
 // import Recorder from './recorder'
 // import listener from './listener'
 import { onkeydownstartrecording, onkeydowninput } from './onkeydown'
