@@ -6,6 +6,7 @@ import { traceHealthRoute } from './health'
 import { postGreenfieldRequest } from './post'
 import { traceOperationsRoute } from './trace-operations'
 import { traceOperationsDashboardRoute } from './trace-operations-dashboard'
+import { traceRotationRoute } from './trace-rotation'
 
 export const greenfieldRequestPlugin: FastifyPluginAsync<APIOptions> = async (
   fastify,
@@ -15,4 +16,5 @@ export const greenfieldRequestPlugin: FastifyPluginAsync<APIOptions> = async (
   await fastify.register(traceHealthRoute, options)
   await fastify.register(traceOperationsRoute, options)
   await fastify.register(traceOperationsDashboardRoute, options)
+  await fastify.register(traceRotationRoute, options)
 }
