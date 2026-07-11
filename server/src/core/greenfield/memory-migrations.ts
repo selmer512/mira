@@ -165,7 +165,7 @@ export const MEMORY_MIGRATIONS: MemoryMigration[] = [
       );
 
       CREATE INDEX IF NOT EXISTS idx_greenfield_memory_event_owner_time
-        ON greenfield_memory_events(stable_owner_hash, occurred_at ASC, rowid ASC);
+        ON greenfield_memory_events(stable_owner_hash, occurred_at ASC);
 
       CREATE TRIGGER IF NOT EXISTS trg_greenfield_memory_event_no_update
       BEFORE UPDATE ON greenfield_memory_events
