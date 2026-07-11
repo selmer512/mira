@@ -67,6 +67,7 @@ jobs:
             'server/src/core/http-server/http-server.ts' \
             'server/src/core/http-server/plugins/key.ts' \
             'app/src/js/trace-operations-*.js' \
+            'app/src/js/trace-rotation-*.js' \
             --ignore-pattern .gitignore \
             2>&1 | tee greenfield-regression-output/greenfield-lint.log
 
