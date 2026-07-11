@@ -1,6 +1,9 @@
 import { getDefaultGreenfieldTraceStore } from './default-runtime'
 import { getDefaultTraceOperationStore } from './default-trace-operations'
-import { TraceOperationsDashboardService } from './trace-key-readiness'
+import {
+  TraceOperationsDashboardService,
+  type TraceOperationsDashboard
+} from './trace-key-readiness'
 
 let defaultDashboardService: Pick<
   TraceOperationsDashboardService,
@@ -20,7 +23,7 @@ export function getDefaultTraceOperationsDashboardService(): Pick<
     )
 
     defaultDashboardService = {
-      getDashboard: async (identity) => {
+      getDashboard: async (identity): Promise<TraceOperationsDashboard> => {
         traceStore.getAppliedMigrationVersions()
         operationStore.getAppliedMigrationVersions()
         return dashboardService.getDashboard(identity)
