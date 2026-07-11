@@ -1,0 +1,115 @@
+name: Mira staging deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref or commit SHA to validate and deploy
+        required: true
+        default: develop
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mira-staging-deployment
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate exact staging ref
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Check out requested ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Install Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies without setup side effects
+        run: npm install --ignore-scripts --legacy-peer-deps --no-audit --no-fund
+
+      - name: Build Aurora declarations
+        run: npm run build --workspace aurora
+
+      - name: Type-check server
+        run: npx tsc --noEmit --project tsconfig.json
+
+      - name: Run greenfield tests
+        run: npm run test:greenfield
+
+      - name: Lint repository
+        run: >-
+          npx eslint
+          'app/src/js/*.{ts,js}'
+          'scripts/**/*.{ts,js}'
+          'server/src/**/*.{ts,js}'
+          --ignore-pattern .gitignore
+
+      - name: Validate deployment shell scripts
+        run: bash -n scripts/deploy/staging-*.sh
+
+      - name: Build production server
+        env:
+          MIRA_LANG: en-US
+          MIRA_HTTP_API_LANG: en-US
+        run: npm run build:server
+
+      - name: Build production client
+        env:
+          MIRA_LANG: en-US
+          MIRA_HTTP_API_LANG: en-US
+        run: npm run build:app
+
+  deploy:
+    name: Deploy owner-controlled staging
+    needs: validate
+    runs-on: [self-hosted, linux, x64, mira-staging]
+    timeout-minutes: 60
+    environment:
+      name: mira-staging
+    steps:
+      - name: Check out requested ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          clean: true
+
+      - name: Resolve exact deployment SHA
+        id: release
+        shell: bash
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy atomically and verify
+        shell: bash
+        run: >-
+          bash scripts/deploy/staging-deploy.sh
+          "$GITHUB_WORKSPACE"
+          "${{ steps.release.outputs.sha }}"
+
+      - name: Collect content-free deployment evidence
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p staging-deployment-evidence
+          evidence="$HOME/mira-state/deployment-evidence/${{ steps.release.outputs.sha }}.json"
+          if [[ -f "$evidence" ]]; then
+            cp "$evidence" staging-deployment-evidence/deployment.json
+          else
+            printf '{"schema_version":1,"deployment_sha":"%s","verified":false,"issue":"deployment_evidence_missing"}\n' \
+              '${{ steps.release.outputs.sha }}' > staging-deployment-evidence/deployment.json
+          fi
+
+      - name: Upload deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mira-staging-deployment-${{ steps.release.outputs.sha }}
+          path: staging-deployment-evidence
+          if-no-files-found: error
