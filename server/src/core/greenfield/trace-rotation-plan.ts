@@ -15,10 +15,7 @@ import type { IdentityContext } from './contracts'
 import { evaluateIdentity } from './policy'
 import { canonicalHash } from './trace-operation-store'
 import { TRACE_KEY_MIGRATIONS } from './trace-key-migrations'
-import {
-  TraceReadKeyring,
-  type TraceKeyringOwnerInventory
-} from './trace-keyring'
+import { TraceReadKeyring } from './trace-keyring'
 
 export const TRACE_ROTATION_PLAN_CAPABILITY = 'trace.rotation.plan'
 
@@ -119,6 +116,14 @@ interface RotationPlanRow {
   authentication_tag: Uint8Array
 }
 
+type RotationPlanAADRow = Omit<
+  RotationPlanRow,
+  | 'plan_hash'
+  | 'ciphertext'
+  | 'initialization_vector'
+  | 'authentication_tag'
+>
+
 function sha256(value: string | Uint8Array): string {
   return createHash('sha256').update(value).digest('hex')
 }
@@ -187,21 +192,19 @@ function bytesValue(value: unknown): Uint8Array {
 
 function parsePlanTtlSeconds(value: string | undefined): number {
   const parsed = Number(value || 900)
-  if (!Number.isInteger(parsed) || parsed < 300 || parsed > 86_400) {
-    return 900
-  }
-  return parsed
+  return Number.isInteger(parsed) && parsed >= 300 && parsed <= 86_400
+    ? parsed
+    : 900
 }
 
 function parseFreeSpaceMultiplier(value: string | undefined): number {
   const parsed = Number(value || 2.2)
-  if (!Number.isFinite(parsed) || parsed < 1.2 || parsed > 10) {
-    return 2.2
-  }
-  return parsed
+  return Number.isFinite(parsed) && parsed >= 1.2 && parsed <= 10
+    ? parsed
+    : 2.2
 }
 
-function buildPlanAAD(row: Omit<RotationPlanRow, 'plan_hash' | 'ciphertext' | 'initialization_vector' | 'authentication_tag'>): Buffer {
+function buildPlanAAD(row: RotationPlanAADRow): Buffer {
   return Buffer.from(
     JSON.stringify({
       rotation_plan_id: row.rotation_plan_id,
@@ -246,7 +249,9 @@ function mapRotationPlanRow(row: Record<string, unknown>): RotationPlanRow {
     estimated_rewrite_bytes: numberValue(row['estimated_rewrite_bytes']),
     required_free_bytes: numberValue(row['required_free_bytes']),
     available_free_bytes: nullableNumberValue(row['available_free_bytes']),
-    backup_status: stringValue(row['backup_status']) as TraceBackupEvidence['status'],
+    backup_status: stringValue(
+      row['backup_status']
+    ) as TraceBackupEvidence['status'],
     created_at: numberValue(row['created_at']),
     expires_at: numberValue(row['expires_at']),
     encryption_key_id: stringValue(row['encryption_key_id']),
@@ -305,22 +310,7 @@ export class TraceRotationPlanner {
   ): TraceRotationPlan {
     this.assertPlanningAuthority(identity)
     const targetVersion = validateKeyVersion(targetKeyVersion)
-    if (!this.keyring.hasVersion(targetVersion)) {
-      throw new TraceRotationPlanError(
-        'trace_rotation.target_key_missing',
-        'The target key version is absent from the configured read keyring.',
-        409,
-        targetVersion
-      )
-    }
-    if (targetVersion === this.keyring.getActiveVersion()) {
-      throw new TraceRotationPlanError(
-        'trace_rotation.target_key_active',
-        'The target key version must differ from the active key version.',
-        409,
-        targetVersion
-      )
-    }
+    this.assertTargetVersion(targetVersion)
 
     const observedAt = this.now()
     const inventory = this.keyring.getOwnerInventory(identity, observedAt)
@@ -348,47 +338,35 @@ export class TraceRotationPlanner {
       )
     ].sort()
     const traceIds = inventory.traces.map((trace) => trace.trace_id).sort()
-    const recordHashes = inventory.traces.map((trace) => trace.record_hash).sort()
     const operationPlanIds = inventory.plans.map((plan) => plan.plan_id).sort()
-    const databaseBytes = this.getDatabaseLogicalBytes(database)
+    const recordHashes = inventory.traces.map((trace) => trace.record_hash).sort()
     const estimatedRewriteBytes = this.getOwnerEncryptedBytes(
       database,
       stableOwnerHash
     )
     const requiredFreeBytes = Math.ceil(
-      Math.max(databaseBytes, estimatedRewriteBytes) *
+      Math.max(this.getDatabaseLogicalBytes(database), estimatedRewriteBytes) *
         this.config.freeSpaceMultiplier
     )
     const availableFreeBytes = this.getAvailableFreeBytes()
     const backup = this.verifyBackup(database, observedAt)
-    const activePlans = inventory.plans.filter(
-      (plan) => !plan.expired && plan.receipt === null
-    )
-    const blockers = [...inventory.blockers]
-
-    if (sourceVersions.includes(targetVersion)) {
-      blockers.push('rotation.target_key_already_contains_owner_records')
-    }
-    if (activePlans.length > 0) {
-      blockers.push('rotation.active_operation_plans_present')
-    }
-    if (backup.status !== 'verified') {
-      blockers.push('rotation.backup_restore_not_verified')
-    }
-    if (
-      availableFreeBytes !== null &&
-      availableFreeBytes < requiredFreeBytes
-    ) {
-      blockers.push('rotation.insufficient_storage_headroom')
-    }
-    blockers.push('rotation.reencryption_executor_not_implemented')
-
+    const blockers = this.buildBlockers({
+      inventoryBlockers: inventory.blockers,
+      sourceVersions,
+      targetVersion,
+      hasActivePlans: inventory.plans.some(
+        (plan) => !plan.expired && plan.receipt === null
+      ),
+      backup,
+      availableFreeBytes,
+      requiredFreeBytes
+    })
     const interruptionCheckpoints = [
       'Verify the immutable plan and backup evidence before any write.',
       'Create a durable rotation journal before rewriting the first record.',
       'Rewrite records in deterministic batches with per-record verification.',
       'Persist a checkpoint after each committed batch and resume only from it.',
-      'Keep the source key readable until every trace, operation plan, and receipt verifies.',
+      'Keep the source key readable until every protected record verifies.',
       'Switch the active key only after full-chain and restart verification.'
     ]
     const verificationCriteria = [
@@ -401,16 +379,15 @@ export class TraceRotationPlanner {
     ]
     const rollbackLimits = [
       'This plan does not execute re-encryption and cannot alter owner records.',
-      'During a future execution, committed target-key batches require journal-guided recovery.',
-      'The source key must not be retired until restart and backup verification succeed.',
-      'Rollback cannot recreate records previously purged by an owner-authorized purge.',
-      'Code rollback is not authorization to delete plans, receipts, bindings, or key metadata.'
+      'Committed target-key batches require journal-guided recovery during execution.',
+      'The source key must remain until restart and backup verification succeed.',
+      'Rollback cannot recreate records previously purged by owner authorization.',
+      'Code rollback cannot delete plans, receipts, bindings, or key metadata.'
     ]
     const createdAt = observedAt.getTime()
     const expiresAt = createdAt + this.config.planTtlSeconds * 1_000
-    const planId = this.createId()
     const publicWithoutHash = {
-      rotation_plan_id: planId,
+      rotation_plan_id: this.createId(),
       target_key_version: targetVersion,
       target_encryption_key_id: targetKeyId,
       source_key_versions: sourceVersions,
@@ -426,7 +403,7 @@ export class TraceRotationPlanner {
       interruption_checkpoints: interruptionCheckpoints,
       verification_criteria: verificationCriteria,
       rollback_limits: rollbackLimits,
-      blockers: [...new Set(blockers)],
+      blockers,
       execution_supported: false as const,
       ready_for_execution: false as const,
       created_at: observedAt.toISOString(),
@@ -467,10 +444,9 @@ export class TraceRotationPlanner {
       .get(rotationPlanId, stableOwnerHash) as
       | Record<string, unknown>
       | undefined
-    if (!raw) {
-      return null
-    }
-    return this.decryptPersistedPlan(identity.owner_id, mapRotationPlanRow(raw))
+    return raw
+      ? this.decryptPersistedPlan(identity.owner_id, mapRotationPlanRow(raw))
+      : null
   }
 
   public close(): void {
@@ -511,13 +487,63 @@ export class TraceRotationPlanner {
     }
   }
 
+  private assertTargetVersion(targetVersion: string): void {
+    if (!this.keyring.hasVersion(targetVersion)) {
+      throw new TraceRotationPlanError(
+        'trace_rotation.target_key_missing',
+        'The target key version is absent from the configured read keyring.',
+        409,
+        targetVersion
+      )
+    }
+    if (targetVersion === this.keyring.getActiveVersion()) {
+      throw new TraceRotationPlanError(
+        'trace_rotation.target_key_active',
+        'The target key version must differ from the active key version.',
+        409,
+        targetVersion
+      )
+    }
+  }
+
+  private buildBlockers(input: {
+    inventoryBlockers: string[]
+    sourceVersions: string[]
+    targetVersion: string
+    hasActivePlans: boolean
+    backup: TraceBackupEvidence
+    availableFreeBytes: number | null
+    requiredFreeBytes: number
+  }): string[] {
+    const blockers = [...input.inventoryBlockers]
+    if (input.sourceVersions.includes(input.targetVersion)) {
+      blockers.push('rotation.target_key_already_contains_owner_records')
+    }
+    if (input.hasActivePlans) {
+      blockers.push('rotation.active_operation_plans_present')
+    }
+    if (input.backup.status !== 'verified') {
+      blockers.push('rotation.backup_restore_not_verified')
+    }
+    if (
+      input.availableFreeBytes !== null &&
+      input.availableFreeBytes < input.requiredFreeBytes
+    ) {
+      blockers.push('rotation.insufficient_storage_headroom')
+    }
+    blockers.push('rotation.reencryption_executor_not_implemented')
+    return [...new Set(blockers)]
+  }
+
   private ensureDatabase(): DatabaseSync {
     if (this.database) {
       return this.database
     }
-    const directory = path.dirname(this.config.databasePath)
     if (this.config.databasePath !== ':memory:') {
-      fs.mkdirSync(directory, { recursive: true, mode: 0o700 })
+      fs.mkdirSync(path.dirname(this.config.databasePath), {
+        recursive: true,
+        mode: 0o700
+      })
     }
     const database = new DatabaseSync(this.config.databasePath)
     database.exec('PRAGMA journal_mode = WAL;')
@@ -628,9 +654,7 @@ export class TraceRotationPlanner {
     const pageSize = database.prepare('PRAGMA page_size').get() as
       | Record<string, unknown>
       | undefined
-    const count = pageCount
-      ? numberValue(Object.values(pageCount)[0])
-      : 0
+    const count = pageCount ? numberValue(Object.values(pageCount)[0]) : 0
     const size = pageSize ? numberValue(Object.values(pageSize)[0]) : 0
     return count * size
   }
@@ -653,92 +677,62 @@ export class TraceRotationPlanner {
   ): TraceBackupEvidence {
     const verifiedAt = observedAt.toISOString()
     if (!this.config.backupPath) {
-      return {
-        status: 'not_configured',
-        path_ref: null,
-        size_bytes: null,
-        integrity_check: null,
-        migration_versions: [],
-        trace_count: null,
-        operation_plan_count: null,
-        verified_at: verifiedAt,
-        issue: 'MIRA_GREENFIELD_TRACE_BACKUP_PATH is not configured.'
-      }
+      return this.backupFailure(
+        'not_configured',
+        null,
+        verifiedAt,
+        'MIRA_GREENFIELD_TRACE_BACKUP_PATH is not configured.'
+      )
     }
-    const resolvedBackup = path.resolve(this.config.backupPath)
-    const resolvedLive = path.resolve(this.config.databasePath)
-    if (resolvedBackup === resolvedLive || !fs.existsSync(resolvedBackup)) {
-      return {
-        status: 'missing',
-        path_ref: `backup:${sha256(resolvedBackup).slice(0, 24)}`,
-        size_bytes: null,
-        integrity_check: null,
-        migration_versions: [],
-        trace_count: null,
-        operation_plan_count: null,
-        verified_at: verifiedAt,
-        issue:
-          resolvedBackup === resolvedLive
-            ? 'The backup path points to the live database.'
-            : 'The configured backup file does not exist.'
-      }
+    const backupPath = path.resolve(this.config.backupPath)
+    const pathRef = `backup:${sha256(backupPath).slice(0, 24)}`
+    if (
+      backupPath === path.resolve(this.config.databasePath) ||
+      !fs.existsSync(backupPath)
+    ) {
+      return this.backupFailure(
+        'missing',
+        pathRef,
+        verifiedAt,
+        backupPath === path.resolve(this.config.databasePath)
+          ? 'The backup path points to the live database.'
+          : 'The configured backup file does not exist.'
+      )
     }
 
     let backup: DatabaseSync | null = null
     try {
-      backup = new DatabaseSync(resolvedBackup)
+      backup = new DatabaseSync(backupPath)
       const integrityRow = backup.prepare('PRAGMA integrity_check').get() as
         | Record<string, unknown>
         | undefined
       const integrity = integrityRow
         ? stringValue(Object.values(integrityRow)[0])
         : ''
-      const backupVersions = backup
-        .prepare(
-          `SELECT version FROM greenfield_trace_schema_migrations
-           ORDER BY version ASC`
-        )
-        .all()
-        .map((row) =>
-          numberValue((row as Record<string, unknown>)['version'])
-        )
-      const liveVersions = liveDatabase
-        .prepare(
-          `SELECT version FROM greenfield_trace_schema_migrations
-           ORDER BY version ASC`
-        )
-        .all()
-        .map((row) =>
-          numberValue((row as Record<string, unknown>)['version'])
-        )
-      const traceRow = backup
-        .prepare('SELECT COUNT(*) AS count FROM greenfield_trace_records')
-        .get() as Record<string, unknown> | undefined
-      const operationRow = backup
-        .prepare(
-          'SELECT COUNT(*) AS count FROM greenfield_trace_operation_plans'
-        )
-        .get() as Record<string, unknown> | undefined
-      const liveTraceRow = liveDatabase
-        .prepare('SELECT COUNT(*) AS count FROM greenfield_trace_records')
-        .get() as Record<string, unknown> | undefined
-      const liveOperationRow = liveDatabase
-        .prepare(
-          'SELECT COUNT(*) AS count FROM greenfield_trace_operation_plans'
-        )
-        .get() as Record<string, unknown> | undefined
-      const traceCount = numberValue(traceRow?.['count'] || 0)
-      const operationPlanCount = numberValue(operationRow?.['count'] || 0)
+      const backupVersions = this.readMigrationVersions(backup)
+      const liveVersions = this.readMigrationVersions(liveDatabase)
+      const traceCount = this.readTableCount(
+        backup,
+        'greenfield_trace_records'
+      )
+      const operationPlanCount = this.readTableCount(
+        backup,
+        'greenfield_trace_operation_plans'
+      )
       const valid =
         integrity === 'ok' &&
         JSON.stringify(backupVersions) === JSON.stringify(liveVersions) &&
-        traceCount === numberValue(liveTraceRow?.['count'] || 0) &&
+        traceCount ===
+          this.readTableCount(liveDatabase, 'greenfield_trace_records') &&
         operationPlanCount ===
-          numberValue(liveOperationRow?.['count'] || 0)
+          this.readTableCount(
+            liveDatabase,
+            'greenfield_trace_operation_plans'
+          )
       return {
         status: valid ? 'verified' : 'invalid',
-        path_ref: `backup:${sha256(resolvedBackup).slice(0, 24)}`,
-        size_bytes: fs.statSync(resolvedBackup).size,
+        path_ref: pathRef,
+        size_bytes: fs.statSync(backupPath).size,
         integrity_check: integrity,
         migration_versions: backupVersions,
         trace_count: traceCount,
@@ -750,21 +744,57 @@ export class TraceRotationPlanner {
       }
     } catch (error) {
       return {
-        status: 'invalid',
-        path_ref: `backup:${sha256(resolvedBackup).slice(0, 24)}`,
-        size_bytes: fs.existsSync(resolvedBackup)
-          ? fs.statSync(resolvedBackup).size
-          : null,
-        integrity_check: null,
-        migration_versions: [],
-        trace_count: null,
-        operation_plan_count: null,
-        verified_at: verifiedAt,
-        issue: error instanceof Error ? error.message : String(error)
+        ...this.backupFailure(
+          'invalid',
+          pathRef,
+          verifiedAt,
+          error instanceof Error ? error.message : String(error)
+        ),
+        size_bytes: fs.existsSync(backupPath)
+          ? fs.statSync(backupPath).size
+          : null
       }
     } finally {
       backup?.close()
     }
+  }
+
+  private backupFailure(
+    status: TraceBackupEvidence['status'],
+    pathRef: string | null,
+    verifiedAt: string,
+    issue: string
+  ): TraceBackupEvidence {
+    return {
+      status,
+      path_ref: pathRef,
+      size_bytes: null,
+      integrity_check: null,
+      migration_versions: [],
+      trace_count: null,
+      operation_plan_count: null,
+      verified_at: verifiedAt,
+      issue
+    }
+  }
+
+  private readMigrationVersions(database: DatabaseSync): number[] {
+    return database
+      .prepare(
+        `SELECT version FROM greenfield_trace_schema_migrations
+         ORDER BY version ASC`
+      )
+      .all()
+      .map((row) =>
+        numberValue((row as Record<string, unknown>)['version'])
+      )
+  }
+
+  private readTableCount(database: DatabaseSync, tableName: string): number {
+    const row = database
+      .prepare(`SELECT COUNT(*) AS count FROM ${tableName}`)
+      .get() as Record<string, unknown> | undefined
+    return numberValue(row?.['count'] || 0)
   }
 
   private persistPlan(
@@ -792,7 +822,7 @@ export class TraceRotationPlanner {
       blockers: plan.blockers,
       backup: plan.backup
     }
-    const baseRow = {
+    const baseRow: RotationPlanAADRow = {
       rotation_plan_id: plan.rotation_plan_id,
       stable_owner_hash: stableOwnerHash,
       target_key_version: plan.target_key_version,
@@ -820,12 +850,6 @@ export class TraceRotationPlanner {
       cipher.final()
     ])
     const authenticationTag = cipher.getAuthTag()
-    const encryptedPlanHash = computeEncryptedPlanHash(
-      aad,
-      ciphertext,
-      initializationVector,
-      authenticationTag
-    )
     database
       .prepare(
         `INSERT INTO greenfield_trace_rotation_plans (
@@ -850,7 +874,12 @@ export class TraceRotationPlanner {
         createdAt,
         expiresAt,
         activeKeyId,
-        encryptedPlanHash,
+        computeEncryptedPlanHash(
+          aad,
+          ciphertext,
+          initializationVector,
+          authenticationTag
+        ),
         ciphertext,
         initializationVector,
         authenticationTag
@@ -863,13 +892,14 @@ export class TraceRotationPlanner {
   ): TraceRotationPlan {
     const key = this.readKeyByFingerprint(row.encryption_key_id)
     const aad = buildPlanAAD(row)
-    const encryptedHash = computeEncryptedPlanHash(
-      aad,
-      row.ciphertext,
-      row.initialization_vector,
-      row.authentication_tag
-    )
-    if (encryptedHash !== row.plan_hash) {
+    if (
+      computeEncryptedPlanHash(
+        aad,
+        row.ciphertext,
+        row.initialization_vector,
+        row.authentication_tag
+      ) !== row.plan_hash
+    ) {
       throw new TraceRotationPlanError(
         'trace_rotation.plan_integrity_failed',
         'The persisted rotation plan failed encrypted integrity verification.',
@@ -937,13 +967,23 @@ export class TraceRotationPlanner {
   }
 
   private readKeyByFingerprint(encryptionKeyId: string): Buffer {
-    const activeKey = decodeKey(
-      this.config.activeMasterKeyBase64,
-      'MIRA_GREENFIELD_TRACE_MASTER_KEY'
-    )
-    const configured: Record<string, unknown> = this.config.keyringJson.trim()
-      ? (JSON.parse(this.config.keyringJson) as Record<string, unknown>)
-      : {}
+    let configured: Record<string, unknown> = {}
+    if (this.config.keyringJson.trim()) {
+      try {
+        const parsed = JSON.parse(this.config.keyringJson) as unknown
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+          throw new Error('The keyring must be a JSON object.')
+        }
+        configured = { ...(parsed as Record<string, unknown>) }
+      } catch (error) {
+        throw new TraceRotationPlanError(
+          'trace_rotation.keyring_invalid',
+          'The configured trace keyring is invalid JSON.',
+          503,
+          error instanceof Error ? error.message : String(error)
+        )
+      }
+    }
     configured[this.config.activeKeyVersion] =
       this.config.activeMasterKeyBase64
     for (const [version, encoded] of Object.entries(configured)) {
@@ -955,9 +995,6 @@ export class TraceRotationPlanner {
       if (sha256(key).slice(0, 16) === encryptionKeyId) {
         return key
       }
-    }
-    if (sha256(activeKey).slice(0, 16) === encryptionKeyId) {
-      return activeKey
     }
     throw new TraceRotationPlanError(
       'trace_rotation.plan_key_unavailable',
