@@ -597,6 +597,9 @@ export class TraceReadKeyring {
       return null
     }
     const row = rows[0]
+    if (!row) {
+      return null
+    }
     const keyById = new Map(
       [...this.ensureKeys().values()].map((key) => [key.encryptionKeyId, key])
     )
@@ -1005,7 +1008,7 @@ export class TraceReadKeyring {
     }
     const placeholders = ownerHashes.map(() => '?').join(', ')
     const traceClause = traceId ? ' AND trace_id = ?' : ''
-    const values: unknown[] = traceId
+    const values: string[] = traceId
       ? [...ownerHashes, traceId]
       : [...ownerHashes]
     return database
