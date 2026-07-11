@@ -7,7 +7,6 @@ import dotenv from 'dotenv'
 import { command } from 'execa'
 import semver from 'semver'
 import kill from 'tree-kill'
-import axios from 'axios'
 import osName from 'os-name'
 import getos from 'getos'
 
