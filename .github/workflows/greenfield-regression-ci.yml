@@ -6,10 +6,13 @@ on:
       - develop
     paths:
       - '.github/workflows/greenfield-regression-ci.yml'
+      - '.github/workflows/mira-staging-*.yml'
       - '.env.sample'
       - 'app/**'
       - 'aurora/**'
       - 'bridges/**'
+      - 'deploy/**'
+      - 'docs/greenfield/**'
       - 'package.json'
       - 'scripts/**'
       - 'server/src/**'
@@ -28,7 +31,7 @@ concurrency:
 
 jobs:
   regression:
-    name: Lint, build, client, agentic, and HTTP
+    name: Lint, build, client, agentic, HTTP, and deployment assets
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -68,6 +71,7 @@ jobs:
             'server/src/core/http-server/plugins/key.ts' \
             'app/src/js/trace-operations-*.js' \
             'app/src/js/trace-rotation-*.js' \
+            'app/src/js/memory-*.js' \
             --ignore-pattern .gitignore \
             2>&1 | tee greenfield-regression-output/greenfield-lint.log
 
@@ -83,6 +87,24 @@ jobs:
             'server/src/**/*.{ts,js}' \
             --ignore-pattern .gitignore \
             2>&1 | tee greenfield-regression-output/repository-lint.log
+
+      - name: Validate staging deployment assets
+        id: deployment_assets
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          {
+            bash -n scripts/deploy/staging-host-bootstrap.sh
+            bash -n scripts/deploy/staging-preflight.sh
+            bash -n scripts/deploy/staging-deploy.sh
+            bash -n scripts/deploy/staging-smoke.sh
+            bash -n scripts/deploy/staging-rollback.sh
+            test -f deploy/staging/mira-staging.service
+            test -f deploy/staging/mira.env.example
+            test -f .github/workflows/mira-staging-deploy.yml
+            test -f .github/workflows/mira-staging-rollback.yml
+          } 2>&1 | tee greenfield-regression-output/deployment-assets.log
 
       - name: Build production server
         id: build_server
@@ -132,6 +154,7 @@ jobs:
           for result in \
             "greenfield_lint:${{ steps.greenfield_lint.outcome }}" \
             "repository_lint:${{ steps.repository_lint.outcome }}" \
+            "deployment_assets:${{ steps.deployment_assets.outcome }}" \
             "build_server:${{ steps.build_server.outcome }}" \
             "build_app:${{ steps.build_app.outcome }}" \
             "agentic_unit:${{ steps.agentic_unit.outcome }}" \
