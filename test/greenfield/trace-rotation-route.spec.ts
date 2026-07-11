@@ -132,7 +132,7 @@ describe('trace rotation planning routes', () => {
     await fastify.close()
   })
 
-  it('rejects an unpaired device and undeclared body fields', async () => {
+  it('rejects an unpaired device before planning', async () => {
     const fastify = Fastify()
     const createPlan = vi.fn(() => plan())
     await fastify.register(
@@ -143,13 +143,30 @@ describe('trace rotation planning routes', () => {
       { apiVersion: 'v1' }
     )
 
-    const unpaired = await fastify.inject({
+    const response = await fastify.inject({
       method: 'POST',
       url: '/api/v1/greenfield/trace-rotation/plan',
       headers: { 'x-api-key': 'correct-key' },
       payload: { device_id: 'attacker', target_key_version: 'v2' }
     })
-    const invalid = await fastify.inject({
+
+    expect(response.statusCode).toBe(403)
+    expect(createPlan).not.toHaveBeenCalled()
+    await fastify.close()
+  })
+
+  it('strips undeclared identity fields before the planner is called', async () => {
+    const fastify = Fastify()
+    const createPlan = vi.fn(() => plan())
+    await fastify.register(
+      createTraceRotationRoute(identityResolver(), {
+        createPlan,
+        readPlan: vi.fn(() => null)
+      }),
+      { apiVersion: 'v1' }
+    )
+
+    const response = await fastify.inject({
       method: 'POST',
       url: '/api/v1/greenfield/trace-rotation/plan',
       headers: { 'x-api-key': 'correct-key' },
@@ -160,9 +177,12 @@ describe('trace rotation planning routes', () => {
       }
     })
 
-    expect(unpaired.statusCode).toBe(403)
-    expect(invalid.statusCode).toBe(400)
-    expect(createPlan).not.toHaveBeenCalled()
+    expect(response.statusCode).toBe(200)
+    expect(createPlan).toHaveBeenCalledTimes(1)
+    expect(createPlan).toHaveBeenCalledWith(
+      expect.objectContaining({ owner_id: 'owner-1', device_id: 'device-1' }),
+      'v2'
+    )
     await fastify.close()
   })
 
