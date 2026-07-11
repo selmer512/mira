@@ -1007,9 +1007,9 @@ export class EncryptedSqliteMemoryStore {
     const tokens = tokenize(query)
     const temporalClause =
       timeScope === 'historical'
-        ? ` AND r.temporal_status = 'historical'`
+        ? ' AND r.temporal_status = \'historical\''
         : timeScope === 'prospective'
-          ? ` AND r.temporal_status = 'prospective'`
+          ? ' AND r.temporal_status = \'prospective\''
           : ''
     let rows: MemoryRow[]
     if (tokens.length === 0) {

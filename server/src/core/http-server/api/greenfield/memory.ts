@@ -8,6 +8,7 @@ import {
   getDefaultGreenfieldIdentityResolver,
   getDefaultMemoryCandidateRuntime,
   getDefaultMemoryService,
+  type IdentityContext,
   type IdentityResolver,
   type MemoryCandidateExecutionResult,
   type MemoryCandidateRequest,
@@ -257,7 +258,7 @@ async function resolveIdentity(
   identityResolver: IdentityResolver,
   deviceId: string,
   credential: string
-) {
+): Promise<IdentityContext> {
   return identityResolver.resolve({
     deviceId,
     credential,
