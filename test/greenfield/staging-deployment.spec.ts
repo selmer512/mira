@@ -25,6 +25,17 @@ describe('owner-controlled staging deployment', () => {
     expect(permissions).not.toContain('memory.purge')
   })
 
+  it('binds initial staging to loopback through an explicit server setting', () => {
+    const environment = read('deploy/staging/mira.env.example')
+    const server = read('server/src/core/http-server/http-server.ts')
+    const preflight = read('scripts/deploy/staging-preflight.sh')
+
+    expect(environment).toContain('MIRA_BIND_HOST=127.0.0.1')
+    expect(server).toContain("process.env['MIRA_BIND_HOST'] || '0.0.0.0'")
+    expect(server).toContain('host: bindHost')
+    expect(preflight).toContain('initial staging must bind to 127.0.0.1')
+  })
+
   it('runs Mira as a user-scoped, restartable service', () => {
     const service = read('deploy/staging/mira-staging.service')
 
