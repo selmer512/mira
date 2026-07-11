@@ -28,7 +28,7 @@ concurrency:
 
 jobs:
   regression:
-    name: Lint, build, agentic, and legacy HTTP
+    name: Lint, build, client, agentic, and HTTP
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -55,7 +55,7 @@ jobs:
       - name: Create diagnostic directory
         run: mkdir -p greenfield-regression-output
 
-      - name: Lint greenfield and touched HTTP code
+      - name: Lint greenfield server and owner UI code
         id: greenfield_lint
         continue-on-error: true
         shell: bash
@@ -66,6 +66,7 @@ jobs:
             'server/src/core/http-server/api/greenfield/**/*.{ts,js}' \
             'server/src/core/http-server/http-server.ts' \
             'server/src/core/http-server/plugins/key.ts' \
+            'app/src/js/trace-operations-*.js' \
             --ignore-pattern .gitignore \
             2>&1 | tee greenfield-regression-output/greenfield-lint.log
 
@@ -89,6 +90,14 @@ jobs:
         run: |
           set -o pipefail
           npm run build:server 2>&1 | tee greenfield-regression-output/build-server.log
+
+      - name: Build production client
+        id: build_app
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run build:app 2>&1 | tee greenfield-regression-output/build-app.log
 
       - name: Run agentic-loop unit suite
         id: agentic_unit
@@ -122,6 +131,7 @@ jobs:
           for result in \
             "greenfield_lint:${{ steps.greenfield_lint.outcome }}" \
             "build_server:${{ steps.build_server.outcome }}" \
+            "build_app:${{ steps.build_app.outcome }}" \
             "agentic_unit:${{ steps.agentic_unit.outcome }}" \
             "over_http:${{ steps.over_http.outcome }}"; do
             name="${result%%:*}"
