@@ -1,0 +1,31 @@
+[Unit]
+Description=Mira owner-controlled staging
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=%h/mira-deploy/current
+EnvironmentFile=%h/.config/mira-staging/mira.env
+ExecStartPre=%h/.local/bin/mira-staging-node server/dist/pre-check.js
+ExecStart=%h/.local/bin/mira-staging-node server/dist/index.js
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=180
+TimeoutStopSec=30
+KillSignal=SIGTERM
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
