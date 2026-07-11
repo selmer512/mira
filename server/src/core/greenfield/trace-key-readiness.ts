@@ -131,6 +131,12 @@ interface KeyRegistryRow {
   metadata_hash: string
 }
 
+interface KeyRegistrationResult {
+  row: KeyRegistryRow | null
+  conflict: string | null
+  metadataIntegrityValid: boolean
+}
+
 function sha256(value: string | Uint8Array): string {
   return createHash('sha256').update(value).digest('hex')
 }
@@ -178,11 +184,6 @@ function stringValue(value: unknown): string {
 
 function nullableStringValue(value: unknown): string | null {
   return value == null ? null : String(value)
-}
-
-function parseJsonArray(value: unknown): string[] {
-  const parsed = JSON.parse(stringValue(value) || '[]') as unknown
-  return Array.isArray(parsed) ? parsed.map((item) => String(item)) : []
 }
 
 function tableExists(database: DatabaseSync, tableName: string): boolean {
@@ -268,38 +269,7 @@ export class TraceOperationsDashboardService {
   public async getDashboard(
     identity: IdentityContext
   ): Promise<TraceOperationsDashboard> {
-    if (!this.config.enabled) {
-      throw new TraceKeyReadinessError(
-        'trace_key.dashboard_disabled',
-        'The trace operations dashboard is disabled.',
-        503
-      )
-    }
-
-    const identityDecision = evaluateIdentity(identity)
-    if (!identityDecision.allowed) {
-      throw new TraceKeyReadinessError(
-        identityDecision.code,
-        identityDecision.reasons.join(' '),
-        403
-      )
-    }
-
-    if (!identity.permissions.includes(TRACE_OPERATIONS_READ_CAPABILITY)) {
-      throw new TraceKeyReadinessError(
-        'trace_key.permission_missing',
-        'The authenticated owner session lacks trace operations read permission.',
-        403
-      )
-    }
-
-    if (!identity.privacy_zones.includes('private')) {
-      throw new TraceKeyReadinessError(
-        'trace_key.privacy_zone_denied',
-        'The authenticated owner session cannot access the private trace zone.',
-        403
-      )
-    }
+    this.assertAuthorized(identity)
 
     const observedAt = this.now()
     const database = this.ensureDatabase()
@@ -324,7 +294,11 @@ export class TraceOperationsDashboardService {
       observedAt
     )
     const chain = await this.traceStore.verifyOwnerChain(identity.owner_id)
-    const versions = this.buildTraceVersionInventory(database, ownerHash, encryptionKeyId)
+    const versions = this.buildTraceVersionInventory(
+      database,
+      ownerHash,
+      encryptionKeyId
+    )
     const activeKeyCount = versions
       .filter((entry) => entry.active)
       .reduce((sum, entry) => sum + entry.trace_count, 0)
@@ -346,35 +320,15 @@ export class TraceOperationsDashboardService {
         plan.receipt?.execution_status === 'succeeded' &&
         plan.receipt.verification_status === 'succeeded'
     ).length
-    const blockers = [
-      'rotation.stable_owner_lookup_not_implemented',
-      'rotation.multi_key_keyring_not_implemented',
-      'rotation.reencryption_executor_not_implemented',
-      'rotation.backup_restore_not_verified'
-    ]
+    const blockers = this.buildBlockers({
+      registration,
+      chain,
+      versions,
+      unknownKeyVersionCount,
+      unreadablePlanCount,
+      activeUnexpired
+    })
     const warnings: string[] = []
-
-    if (registration.conflict) {
-      blockers.push(registration.conflict)
-    }
-    if (!registration.metadataIntegrityValid) {
-      blockers.push('rotation.key_registry_integrity_failed')
-    }
-    if (!chain.valid) {
-      blockers.push('rotation.trace_chain_invalid')
-    }
-    if (unknownKeyVersionCount > 0) {
-      blockers.push('rotation.unregistered_trace_key_detected')
-    }
-    if (versions.some((entry) => !entry.active)) {
-      blockers.push('rotation.foreign_trace_key_detected')
-    }
-    if (unreadablePlanCount > 0) {
-      blockers.push('rotation.operation_plan_unreadable')
-    }
-    if (activeUnexpired > 0) {
-      blockers.push('rotation.active_operation_plans_present')
-    }
     if (totalTraceCount === 0) {
       warnings.push('rotation.no_trace_records_to_assess')
     }
@@ -384,7 +338,12 @@ export class TraceOperationsDashboardService {
 
     const readiness: TraceKeyReadinessReport = {
       observed_at: observedAt.toISOString(),
-      status: blockers.length > 0 ? 'blocked' : warnings.length > 0 ? 'attention_required' : 'ready',
+      status:
+        blockers.length > 0
+          ? 'blocked'
+          : warnings.length > 0
+            ? 'attention_required'
+            : 'ready',
       rotation_supported: false,
       active_key: {
         key_version: keyVersion,
@@ -431,6 +390,77 @@ export class TraceOperationsDashboardService {
     this.masterKey = null
   }
 
+  private assertAuthorized(identity: IdentityContext): void {
+    if (!this.config.enabled) {
+      throw new TraceKeyReadinessError(
+        'trace_key.dashboard_disabled',
+        'The trace operations dashboard is disabled.',
+        503
+      )
+    }
+
+    const identityDecision = evaluateIdentity(identity)
+    if (!identityDecision.allowed) {
+      throw new TraceKeyReadinessError(
+        identityDecision.code,
+        identityDecision.reasons.join(' '),
+        403
+      )
+    }
+    if (!identity.permissions.includes(TRACE_OPERATIONS_READ_CAPABILITY)) {
+      throw new TraceKeyReadinessError(
+        'trace_key.permission_missing',
+        'The authenticated owner session lacks trace operations read permission.',
+        403
+      )
+    }
+    if (!identity.privacy_zones.includes('private')) {
+      throw new TraceKeyReadinessError(
+        'trace_key.privacy_zone_denied',
+        'The authenticated owner session cannot access the private trace zone.',
+        403
+      )
+    }
+  }
+
+  private buildBlockers(input: {
+    registration: KeyRegistrationResult
+    chain: TraceChainVerification
+    versions: TraceKeyInventoryVersion[]
+    unknownKeyVersionCount: number
+    unreadablePlanCount: number
+    activeUnexpired: number
+  }): string[] {
+    const blockers = [
+      'rotation.stable_owner_lookup_not_implemented',
+      'rotation.multi_key_keyring_not_implemented',
+      'rotation.reencryption_executor_not_implemented',
+      'rotation.backup_restore_not_verified'
+    ]
+    if (input.registration.conflict) {
+      blockers.push(input.registration.conflict)
+    }
+    if (!input.registration.metadataIntegrityValid) {
+      blockers.push('rotation.key_registry_integrity_failed')
+    }
+    if (!input.chain.valid) {
+      blockers.push('rotation.trace_chain_invalid')
+    }
+    if (input.unknownKeyVersionCount > 0) {
+      blockers.push('rotation.unregistered_trace_key_detected')
+    }
+    if (input.versions.some((entry) => !entry.active)) {
+      blockers.push('rotation.foreign_trace_key_detected')
+    }
+    if (input.unreadablePlanCount > 0) {
+      blockers.push('rotation.operation_plan_unreadable')
+    }
+    if (input.activeUnexpired > 0) {
+      blockers.push('rotation.active_operation_plans_present')
+    }
+    return blockers
+  }
+
   private ensureDatabase(): DatabaseSync {
     if (this.database) {
       return this.database
@@ -456,7 +486,6 @@ export class TraceOperationsDashboardService {
     if (!isMemoryDatabase) {
       this.tryRestrictPermissions(this.config.databasePath, 0o600)
     }
-
     return database
   }
 
@@ -520,11 +549,7 @@ export class TraceOperationsDashboardService {
     keyVersion: string,
     encryptionKeyId: string,
     registeredAt: Date
-  ): {
-    row: KeyRegistryRow | null
-    conflict: string | null
-    metadataIntegrityValid: boolean
-  } {
+  ): KeyRegistrationResult {
     const versionRow = mapKeyRegistryRow(
       database
         .prepare(
@@ -556,7 +581,6 @@ export class TraceOperationsDashboardService {
         metadataIntegrityValid: this.verifyKeyRegistryRow(keyRow)
       }
     }
-
     if (versionRow) {
       return {
         row: versionRow,
@@ -585,15 +609,14 @@ export class TraceOperationsDashboardService {
         registeredAtMs,
         metadataHash
       )
-    const row: KeyRegistryRow = {
-      key_version: keyVersion,
-      encryption_key_id: encryptionKeyId,
-      algorithm: 'aes-256-gcm',
-      registered_at: registeredAtMs,
-      metadata_hash: metadataHash
-    }
     return {
-      row,
+      row: {
+        key_version: keyVersion,
+        encryption_key_id: encryptionKeyId,
+        algorithm: 'aes-256-gcm',
+        registered_at: registeredAtMs,
+        metadata_hash: metadataHash
+      },
       conflict: null,
       metadataIntegrityValid: true
     }
@@ -719,7 +742,6 @@ export class TraceOperationsDashboardService {
           throw new Error('Plan disappeared after owner-scoped lookup.')
         }
         const approval = this.operationStore.readApproval(planId)
-        const receipt = this.operationStore.readReceipt(planId)
         return {
           plan_id: stored.plan.plan_id,
           action_id: stored.plan.action_id,
@@ -734,39 +756,47 @@ export class TraceOperationsDashboardService {
           expires_at: stored.plan.expires_at,
           expired: Date.parse(stored.plan.expires_at) < observedAt.getTime(),
           approval_decision: approval?.decision || null,
-          receipt,
+          receipt: this.operationStore.readReceipt(planId),
           key_version: keyVersion,
           key_metadata_source: 'active_key_decryption'
         }
       } catch {
-        const metadata = database
-          .prepare(
-            `SELECT plan_id, action_id, trace_id, operation, risk, scope_hash,
-                    trace_count, created_at, expires_at
-             FROM greenfield_trace_operation_plans
-             WHERE plan_id = ? LIMIT 1`
-          )
-          .get(planId) as Record<string, unknown>
-        return {
-          plan_id: stringValue(metadata['plan_id']),
-          action_id: stringValue(metadata['action_id']),
-          operation_trace_id: stringValue(metadata['trace_id']),
-          operation: stringValue(metadata['operation']) as TraceOperation,
-          risk: stringValue(metadata['risk']) as 'high' | 'critical',
-          scope_hash: stringValue(metadata['scope_hash']),
-          trace_count: numberValue(metadata['trace_count']),
-          trace_ids: [],
-          verification_criteria: [],
-          created_at: new Date(numberValue(metadata['created_at'])).toISOString(),
-          expires_at: new Date(numberValue(metadata['expires_at'])).toISOString(),
-          expired: numberValue(metadata['expires_at']) < observedAt.getTime(),
-          approval_decision: null,
-          receipt: null,
-          key_version: null,
-          key_metadata_source: 'unavailable'
-        }
+        return this.readUnavailablePlan(database, planId, observedAt)
       }
     })
+  }
+
+  private readUnavailablePlan(
+    database: DatabaseSync,
+    planId: string,
+    observedAt: Date
+  ): TraceOperationDashboardPlan {
+    const metadata = database
+      .prepare(
+        `SELECT plan_id, action_id, trace_id, operation, risk, scope_hash,
+                trace_count, created_at, expires_at
+         FROM greenfield_trace_operation_plans
+         WHERE plan_id = ? LIMIT 1`
+      )
+      .get(planId) as Record<string, unknown>
+    return {
+      plan_id: stringValue(metadata['plan_id']),
+      action_id: stringValue(metadata['action_id']),
+      operation_trace_id: stringValue(metadata['trace_id']),
+      operation: stringValue(metadata['operation']) as TraceOperation,
+      risk: stringValue(metadata['risk']) as 'high' | 'critical',
+      scope_hash: stringValue(metadata['scope_hash']),
+      trace_count: numberValue(metadata['trace_count']),
+      trace_ids: [],
+      verification_criteria: [],
+      created_at: new Date(numberValue(metadata['created_at'])).toISOString(),
+      expires_at: new Date(numberValue(metadata['expires_at'])).toISOString(),
+      expired: numberValue(metadata['expires_at']) < observedAt.getTime(),
+      approval_decision: null,
+      receipt: null,
+      key_version: null,
+      key_metadata_source: 'unavailable'
+    }
   }
 
   private getAppliedMigrationVersions(database: DatabaseSync): number[] {
