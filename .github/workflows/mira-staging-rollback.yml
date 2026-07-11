@@ -1,0 +1,61 @@
+name: Mira staging rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: Previously retained release SHA to restore
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mira-staging-deployment
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    name: Restore verified staging release
+    runs-on: [self-hosted, linux, x64, mira-staging]
+    timeout-minutes: 15
+    environment:
+      name: mira-staging
+    steps:
+      - name: Validate rollback input
+        shell: bash
+        run: |
+          [[ '${{ inputs.release_sha }}' =~ ^[a-f0-9]{7,64}$ ]] || {
+            echo 'release_sha is invalid' >&2
+            exit 1
+          }
+
+      - name: Restore release and verify
+        shell: bash
+        run: >-
+          bash "$HOME/mira-deploy/current/scripts/deploy/staging-rollback.sh"
+          "${{ inputs.release_sha }}"
+
+      - name: Collect content-free rollback evidence
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p staging-rollback-evidence
+          evidence="$(find "$HOME/mira-state/deployment-evidence" -maxdepth 1 -type f \
+            -name 'rollback-${{ inputs.release_sha }}-*.json' -printf '%T@ %p\n' \
+            | sort -nr | head -n 1 | cut -d' ' -f2-)"
+          if [[ -n "$evidence" && -f "$evidence" ]]; then
+            cp "$evidence" staging-rollback-evidence/rollback.json
+          else
+            printf '{"schema_version":1,"deployment_sha":"%s","verified":false,"issue":"rollback_evidence_missing"}\n' \
+              '${{ inputs.release_sha }}' > staging-rollback-evidence/rollback.json
+          fi
+
+      - name: Upload rollback evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mira-staging-rollback-${{ inputs.release_sha }}
+          path: staging-rollback-evidence
+          if-no-files-found: error
