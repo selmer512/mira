@@ -100,8 +100,17 @@ function request() {
 }
 
 function countCandidates(databasePath: string): number {
+  if (!fs.existsSync(databasePath)) return 0
   const database = new DatabaseSync(databasePath)
   try {
+    const table = database
+      .prepare(
+        `SELECT name FROM sqlite_master
+         WHERE type = 'table' AND name = 'greenfield_memory_candidates'
+         LIMIT 1`
+      )
+      .get()
+    if (!table) return 0
     const row = database
       .prepare(
         'SELECT COUNT(*) AS count FROM greenfield_memory_candidates'
@@ -218,10 +227,14 @@ describe('traced memory candidate runtime', () => {
       createId: createIds()
     })
 
-    await expect(orchestrator.execute(request())).rejects.toBeInstanceOf(
-      GreenfieldExecutionError
-    )
-    await expect(orchestrator.execute(request())).rejects.toMatchObject({
+    let failure: unknown
+    try {
+      await orchestrator.execute(request())
+    } catch (error) {
+      failure = error
+    }
+    expect(failure).toBeInstanceOf(GreenfieldExecutionError)
+    expect(failure).toMatchObject({
       code: 'memory.permission_missing',
       statusCode: 403
     })
