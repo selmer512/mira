@@ -146,14 +146,17 @@ export default class HTTPServer {
    * Launch server
    */
   private async listen(): Promise<void> {
+    const bindHost = process.env['MIRA_BIND_HOST'] || '0.0.0.0'
     this.fastify.listen(
       {
         port: this.port,
-        host: '0.0.0.0'
+        host: bindHost
       },
       () => {
         LogHelper.title('Initialization')
-        LogHelper.success(`Server is available at ${this.host}:${this.port}`)
+        LogHelper.success(
+          `Server is bound to ${bindHost}:${this.port} and advertised at ${this.host}:${this.port}`
+        )
       }
     )
   }
