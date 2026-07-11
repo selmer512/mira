@@ -3,6 +3,7 @@ import type { FastifyPluginAsync } from 'fastify'
 import type { APIOptions } from '@/core/http-server/http-server'
 
 import { traceHealthRoute } from './health'
+import { memoryRoute } from './memory'
 import { postGreenfieldRequest } from './post'
 import { traceOperationsRoute } from './trace-operations'
 import { traceOperationsDashboardRoute } from './trace-operations-dashboard'
@@ -17,4 +18,5 @@ export const greenfieldRequestPlugin: FastifyPluginAsync<APIOptions> = async (
   await fastify.register(traceOperationsRoute, options)
   await fastify.register(traceOperationsDashboardRoute, options)
   await fastify.register(traceRotationRoute, options)
+  await fastify.register(memoryRoute, options)
 }
