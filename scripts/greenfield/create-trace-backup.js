@@ -12,7 +12,8 @@ function stringValue(value) {
 }
 
 function sqlString(value) {
-  return `'${String(value).replaceAll("'", "''")}'`
+  const quote = String.fromCodePoint(39)
+  return `${quote}${String(value).replaceAll(quote, quote.repeat(2))}${quote}`
 }
 
 function readMigrationVersions(database) {
