@@ -1,0 +1,310 @@
+.trace-rotation-launch {
+  margin-left: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(5, 11, 24, 0.74);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.trace-rotation-launch:hover,
+.trace-rotation-launch:focus-visible {
+  border-color: #76a8ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(118, 168, 255, 0.22);
+}
+
+.trace-rotation-panel[hidden] {
+  display: none;
+}
+
+.trace-rotation-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 10020;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  color: #eef4ff;
+}
+
+.trace-rotation-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 4, 13, 0.78);
+  backdrop-filter: blur(10px);
+}
+
+.trace-rotation-shell {
+  position: relative;
+  width: min(1080px, 100%);
+  max-height: calc(100vh - 2.5rem);
+  overflow: auto;
+  padding: 1.25rem;
+  border: 1px solid rgba(122, 165, 255, 0.3);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(59, 108, 215, 0.2), transparent 36%),
+    #07101f;
+  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.52);
+}
+
+.trace-rotation-header,
+.trace-rotation-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.trace-rotation-header h2,
+.trace-rotation-card h3,
+.trace-rotation-card h4,
+.trace-rotation-header p {
+  margin-top: 0;
+}
+
+.trace-rotation-header > div > p:last-child {
+  max-width: 760px;
+  color: #aebbd3;
+}
+
+.trace-rotation-eyebrow {
+  margin-bottom: 0.35rem;
+  color: #85b5ff;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.trace-rotation-close {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.trace-rotation-boundary,
+.trace-rotation-status,
+.trace-rotation-card {
+  margin-top: 1rem;
+  border-radius: 16px;
+}
+
+.trace-rotation-boundary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 193, 94, 0.38);
+  background: rgba(255, 171, 36, 0.1);
+  color: #ffe1ad;
+}
+
+.trace-rotation-status {
+  min-height: 2.8rem;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.055);
+  color: #c8d3e8;
+}
+
+.trace-rotation-status[data-type='success'] {
+  border: 1px solid rgba(91, 214, 160, 0.42);
+  color: #a9f2cf;
+}
+
+.trace-rotation-status[data-type='error'] {
+  border: 1px solid rgba(255, 103, 121, 0.46);
+  color: #ffbac3;
+}
+
+.trace-rotation-card {
+  padding: 1rem;
+  border: 1px solid rgba(143, 171, 224, 0.17);
+  background: rgba(12, 24, 45, 0.82);
+}
+
+.trace-rotation-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.trace-rotation-fields label {
+  display: grid;
+  gap: 0.35rem;
+  color: #b9c6dc;
+  font-size: 0.88rem;
+}
+
+.trace-rotation-fields input,
+.trace-rotation-fields button {
+  min-height: 2.7rem;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.trace-rotation-fields input {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(1, 7, 17, 0.78);
+  color: #fff;
+}
+
+.trace-rotation-fields button {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #78aaff;
+  background: #1d57b7;
+  color: #fff;
+  cursor: pointer;
+}
+
+.trace-rotation-fields input:focus-visible,
+.trace-rotation-fields button:focus-visible,
+.trace-rotation-close:focus-visible,
+.trace-rotation-panel summary:focus-visible {
+  outline: 3px solid rgba(118, 168, 255, 0.48);
+  outline-offset: 2px;
+}
+
+.trace-rotation-help,
+.trace-rotation-card p,
+.trace-rotation-card small {
+  color: #aebbd3;
+}
+
+.trace-rotation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.trace-rotation-readiness {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(255, 193, 94, 0.4);
+  border-radius: 999px;
+  color: #ffe0a6;
+  white-space: nowrap;
+}
+
+.trace-rotation-backup[data-status='ready'],
+.trace-rotation-storage[data-status='ready'] {
+  border-color: rgba(91, 214, 160, 0.42);
+}
+
+.trace-rotation-backup[data-status='blocked'],
+.trace-rotation-storage[data-status='blocked'] {
+  border-color: rgba(255, 103, 121, 0.42);
+}
+
+.trace-rotation-facts,
+.trace-rotation-backup-facts,
+.trace-rotation-storage-facts {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.42fr) minmax(0, 1fr);
+  gap: 0.5rem 0.9rem;
+  margin-bottom: 0;
+}
+
+.trace-rotation-facts dt,
+.trace-rotation-backup-facts dt,
+.trace-rotation-storage-facts dt {
+  color: #8fa1bf;
+}
+
+.trace-rotation-facts dd,
+.trace-rotation-backup-facts dd,
+.trace-rotation-storage-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #f1f5ff;
+}
+
+.trace-rotation-card ul,
+.trace-rotation-card ol {
+  display: grid;
+  gap: 0.45rem;
+  padding-left: 1.3rem;
+}
+
+.trace-rotation-card code {
+  display: block;
+  overflow-wrap: anywhere;
+  color: #b9d5ff;
+}
+
+.trace-rotation-traces li {
+  margin-bottom: 0.7rem;
+}
+
+.trace-rotation-traces small {
+  display: block;
+  margin-top: 0.25rem;
+  overflow-wrap: anywhere;
+}
+
+.trace-rotation-card details {
+  margin-top: 0.8rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+
+.trace-rotation-card summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.trace-rotation-rollback {
+  border-color: rgba(255, 193, 94, 0.34);
+}
+
+.trace-rotation-empty {
+  margin-bottom: 0;
+}
+
+@media (max-width: 820px) {
+  .trace-rotation-fields,
+  .trace-rotation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trace-rotation-panel {
+    padding: 0;
+  }
+
+  .trace-rotation-shell {
+    min-height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trace-rotation-panel *,
+  .trace-rotation-panel *::before,
+  .trace-rotation-panel *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .trace-rotation-shell,
+  .trace-rotation-card,
+  .trace-rotation-boundary,
+  .trace-rotation-status {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+}
