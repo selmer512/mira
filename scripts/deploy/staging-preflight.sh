@@ -31,6 +31,7 @@ source "$ENV_FILE"
 set +a
 
 required_values=(
+  MIRA_BIND_HOST
   MIRA_HTTP_API_KEY
   MIRA_GREENFIELD_OWNER_ID
   MIRA_GREENFIELD_PAIRED_DEVICE_ID
@@ -62,6 +63,7 @@ for name in "${required_true[@]}"; do
   [[ "${!name:-}" == 'true' ]] || fail "$name must be true for staging acceptance"
 done
 
+[[ "$MIRA_BIND_HOST" == '127.0.0.1' ]] || fail 'initial staging must bind to 127.0.0.1; add a reviewed VPN or proxy before wider exposure'
 [[ "${#MIRA_HTTP_API_KEY}" -ge 32 ]] || fail 'MIRA_HTTP_API_KEY must contain at least 32 characters'
 [[ "${MIRA_GREENFIELD_PRIVACY_ZONES:-}" == *private* ]] || fail 'the private privacy zone is required'
 
@@ -129,4 +131,4 @@ mkdir -p \
   "$STATE_ROOT/legacy-memory"
 chmod 700 "$STATE_ROOT" "$STATE_ROOT/greenfield" "$STATE_ROOT/backups" "$STATE_ROOT/logs" "$STATE_ROOT/legacy-memory"
 
-printf 'staging-preflight: ready (node=%s npm=%s environment=%s)\n' "$(node --version)" "$(npm --version)" "$ENV_FILE"
+printf 'staging-preflight: ready (node=%s npm=%s bind=%s environment=%s)\n' "$(node --version)" "$(npm --version)" "$MIRA_BIND_HOST" "$ENV_FILE"
