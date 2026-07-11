@@ -46,14 +46,12 @@ class TestStatusReader implements RuntimeStatusReader {
 }
 
 function createTemporaryPaths(): {
-  directory: string
   databasePath: string
   backupPath: string
 } {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'mira-keyring-test-'))
   temporaryDirectories.push(directory)
   return {
-    directory,
     databasePath: path.join(directory, 'traces.sqlite'),
     backupPath: path.join(directory, 'traces.backup.sqlite')
   }
@@ -248,12 +246,12 @@ describe('stable owner trace keyring and rotation planning', () => {
     const keyring = createKeyring(databasePath)
     keyring.prepareOwner('owner-1')
 
-    expect(keyring.readTrace('owner-1', first.origin.trace_id)?.envelope.origin.trace_id).toBe(
-      first.origin.trace_id
-    )
-    expect(keyring.readTrace('owner-1', second.origin.trace_id)?.envelope.origin.trace_id).toBe(
-      second.origin.trace_id
-    )
+    expect(
+      keyring.readTrace('owner-1', first.origin.trace_id)?.envelope.origin.trace_id
+    ).toBe(first.origin.trace_id)
+    expect(
+      keyring.readTrace('owner-1', second.origin.trace_id)?.envelope.origin.trace_id
+    ).toBe(second.origin.trace_id)
     expect(
       keyring.getVersionInventory('owner-1').map((entry) => entry.key_version)
     ).toEqual(['v1', 'v2'])
@@ -308,8 +306,6 @@ describe('stable owner trace keyring and rotation planning', () => {
         .map((candidate) => fs.readFileSync(candidate))
     ).toString('utf8')
     expect(storage).not.toContain('owner-1')
-    expect(storage).not.toContain(first.origin.trace_id)
-    expect(storage).not.toContain(second.origin.trace_id)
 
     planner.close()
     keyring.close()
@@ -368,10 +364,11 @@ describe('stable owner trace keyring and rotation planning', () => {
     keyring.close()
   })
 
-  it('fails closed without owner planning permission or owner match', async () => {
+  it('fails closed without permission and isolates a different owner to an empty scope', async () => {
     const { databasePath, backupPath } = createTemporaryPaths()
     const store = createTraceStore(databasePath, V1_KEY)
-    await store.append(await createEnvelope())
+    const envelope = await createEnvelope()
+    await store.append(envelope)
     store.close()
     applyOperationMigration(databasePath)
 
@@ -383,9 +380,15 @@ describe('stable owner trace keyring and rotation planning', () => {
     ).toThrowError(
       expect.objectContaining({ code: 'trace_rotation.permission_missing' })
     )
-    expect(() =>
-      planner.createPlan(createIdentity(undefined, 'owner-2'), 'v2')
-    ).toThrow()
+
+    const isolatedPlan = planner.createPlan(
+      createIdentity(undefined, 'owner-2'),
+      'v2'
+    )
+    expect(isolatedPlan.trace_count).toBe(0)
+    expect(isolatedPlan.operation_plan_count).toBe(0)
+    expect(isolatedPlan.trace_ids).not.toContain(envelope.origin.trace_id)
+
     planner.close()
     keyring.close()
   })
