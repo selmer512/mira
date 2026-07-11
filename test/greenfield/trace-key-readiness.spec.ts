@@ -156,7 +156,7 @@ describe('trace key rotation readiness', () => {
       algorithm: 'aes-256-gcm',
       metadata_integrity_valid: true
     })
-    expect(dashboard.readiness.migration_versions).toEqual([1, 2, 3])
+    expect(dashboard.readiness.migration_versions).toEqual([1, 2, 3, 4])
     expect(dashboard.traces).toHaveLength(1)
     expect(dashboard.traces[0]).toMatchObject({
       trace_id: envelope.origin.trace_id,
