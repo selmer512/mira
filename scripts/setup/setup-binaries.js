@@ -30,7 +30,7 @@ TARGETS.set('nodejs-bridge', {
   name: 'Node.js bridge',
   distPath: NODEJS_BRIDGE_DIST_PATH,
   manifestPath: path.join(NODEJS_BRIDGE_DIST_PATH, 'manifest.json'),
-  archiveName: `leon-nodejs-bridge.zip`,
+  archiveName: 'leon-nodejs-bridge.zip',
   version: NODEJS_BRIDGE_VERSION,
   isPlatformDependent: false // Need to be built for the target platform or not
 })

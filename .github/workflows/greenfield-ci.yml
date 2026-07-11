@@ -1,0 +1,88 @@
+name: Greenfield vertical slice
+
+on:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - '.github/workflows/greenfield-ci.yml'
+      - '.env.sample'
+      - 'aurora/**'
+      - 'docs/greenfield/**'
+      - 'package.json'
+      - 'server/src/core/greenfield/**'
+      - 'server/src/core/http-server/api/greenfield/**'
+      - 'server/src/core/http-server/http-server.ts'
+      - 'server/src/core/http-server/plugins/key.ts'
+      - 'test/greenfield/**'
+      - 'tsconfig.json'
+      - 'vitest.greenfield.config.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: greenfield-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Contracts, types, and security boundaries
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies without setup side effects
+        run: npm install --ignore-scripts --legacy-peer-deps --no-audit --no-fund
+
+      - name: Build Aurora type declarations
+        run: npm run build --workspace aurora
+
+      - name: Create diagnostic directory
+        run: mkdir -p greenfield-ci-output
+
+      - name: Type-check server
+        id: typecheck
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npx tsc --noEmit --project tsconfig.json 2>&1 | tee greenfield-ci-output/typecheck.log
+
+      - name: Run greenfield tests
+        id: tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run test:greenfield 2>&1 | tee greenfield-ci-output/tests.log
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: greenfield-ci-output
+          path: greenfield-ci-output
+          if-no-files-found: error
+
+      - name: Enforce validation results
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${{ steps.typecheck.outcome }}" != "success" ]]; then
+            echo "Type-check failed. See greenfield-ci-output/typecheck.log."
+            exit 1
+          fi
+          if [[ "${{ steps.tests.outcome }}" != "success" ]]; then
+            echo "Greenfield tests failed. See greenfield-ci-output/tests.log."
+            exit 1
+          fi

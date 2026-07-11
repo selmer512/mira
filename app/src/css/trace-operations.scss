@@ -1,0 +1,420 @@
+.trace-operations-launch {
+  margin-left: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  background: rgba(9, 13, 24, 0.78);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.trace-operations-launch:hover,
+.trace-operations-launch:focus-visible {
+  border-color: rgba(123, 213, 255, 0.9);
+  outline: none;
+}
+
+.trace-operations-panel[hidden] {
+  display: none;
+}
+
+.trace-operations-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  color: #f7f8fc;
+  font-family: inherit;
+}
+
+.trace-operations-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.trace-operations-shell {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(760px, 100vw);
+  height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 1.25rem;
+  background: #0d1220;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.45);
+}
+
+.trace-operations-header,
+.trace-operations-card-header,
+.trace-history-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.trace-operations-header {
+  padding: 0.35rem 0 1.1rem;
+}
+
+.trace-operations-header h2,
+.trace-operations-card h3,
+.trace-operations-card h4,
+.trace-operations-auth h3 {
+  margin: 0;
+  color: #fff;
+}
+
+.trace-operations-header p,
+.trace-operations-card p,
+.trace-operations-help {
+  color: #b9c0d0;
+}
+
+.trace-operations-eyebrow {
+  margin: 0 0 0.35rem;
+  color: #7bd5ff !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trace-operations-close {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.trace-operations-status {
+  min-height: 1.4rem;
+  margin-bottom: 1rem;
+  border-left: 3px solid #7b879f;
+  padding: 0.65rem 0.8rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #d9deea;
+}
+
+.trace-operations-status[data-type='success'] {
+  border-color: #44d28b;
+}
+
+.trace-operations-status[data-type='warning'] {
+  border-color: #ffd166;
+}
+
+.trace-operations-status[data-type='error'] {
+  border-color: #ff6b7a;
+}
+
+.trace-operations-auth,
+.trace-operations-card {
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.trace-operations-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  align-items: end;
+}
+
+.trace-operations-fields label {
+  display: grid;
+  gap: 0.35rem;
+  color: #dfe4ef;
+}
+
+.trace-operations-fields label span {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.trace-operations-fields input,
+.trace-operations-fields select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.65rem;
+  padding: 0.75rem;
+  background: #080c16;
+  color: #fff;
+  font: inherit;
+}
+
+.trace-operations-fields input:focus,
+.trace-operations-fields select:focus {
+  border-color: #7bd5ff;
+  outline: 2px solid rgba(123, 213, 255, 0.2);
+}
+
+.trace-operations-fields button,
+.trace-plan-actions button,
+.trace-operations-card > button,
+.trace-operations-card-header button {
+  border: 1px solid rgba(123, 213, 255, 0.55);
+  border-radius: 0.65rem;
+  padding: 0.7rem 0.9rem;
+  background: rgba(24, 110, 160, 0.25);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.trace-operations-fields button:disabled,
+.trace-plan-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.trace-operations-help {
+  margin-bottom: 0;
+  font-size: 0.8rem;
+}
+
+.trace-key-summary {
+  margin: 0.85rem 0;
+  border-radius: 0.75rem;
+  padding: 0.85rem;
+  background: rgba(255, 209, 102, 0.09);
+}
+
+.trace-key-summary[data-status='ready'] {
+  background: rgba(68, 210, 139, 0.1);
+}
+
+.trace-key-summary[data-status='blocked'] {
+  background: rgba(255, 107, 122, 0.1);
+}
+
+.trace-key-summary p {
+  margin: 0.3rem 0 0;
+}
+
+.trace-key-facts,
+.trace-plan-facts,
+.trace-receipt-facts {
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.45fr) minmax(0, 1fr);
+  gap: 0.45rem 0.8rem;
+  margin: 0.8rem 0;
+}
+
+.trace-key-facts dt,
+.trace-plan-facts dt,
+.trace-receipt-facts dt {
+  color: #9da7ba;
+}
+
+.trace-key-facts dd,
+.trace-plan-facts dd,
+.trace-receipt-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #f3f5fa;
+}
+
+.trace-key-blockers ul,
+.trace-plan-verification ul,
+.trace-receipt-evidence ul {
+  margin: 0.6rem 0 0;
+  padding-left: 1.25rem;
+  color: #d8deea;
+}
+
+.trace-catalog {
+  display: grid;
+  gap: 0.6rem;
+  max-height: 24rem;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+}
+
+.trace-catalog-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: start;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.16);
+  cursor: pointer;
+}
+
+.trace-catalog-item:has(input:checked) {
+  border-color: #7bd5ff;
+  background: rgba(123, 213, 255, 0.08);
+}
+
+.trace-catalog-item input {
+  margin-top: 0.25rem;
+}
+
+.trace-catalog-body {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.trace-catalog-body code,
+.trace-history-item code {
+  overflow-wrap: anywhere;
+  color: #b8e8ff;
+}
+
+.trace-catalog-body small,
+.trace-history-item small,
+.trace-selection-count,
+.trace-operation-risk,
+.trace-plan-expiry,
+.trace-receipt-status {
+  color: #a8b2c5;
+  font-size: 0.78rem;
+}
+
+.trace-operation-fields {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+}
+
+.trace-operation-warning {
+  margin: 0.9rem 0 0;
+  border-left: 3px solid #ffd166;
+  padding-left: 0.75rem;
+}
+
+.trace-plan-scope,
+.trace-plan-verification,
+.trace-receipt-evidence {
+  margin-top: 1rem;
+}
+
+.trace-plan-scope ol {
+  max-height: 12rem;
+  overflow-y: auto;
+  padding-left: 1.4rem;
+  color: #dce4f2;
+}
+
+.trace-plan-scope li {
+  margin: 0.3rem 0;
+  overflow-wrap: anywhere;
+}
+
+.trace-purge-ack {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.7rem;
+  margin-top: 1rem;
+  border: 1px solid rgba(255, 107, 122, 0.55);
+  border-radius: 0.75rem;
+  padding: 0.85rem;
+  background: rgba(255, 107, 122, 0.08);
+  color: #ffe7ea;
+}
+
+.trace-plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.trace-plan-actions [data-action='approve'],
+.trace-plan-actions [data-action='execute'] {
+  border-color: rgba(255, 209, 102, 0.7);
+  background: rgba(255, 209, 102, 0.14);
+}
+
+.trace-receipt-status[data-status='success'] {
+  color: #66e2a0;
+}
+
+.trace-receipt-status[data-status='error'] {
+  color: #ff8c98;
+}
+
+.trace-operation-history {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.trace-history-item {
+  display: grid;
+  gap: 0.35rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  padding-bottom: 0.7rem;
+}
+
+.trace-history-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.trace-history-item p {
+  margin: 0;
+  font-size: 0.86rem;
+}
+
+.trace-empty {
+  margin: 0;
+  padding: 1rem;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .trace-operations-shell {
+    padding: 0.85rem;
+  }
+
+  .trace-operations-fields,
+  .trace-operation-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .trace-key-facts,
+  .trace-plan-facts,
+  .trace-receipt-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .trace-key-facts dd,
+  .trace-plan-facts dd,
+  .trace-receipt-facts dd {
+    margin-bottom: 0.45rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trace-operations-panel *,
+  .trace-operations-panel *::before,
+  .trace-operations-panel *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .trace-operations-shell,
+  .trace-operations-card,
+  .trace-operations-auth,
+  .trace-catalog-item {
+    border: 1px solid CanvasText;
+  }
+}
