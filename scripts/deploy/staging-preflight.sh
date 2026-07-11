@@ -13,12 +13,9 @@ require_command() {
   command -v "$1" >/dev/null 2>&1 || fail "required command is unavailable: $1"
 }
 
-require_command node
-require_command npm
-require_command curl
-require_command rsync
-require_command systemctl
-require_command stat
+for command_name in node npm curl rsync systemctl stat python3 make g++; do
+  require_command "$command_name"
+done
 
 [[ -f "$ENV_FILE" ]] || fail "environment file does not exist: $ENV_FILE"
 
