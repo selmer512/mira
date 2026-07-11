@@ -70,7 +70,7 @@ jobs:
             --ignore-pattern .gitignore \
             2>&1 | tee greenfield-regression-output/greenfield-lint.log
 
-      - name: Capture repository lint baseline
+      - name: Lint repository
         id: repository_lint
         continue-on-error: true
         shell: bash
@@ -130,6 +130,7 @@ jobs:
           failed=0
           for result in \
             "greenfield_lint:${{ steps.greenfield_lint.outcome }}" \
+            "repository_lint:${{ steps.repository_lint.outcome }}" \
             "build_server:${{ steps.build_server.outcome }}" \
             "build_app:${{ steps.build_app.outcome }}" \
             "agentic_unit:${{ steps.agentic_unit.outcome }}" \
@@ -141,9 +142,5 @@ jobs:
               failed=1
             fi
           done
-
-          if [[ "${{ steps.repository_lint.outcome }}" != 'success' ]]; then
-            echo 'Repository-wide lint has a baseline failure; see repository-lint.log.'
-          fi
 
           exit "$failed"
