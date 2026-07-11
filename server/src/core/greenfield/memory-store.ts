@@ -2571,7 +2571,7 @@ export class EncryptedSqliteMemoryStore {
       .prepare(
         `SELECT event_hash FROM greenfield_memory_events
          WHERE stable_owner_hash = ?
-         ORDER BY occurred_at DESC, rowid DESC LIMIT 1`
+         ORDER BY rowid DESC LIMIT 1`
       )
       .get(input.stableOwnerHash) as Record<string, unknown> | undefined
     const previousEventHash = previous
@@ -2619,7 +2619,7 @@ export class EncryptedSqliteMemoryStore {
       .prepare(
         `SELECT * FROM greenfield_memory_events
          WHERE stable_owner_hash = ?
-         ORDER BY occurred_at ASC, rowid ASC`
+         ORDER BY rowid ASC`
       )
       .all(stableOwnerHash)
       .map((row) => row as Record<string, unknown>)
