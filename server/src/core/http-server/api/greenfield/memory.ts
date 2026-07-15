@@ -257,19 +257,21 @@ function sendError(reply: FastifyReply, error: unknown): void {
 async function resolveIdentity(
   identityResolver: IdentityResolver,
   deviceId: string,
-  credential: string
+  credential: string,
+  now: () => Date
 ): Promise<IdentityContext> {
   return identityResolver.resolve({
     deviceId,
     credential,
-    authenticatedAt: new Date()
+    authenticatedAt: now()
   })
 }
 
 export function createMemoryRoute(
   identityResolver: IdentityResolver,
   candidateRuntime: MemoryCandidateExecutor,
-  memoryService: MemoryLifecycleService
+  memoryService: MemoryLifecycleService,
+  now: () => Date = (): Date => new Date()
 ): FastifyPluginAsync<APIOptions> {
   return async (fastify, options) => {
     fastify.route<{ Body: CreateCandidateRouteSchema['body'] }>({
@@ -300,7 +302,8 @@ export function createMemoryRoute(
           const identity = await resolveIdentity(
             identityResolver,
             request.query.device_id,
-            readCredential(request.headers['x-api-key'])
+            readCredential(request.headers['x-api-key']),
+            now
           )
           const candidate = memoryService.readCandidate(
             identity,
@@ -332,14 +335,15 @@ export function createMemoryRoute(
           const identity = await resolveIdentity(
             identityResolver,
             request.body.device_id,
-            readCredential(request.headers['x-api-key'])
+            readCredential(request.headers['x-api-key']),
+            now
           )
           const result = memoryService.decideCandidate({
             identity,
             candidateId: request.body.candidate_id,
             approvalToken: request.body.approval_token,
             decision: request.body.decision,
-            decidedAt: new Date()
+            decidedAt: now()
           })
           reply.send({ success: true, ...result })
         } catch (error) {
@@ -358,14 +362,15 @@ export function createMemoryRoute(
           const identity = await resolveIdentity(
             identityResolver,
             request.query.device_id,
-            readCredential(request.headers['x-api-key'])
+            readCredential(request.headers['x-api-key']),
+            now
           )
           const result = memoryService.search(
             identity,
             request.query.query,
             request.query.time_scope,
             request.query.limit || 10,
-            new Date()
+            now()
           )
           reply.send({ success: true, result })
         } catch (error) {
@@ -384,11 +389,12 @@ export function createMemoryRoute(
           const identity = await resolveIdentity(
             identityResolver,
             request.query.device_id,
-            readCredential(request.headers['x-api-key'])
+            readCredential(request.headers['x-api-key']),
+            now
           )
           reply.send({
             success: true,
-            export_bundle: memoryService.exportOwner(identity, new Date())
+            export_bundle: memoryService.exportOwner(identity, now())
           })
         } catch (error) {
           sendError(reply, error)
@@ -406,14 +412,15 @@ export function createMemoryRoute(
           const identity = await resolveIdentity(
             identityResolver,
             request.body.device_id,
-            readCredential(request.headers['x-api-key'])
+            readCredential(request.headers['x-api-key']),
+            now
           )
           const created = memoryService.createPurgePlan({
             identity,
             traceId: randomUUID(),
             memoryIds: request.body.memory_ids,
             reasonCode: request.body.reason_code,
-            createdAt: new Date()
+            createdAt: now()
           })
           reply.send({
             success: true,
@@ -436,7 +443,8 @@ export function createMemoryRoute(
           const identity = await resolveIdentity(
             identityResolver,
             request.query.device_id,
-            readCredential(request.headers['x-api-key'])
+            readCredential(request.headers['x-api-key']),
+            now
           )
           const plan = memoryService.readPurgePlan(
             identity,
@@ -468,14 +476,15 @@ export function createMemoryRoute(
           const identity = await resolveIdentity(
             identityResolver,
             request.body.device_id,
-            readCredential(request.headers['x-api-key'])
+            readCredential(request.headers['x-api-key']),
+            now
           )
           const approval = memoryService.decidePurgePlan({
             identity,
             planId: request.body.plan_id,
             approvalToken: request.body.approval_token,
             decision: request.body.decision,
-            decidedAt: new Date()
+            decidedAt: now()
           })
           reply.send({ success: true, approval })
         } catch (error) {
@@ -494,12 +503,13 @@ export function createMemoryRoute(
           const identity = await resolveIdentity(
             identityResolver,
             request.body.device_id,
-            readCredential(request.headers['x-api-key'])
+            readCredential(request.headers['x-api-key']),
+            now
           )
           const receipt = memoryService.executePurgePlan({
             identity,
             planId: request.body.plan_id,
-            executedAt: new Date()
+            executedAt: now()
           })
           reply.send({ success: true, receipt })
         } catch (error) {
@@ -518,7 +528,8 @@ export function createMemoryRoute(
           const identity = await resolveIdentity(
             identityResolver,
             request.query.device_id,
-            readCredential(request.headers['x-api-key'])
+            readCredential(request.headers['x-api-key']),
+            now
           )
           const receipt = memoryService.readPurgeReceipt(
             identity,
