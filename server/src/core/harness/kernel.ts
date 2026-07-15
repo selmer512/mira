@@ -7,6 +7,7 @@ import type {
   HarnessAdapterExecutionInput,
   HarnessApprovalCheckpoint,
   HarnessCancelRequest,
+  HarnessCapabilityAdapter,
   HarnessCard,
   HarnessCardRequest,
   HarnessDecisionRequest,
@@ -198,8 +199,9 @@ export class MiraHarnessKernel {
     }
 
     const createdAt = this.now().toISOString()
+    const taskId = this.createId()
     const task: HarnessTask = {
-      task_id: this.createId(),
+      task_id: taskId,
       context_id: request.context_id,
       owner_id: identity.owner_id,
       device_id: identity.device_id,
@@ -221,7 +223,7 @@ export class MiraHarnessKernel {
       artifacts: [],
       approval: null,
       error: null,
-      trace_id: null,
+      trace_id: taskId,
       created_at: createdAt,
       updated_at: createdAt,
       completed_at: null,
@@ -644,7 +646,7 @@ export class MiraHarnessKernel {
     stage: 'input' | 'output',
     task: HarnessTask,
     identity: IdentityContext,
-    manifest: ReturnType<MiraHarnessKernel['getAdapter']>['manifest'],
+    manifest: HarnessCapabilityAdapter['manifest'],
     request: HarnessStartRequest,
     result?: HarnessFinalStepResult
   ): Promise<void> {
@@ -691,7 +693,7 @@ export class MiraHarnessKernel {
     stage: HarnessHookStage,
     task: HarnessTask,
     identity: IdentityContext,
-    manifest: ReturnType<MiraHarnessKernel['getAdapter']>['manifest'],
+    manifest: HarnessCapabilityAdapter['manifest'],
     contextRef: string | null
   ): Promise<void> {
     const hookContext: HarnessHookContext = {
@@ -874,9 +876,10 @@ export class MiraHarnessKernel {
     return this.dependencies.store.appendEvent(event)
   }
 
-  private executionHookStages(
-    executionKind: string
-  ): { before: HarnessHookStage | null; after: HarnessHookStage | null } {
+  private executionHookStages(executionKind: string): {
+    before: HarnessHookStage | null
+    after: HarnessHookStage | null
+  } {
     if (executionKind === 'model' || executionKind === 'agent') {
       return { before: 'before_model_call', after: 'after_model_call' }
     }
@@ -886,7 +889,7 @@ export class MiraHarnessKernel {
     return { before: null, after: null }
   }
 
-  private getAdapter(capabilityId: string) {
+  private getAdapter(capabilityId: string): HarnessCapabilityAdapter {
     try {
       return this.dependencies.registry.get(capabilityId)
     } catch (error) {
