@@ -87,8 +87,11 @@ export interface A2ARemoteTaskView {
   context_id: string
   state: HarnessTaskState
   messages: HarnessMessagePart[]
-  artifacts: Omit<HarnessArtifact, 'artifact_id' | 'created_at' | 'capability_id'>[]
-  error: { code: string; message: string } | null
+  artifacts: Omit<
+    HarnessArtifact,
+    'artifact_id' | 'created_at' | 'capability_id'
+  >[]
+  error: { code: string, message: string } | null
 }
 
 export interface A2AClientPort {
