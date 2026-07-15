@@ -44,6 +44,9 @@ required_values=(
   MIRA_GREENFIELD_MEMORY_DB_PATH
   MIRA_GREENFIELD_MEMORY_MASTER_KEY
   MIRA_GREENFIELD_MEMORY_KEY_VERSION
+  MIRA_HARNESS_DB_PATH
+  MIRA_HARNESS_MASTER_KEY
+  MIRA_HARNESS_KEY_VERSION
 )
 
 for name in "${required_values[@]}"; do
@@ -58,6 +61,8 @@ required_true=(
   MIRA_GREENFIELD_TRACE_PERSISTENCE
   MIRA_GREENFIELD_TRACE_OPERATIONS
   MIRA_GREENFIELD_MEMORY
+  MIRA_HARNESS_ENABLED
+  MIRA_HARNESS_PERSISTENCE
 )
 for name in "${required_true[@]}"; do
   [[ "${!name:-}" == 'true' ]] || fail "$name must be true for staging acceptance"
@@ -85,10 +90,16 @@ validate_key() {
 validate_key MIRA_GREENFIELD_TRACE_MASTER_KEY
 validate_key MIRA_GREENFIELD_OWNER_LOOKUP_KEY
 validate_key MIRA_GREENFIELD_MEMORY_MASTER_KEY
+validate_key MIRA_HARNESS_MASTER_KEY
 
-[[ "$MIRA_GREENFIELD_TRACE_MASTER_KEY" != "$MIRA_GREENFIELD_OWNER_LOOKUP_KEY" ]] || fail 'trace and owner lookup keys must be distinct'
-[[ "$MIRA_GREENFIELD_TRACE_MASTER_KEY" != "$MIRA_GREENFIELD_MEMORY_MASTER_KEY" ]] || fail 'trace and memory keys must be distinct'
-[[ "$MIRA_GREENFIELD_OWNER_LOOKUP_KEY" != "$MIRA_GREENFIELD_MEMORY_MASTER_KEY" ]] || fail 'owner lookup and memory keys must be distinct'
+node -e '
+  const keys = process.argv.slice(1)
+  if (new Set(keys).size !== keys.length) process.exit(1)
+' \
+  "$MIRA_GREENFIELD_TRACE_MASTER_KEY" \
+  "$MIRA_GREENFIELD_OWNER_LOOKUP_KEY" \
+  "$MIRA_GREENFIELD_MEMORY_MASTER_KEY" \
+  "$MIRA_HARNESS_MASTER_KEY" || fail 'trace, owner lookup, memory, and harness keys must be distinct'
 
 node -e '
   const keyring = JSON.parse(process.argv[1])
@@ -104,7 +115,11 @@ node -e '
   if (new Set(fingerprints).size !== fingerprints.length) process.exit(4)
 ' "$MIRA_GREENFIELD_TRACE_KEYRING_JSON" "$MIRA_GREENFIELD_TRACE_KEY_VERSION" "$MIRA_GREENFIELD_TRACE_MASTER_KEY" || fail 'trace keyring is invalid or does not match the active key'
 
-for path_name in MIRA_GREENFIELD_TRACE_DB_PATH MIRA_GREENFIELD_TRACE_BACKUP_PATH MIRA_GREENFIELD_MEMORY_DB_PATH; do
+for path_name in \
+  MIRA_GREENFIELD_TRACE_DB_PATH \
+  MIRA_GREENFIELD_TRACE_BACKUP_PATH \
+  MIRA_GREENFIELD_MEMORY_DB_PATH \
+  MIRA_HARNESS_DB_PATH; do
   path_value="${!path_name}"
   [[ "$path_value" == /* ]] || fail "$path_name must be absolute"
   case "$path_value" in
@@ -131,4 +146,9 @@ mkdir -p \
   "$STATE_ROOT/legacy-memory"
 chmod 700 "$STATE_ROOT" "$STATE_ROOT/greenfield" "$STATE_ROOT/backups" "$STATE_ROOT/logs" "$STATE_ROOT/legacy-memory"
 
-printf 'staging-preflight: ready (node=%s npm=%s bind=%s environment=%s)\n' "$(node --version)" "$(npm --version)" "$MIRA_BIND_HOST" "$ENV_FILE"
+printf 'staging-preflight: ready (node=%s npm=%s bind=%s harness=%s environment=%s)\n' \
+  "$(node --version)" \
+  "$(npm --version)" \
+  "$MIRA_BIND_HOST" \
+  "$MIRA_HARNESS_PERSISTENCE" \
+  "$ENV_FILE"
