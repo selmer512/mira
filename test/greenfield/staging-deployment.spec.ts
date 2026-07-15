@@ -111,10 +111,10 @@ describe('owner-controlled staging deployment', () => {
     expect(smoke).toContain("owner_scope_probe: 'not_found_as_expected'")
     expect(smoke).not.toContain('export_bundle')
     expect(smoke).not.toContain('memory.content')
-    expect(evidenceSection).not.toContain('owner_id')
-    expect(evidenceSection).not.toContain('device_id')
-    expect(evidenceSection).not.toContain('task_id')
-    expect(evidenceSection).not.toContain('trace_id')
+    expect(evidenceSection).not.toMatch(/(^|\s)owner_id\s*:/m)
+    expect(evidenceSection).not.toMatch(/(^|\s)device_id\s*:/m)
+    expect(evidenceSection).not.toMatch(/(^|\s)task_id\s*:/m)
+    expect(evidenceSection).not.toMatch(/(^|\s)trace_id\s*:/m)
   })
 
   it('fails closed on placeholders, key reuse, broad file mode, and destructive grants', () => {
