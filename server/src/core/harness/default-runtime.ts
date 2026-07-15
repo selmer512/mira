@@ -5,9 +5,16 @@ import { createDefaultHarnessGuardrails } from './guardrails'
 import { HarnessHookBus } from './hooks'
 import { MiraHarnessKernel } from './kernel'
 import { HarnessCapabilityRegistry } from './registry'
-import { InMemoryHarnessTaskStore } from './store'
+import { EncryptedSqliteHarnessTaskStore } from './sqlite-store'
+import { InMemoryHarnessTaskStore, type HarnessTaskStore } from './store'
 
 let defaultHarness: MiraHarnessKernel | null = null
+
+function createDefaultStore(): HarnessTaskStore {
+  return process.env['MIRA_HARNESS_PERSISTENCE'] === 'true'
+    ? EncryptedSqliteHarnessTaskStore.fromProcessEnv()
+    : new InMemoryHarnessTaskStore()
+}
 
 export function createDefaultMiraHarness(): MiraHarnessKernel {
   const registry = new HarnessCapabilityRegistry()
@@ -16,7 +23,7 @@ export function createDefaultMiraHarness(): MiraHarnessKernel {
   return new MiraHarnessKernel({
     identityResolver: getDefaultGreenfieldIdentityResolver(),
     registry,
-    store: new InMemoryHarnessTaskStore(),
+    store: createDefaultStore(),
     hooks: new HarnessHookBus(),
     guardrails: createDefaultHarnessGuardrails(),
     maxSteps: Number(process.env['MIRA_HARNESS_MAX_STEPS'] || 12),
