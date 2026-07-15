@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - develop
+      - greenfield/vertical-slice-foundation-20260710
     paths:
       - '.github/workflows/greenfield-ci.yml'
       - '.env.sample'
@@ -11,6 +12,7 @@ on:
       - 'docs/greenfield/**'
       - 'package.json'
       - 'server/src/core/greenfield/**'
+      - 'server/src/core/harness/**'
       - 'server/src/core/http-server/api/greenfield/**'
       - 'server/src/core/http-server/http-server.ts'
       - 'server/src/core/http-server/plugins/key.ts'
