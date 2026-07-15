@@ -15,6 +15,7 @@ import {
   createDefaultHarnessGuardrails,
   type HarnessAdapterExecutionInput,
   type HarnessCapabilityAdapter,
+  type HarnessCapabilityManifest,
   type HarnessPreparedContext,
   type HarnessStepResult
 } from '@/core/harness'
@@ -48,26 +49,33 @@ class RouteIdentityResolver implements IdentityResolver {
   }
 }
 
-class RouteAnswerAdapter implements HarnessCapabilityAdapter {
-  public readonly manifest = {
-    capability_id: 'route.answer',
-    name: 'Route answer',
+function routeManifest(
+  capabilityId: 'route.answer' | 'route.slow',
+  name: string
+): HarnessCapabilityManifest {
+  return {
+    capability_id: capabilityId,
+    name,
     description: 'Deterministic route adapter.',
     version: '1',
-    execution_kind: 'deterministic' as const,
-    required_permissions: ['route.answer'],
+    execution_kind: 'deterministic',
+    required_permissions: [capabilityId],
     allowed_privacy_zones: ['private'],
-    risk: 'low' as const,
-    confirmation: 'never' as const,
+    risk: 'low',
+    confirmation: 'never',
     supports_streaming: true,
     supports_cancellation: true,
     supports_handoffs: false,
-    input_schema_ref: 'schema://route/answer/input',
-    output_schema_ref: 'schema://route/answer/output',
+    input_schema_ref: `schema://${capabilityId}/input`,
+    output_schema_ref: `schema://${capabilityId}/output`,
     provider: 'test',
     model: null,
     tags: ['test']
   }
+}
+
+class RouteAnswerAdapter implements HarnessCapabilityAdapter {
+  public readonly manifest = routeManifest('route.answer', 'Route answer')
 
   public async prepareContext(
     input: HarnessAdapterExecutionInput
@@ -93,12 +101,19 @@ class RouteAnswerAdapter implements HarnessCapabilityAdapter {
   }
 }
 
-class RouteSlowAdapter extends RouteAnswerAdapter {
-  public readonly manifest = {
-    ...super.manifest,
-    capability_id: 'route.slow',
-    name: 'Route slow',
-    required_permissions: ['route.slow']
+class RouteSlowAdapter implements HarnessCapabilityAdapter {
+  public readonly manifest = routeManifest('route.slow', 'Route slow')
+
+  public async prepareContext(
+    input: HarnessAdapterExecutionInput
+  ): Promise<HarnessPreparedContext> {
+    return {
+      context_ref: `context://route/${input.task.task_id}`,
+      values: {},
+      evidence_refs: [],
+      memory_refs: [],
+      limitations: []
+    }
   }
 
   public async execute(
@@ -127,9 +142,10 @@ function createKernel(): MiraHarnessKernel {
 }
 
 describe('harness HTTP routes', () => {
-  const fastify = Fastify()
+  let fastify: ReturnType<typeof Fastify>
 
   beforeEach(async () => {
+    fastify = Fastify()
     await fastify.register(createHarnessRoute(createKernel()), {
       apiVersion: 'v1'
     })
@@ -151,10 +167,11 @@ describe('harness HTTP routes', () => {
     expect(response.headers['cache-control']).toBe('no-store')
     const body = response.json()
     expect(body.success).toBe(true)
-    expect(body.card.capabilities.map((item: { capability_id: string }) => item.capability_id)).toEqual([
-      'route.answer',
-      'route.slow'
-    ])
+    expect(
+      body.card.capabilities.map(
+        (item: { capability_id: string }) => item.capability_id
+      )
+    ).toEqual(['route.answer', 'route.slow'])
   })
 
   it('creates a task and exposes incremental ordered events', async () => {
@@ -198,9 +215,11 @@ describe('harness HTTP routes', () => {
       headers: { 'x-api-key': 'route-secret' }
     })
     const afterBody = after.json()
-    expect(afterBody.events.every((event: { sequence: number }) => event.sequence > 1)).toBe(
-      true
-    )
+    expect(
+      afterBody.events.every(
+        (event: { sequence: number }) => event.sequence > 1
+      )
+    ).toBe(true)
   })
 
   it('rejects invalid credentials and unpaired devices', async () => {
