@@ -1,13 +1,13 @@
 import Fastify from 'fastify'
 import { describe, expect, it } from 'vitest'
 
+import type { IdentityResolver } from '@/core/greenfield/runtime'
 import {
   HarnessCapabilityRegistry,
   HarnessHookBus,
   InMemoryHarnessTaskStore,
   MiraHarnessKernel,
-  createDefaultHarnessGuardrails,
-  type IdentityResolver
+  createDefaultHarnessGuardrails
 } from '@/core/harness'
 import { createHarnessRoute } from '@/core/http-server/api/greenfield/harness'
 
