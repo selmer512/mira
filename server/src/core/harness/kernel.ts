@@ -45,7 +45,8 @@ const STATE_TRANSITIONS: Record<HarnessTaskState, HarnessTaskState[]> = {
     'input_required',
     'completed',
     'failed',
-    'canceled'
+    'canceled',
+    'rejected'
   ],
   input_required: ['working', 'failed', 'canceled', 'rejected'],
   approval_required: ['working', 'failed', 'canceled', 'rejected'],
@@ -723,18 +724,19 @@ export class MiraHarnessKernel {
     >
   ): HarnessTask {
     let next = this.transition(task, 'approval_required')
-    next.approval = {
+    const approval: HarnessApprovalCheckpoint = {
       ...structuredClone(checkpoint),
       approval_id: this.createId(),
       capability_id: capabilityId,
       requested_at: this.now().toISOString()
     }
+    next.approval = approval
     next = this.save(next)
     this.emit(next, 'approval.requested', 'The task requires an owner decision.', {
-      approval_id: next.approval.approval_id,
-      risk: next.approval.risk,
-      expires_at: next.approval.expires_at,
-      required_permissions: next.approval.required_permissions
+      approval_id: approval.approval_id,
+      risk: approval.risk,
+      expires_at: approval.expires_at,
+      required_permissions: approval.required_permissions
     })
     return next
   }
