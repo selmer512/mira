@@ -131,15 +131,16 @@ async function createHarness() {
   const traceStore: MemoryTraceStore = {
     append: vi.fn(async (envelope) => persistenceReceipt(envelope))
   }
+  const now = createClock()
   const runtime = new MemoryCandidateRequestOrchestrator({
     identityResolver: resolver,
     memoryService: service,
     traceStore,
-    now: createClock(),
+    now,
     createId: createIds()
   })
   const fastify = Fastify()
-  await fastify.register(createMemoryRoute(resolver, runtime, service), {
+  await fastify.register(createMemoryRoute(resolver, runtime, service, now), {
     apiVersion: 'v1'
   })
   return { databasePath, store, service, traceStore, fastify }
