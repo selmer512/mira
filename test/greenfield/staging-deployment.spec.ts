@@ -15,6 +15,11 @@ describe('owner-controlled staging deployment', () => {
     expect(environment).toContain('MIRA_GREENFIELD_TRACE_MASTER_KEY=REPLACE_')
     expect(environment).toContain('MIRA_GREENFIELD_MEMORY_MASTER_KEY=REPLACE_')
     expect(environment).toContain('MIRA_GREENFIELD_OWNER_LOOKUP_KEY=REPLACE_')
+    expect(environment).toContain('MIRA_HARNESS_MASTER_KEY=REPLACE_')
+    expect(environment).toContain('MIRA_HARNESS_PERSISTENCE=true')
+    expect(environment).toContain(
+      'MIRA_HARNESS_DB_PATH=/home/mira-staging/mira-state/greenfield/harness.sqlite'
+    )
     expect(environment).toContain('MIRA_STAGING_ALLOW_DESTRUCTIVE=false')
 
     const permissions = environment
@@ -56,7 +61,9 @@ describe('owner-controlled staging deployment', () => {
       expect(workflow).toContain('workflow_dispatch:')
       expect(workflow).not.toContain('pull_request:')
       expect(workflow).not.toContain('push:')
-      expect(workflow).toContain('runs-on: [self-hosted, linux, x64, mira-staging]')
+      expect(workflow).toContain(
+        'runs-on: [self-hosted, linux, x64, mira-staging]'
+      )
       expect(workflow).toContain('name: mira-staging')
       expect(workflow).toContain('contents: read')
     }
@@ -84,28 +91,48 @@ describe('owner-controlled staging deployment', () => {
     expect(deployment).not.toContain('sudo ')
 
     expect(rollback).toContain('restore_original')
-    expect(rollback).toContain('rollback target failed authenticated smoke verification')
+    expect(rollback).toContain(
+      'rollback target failed authenticated smoke verification'
+    )
     expect(rollback).not.toContain('sudo ')
   })
 
-  it('uploads only content-free smoke evidence', () => {
+  it('verifies a real harness task while uploading only content-free evidence', () => {
     const smoke = read('scripts/deploy/staging-smoke.sh')
+    const evidenceSection = smoke.slice(smoke.indexOf('const evidence ='))
 
+    expect(smoke).toContain('/api/v1/harness/card')
+    expect(smoke).toContain('/api/v1/harness/tasks')
+    expect(smoke).toContain("capability_id: 'system.status.read'")
+    expect(smoke).toContain('lifecycle_sequence_contiguous: true')
+    expect(smoke).toContain('causal_trace_present: Boolean')
+    expect(smoke).toContain('encrypted_journal_expected: true')
     expect(smoke).toContain('chain_valid')
     expect(smoke).toContain("owner_scope_probe: 'not_found_as_expected'")
     expect(smoke).not.toContain('export_bundle')
     expect(smoke).not.toContain('memory.content')
-    expect(smoke).not.toContain('owner_id:')
-    expect(smoke).not.toContain('device_id:')
+    expect(evidenceSection).not.toMatch(/(^|\s)owner_id\s*:/m)
+    expect(evidenceSection).not.toMatch(/(^|\s)device_id\s*:/m)
+    expect(evidenceSection).not.toMatch(/(^|\s)task_id\s*:/m)
+    expect(evidenceSection).not.toMatch(/(^|\s)trace_id\s*:/m)
   })
 
   it('fails closed on placeholders, key reuse, broad file mode, and destructive grants', () => {
     const preflight = read('scripts/deploy/staging-preflight.sh')
 
+    expect(preflight).toContain('MIRA_HARNESS_MASTER_KEY')
+    expect(preflight).toContain('MIRA_HARNESS_DB_PATH')
+    expect(preflight).toContain('MIRA_HARNESS_PERSISTENCE')
     expect(preflight).toContain('still contains a placeholder')
-    expect(preflight).toContain('keys must be distinct')
-    expect(preflight).toContain('environment file group permissions are too broad')
-    expect(preflight).toContain('is forbidden until destructive staging acceptance')
+    expect(preflight).toContain(
+      'trace, owner lookup, memory, and harness keys must be distinct'
+    )
+    expect(preflight).toContain(
+      'environment file group permissions are too broad'
+    )
+    expect(preflight).toContain(
+      'is forbidden until destructive staging acceptance'
+    )
     expect(preflight).toContain('must remain under')
   })
 })

@@ -1,0 +1,323 @@
+.harness-launch {
+  margin-left: 0.5rem;
+}
+
+.harness-panel[hidden] {
+  display: none;
+}
+
+.harness-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  color: #f5f7ff;
+}
+
+.harness-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 8, 20, 0.82);
+  backdrop-filter: blur(12px);
+}
+
+.harness-shell {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 100%);
+  max-height: min(92vh, 980px);
+  overflow: auto;
+  border: 1px solid rgba(157, 176, 255, 0.28);
+  border-radius: 24px;
+  padding: clamp(1rem, 2.2vw, 2rem);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(74, 92, 255, 0.22), transparent 30%),
+    linear-gradient(145deg, rgba(18, 23, 49, 0.98), rgba(8, 12, 28, 0.98));
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.48);
+}
+
+.harness-header,
+.harness-card-heading,
+.harness-actions,
+.harness-event-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.harness-header {
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.harness-header h2,
+.harness-card h3,
+.harness-card h4,
+.harness-header p,
+.harness-card p {
+  margin-top: 0;
+}
+
+.harness-close {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 999px;
+  font-size: 1.5rem;
+}
+
+.harness-eyebrow {
+  margin-bottom: 0.35rem;
+  color: #aebcff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.harness-live-status {
+  margin-bottom: 1rem;
+  border: 1px solid rgba(157, 176, 255, 0.2);
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.harness-live-status[data-tone='success'] {
+  border-color: rgba(95, 218, 163, 0.5);
+}
+
+.harness-live-status[data-tone='danger'] {
+  border-color: rgba(255, 102, 128, 0.55);
+}
+
+.harness-live-status[data-tone='attention'] {
+  border-color: rgba(255, 196, 87, 0.55);
+}
+
+.harness-card {
+  margin-bottom: 1rem;
+  border: 1px solid rgba(157, 176, 255, 0.18);
+  border-radius: 18px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.harness-auth-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: end;
+}
+
+.harness-card label {
+  display: grid;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.harness-card input,
+.harness-card select,
+.harness-card textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(157, 176, 255, 0.3);
+  border-radius: 12px;
+  padding: 0.72rem 0.8rem;
+  color: inherit;
+  background: rgba(4, 8, 24, 0.72);
+}
+
+.harness-card textarea {
+  resize: vertical;
+}
+
+.harness-card button,
+.harness-launch {
+  border: 1px solid rgba(157, 176, 255, 0.38);
+  border-radius: 12px;
+  padding: 0.72rem 1rem;
+  color: #fff;
+  background: linear-gradient(135deg, #586cff, #7e57ff);
+  cursor: pointer;
+}
+
+.harness-card button.secondary {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.harness-card button.danger {
+  border-color: rgba(255, 102, 128, 0.55);
+  background: rgba(180, 44, 76, 0.76);
+}
+
+.harness-card button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.harness-help,
+.harness-muted {
+  color: rgba(229, 234, 255, 0.68);
+  font-size: 0.88rem;
+}
+
+.harness-capability-detail {
+  border-left: 3px solid rgba(126, 87, 255, 0.8);
+  padding-left: 0.9rem;
+}
+
+.harness-state,
+.harness-risk,
+.harness-protocol,
+.harness-event-count,
+.harness-artifact-count {
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.harness-state[data-tone='active'] {
+  background: rgba(88, 108, 255, 0.3);
+}
+
+.harness-state[data-tone='success'] {
+  background: rgba(45, 169, 112, 0.3);
+}
+
+.harness-state[data-tone='attention'] {
+  background: rgba(194, 139, 34, 0.35);
+}
+
+.harness-state[data-tone='danger'] {
+  background: rgba(190, 53, 84, 0.35);
+}
+
+.harness-task-facts,
+.harness-approval-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.harness-fact {
+  min-width: 0;
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: rgba(4, 8, 24, 0.52);
+}
+
+.harness-fact dt {
+  margin-bottom: 0.25rem;
+  color: rgba(229, 234, 255, 0.62);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+}
+
+.harness-fact dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.harness-answer,
+.harness-error {
+  margin-top: 1rem;
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: rgba(4, 8, 24, 0.52);
+}
+
+.harness-error {
+  border: 1px solid rgba(255, 102, 128, 0.45);
+}
+
+.harness-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.harness-event-list {
+  display: grid;
+  gap: 0.65rem;
+  max-height: 430px;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.harness-event,
+.harness-artifact {
+  border: 1px solid rgba(157, 176, 255, 0.16);
+  border-radius: 12px;
+  padding: 0.8rem;
+  background: rgba(4, 8, 24, 0.5);
+}
+
+.harness-event-heading time {
+  color: rgba(229, 234, 255, 0.58);
+  font-size: 0.72rem;
+}
+
+.harness-artifact-list {
+  display: grid;
+  gap: 0.65rem;
+  max-height: 430px;
+  overflow: auto;
+}
+
+.harness-artifact pre {
+  max-height: 230px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.harness-artifact-metadata {
+  color: rgba(229, 234, 255, 0.65);
+  font-size: 0.75rem;
+}
+
+@media (max-width: 800px) {
+  .harness-auth-grid,
+  .harness-columns,
+  .harness-task-facts,
+  .harness-approval-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .harness-header,
+  .harness-card-heading,
+  .harness-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .harness-panel *,
+  .harness-panel *::before,
+  .harness-panel *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .harness-shell,
+  .harness-card,
+  .harness-event,
+  .harness-artifact,
+  .harness-live-status {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+}
