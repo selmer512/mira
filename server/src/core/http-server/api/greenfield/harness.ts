@@ -189,11 +189,14 @@ export function createHarnessRoute(
       handler: async (request, reply) => {
         reply.header('Cache-Control', 'no-store')
         try {
+          const afterSequence = request.query.after_sequence
           const view = await harness.read({
             device_id: request.query.device_id,
             credential: readCredential(request.headers['x-api-key']),
             task_id: request.params.task_id,
-            after_sequence: request.query.after_sequence
+            ...(afterSequence === undefined
+              ? {}
+              : { after_sequence: afterSequence })
           })
           reply.send({ success: true, ...view })
         } catch (error) {
@@ -212,11 +215,12 @@ export function createHarnessRoute(
       handler: async (request, reply) => {
         reply.header('Cache-Control', 'no-store')
         try {
+          const reason = request.body.reason
           const view = await harness.cancel({
             device_id: request.body.device_id,
             credential: readCredential(request.headers['x-api-key']),
             task_id: request.params.task_id,
-            reason: request.body.reason
+            ...(reason === undefined ? {} : { reason })
           })
           reply.send({ success: true, ...view })
         } catch (error) {
