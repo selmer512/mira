@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - develop
+      - greenfield/vertical-slice-foundation-20260710
     paths:
       - '.github/workflows/greenfield-regression-ci.yml'
       - '.github/workflows/mira-staging-*.yml'
@@ -31,7 +32,7 @@ concurrency:
 
 jobs:
   regression:
-    name: Lint, build, client, agentic, HTTP, and deployment assets
+    name: Lint, build, client, agentic, HTTP, deployment, and harness
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -66,12 +67,14 @@ jobs:
           set -o pipefail
           npx eslint \
             'server/src/core/greenfield/**/*.{ts,js}' \
+            'server/src/core/harness/**/*.{ts,js}' \
             'server/src/core/http-server/api/greenfield/**/*.{ts,js}' \
             'server/src/core/http-server/http-server.ts' \
             'server/src/core/http-server/plugins/key.ts' \
             'app/src/js/trace-operations-*.js' \
             'app/src/js/trace-rotation-*.js' \
             'app/src/js/memory-*.js' \
+            'app/src/js/harness-*.js' \
             --ignore-pattern .gitignore \
             2>&1 | tee greenfield-regression-output/greenfield-lint.log
 
