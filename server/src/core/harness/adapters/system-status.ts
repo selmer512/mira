@@ -37,7 +37,7 @@ export class SystemStatusHarnessAdapter implements HarnessCapabilityAdapter {
     allowed_privacy_zones: ['private'],
     risk: 'low',
     confirmation: 'never',
-    supports_streaming: true,
+    supports_streaming: false,
     supports_cancellation: true,
     supports_handoffs: false,
     input_schema_ref: 'schema://mira/harness/system-status/input/v1',
