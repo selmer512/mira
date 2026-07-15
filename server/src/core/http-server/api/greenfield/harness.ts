@@ -115,6 +115,16 @@ function readCredential(header: string | string[] | undefined): string {
   return Array.isArray(header) ? header[0] || '' : header || ''
 }
 
+function assertHarnessEnabled(enabled: boolean): void {
+  if (!enabled) {
+    throw new HarnessKernelError(
+      'harness.disabled',
+      'The Mira owner harness is disabled by configuration.',
+      503
+    )
+  }
+}
+
 function sendError(reply: FastifyReply, error: unknown): void {
   if (
     error instanceof HarnessKernelError ||
@@ -138,7 +148,8 @@ function sendError(reply: FastifyReply, error: unknown): void {
 }
 
 export function createHarnessRoute(
-  harness: MiraHarnessKernel
+  harness: MiraHarnessKernel,
+  enabled = true
 ): FastifyPluginAsync<APIOptions> {
   return async (fastify, options) => {
     fastify.route<{ Querystring: CardRoute['querystring'] }>({
@@ -148,6 +159,7 @@ export function createHarnessRoute(
       handler: async (request, reply) => {
         reply.header('Cache-Control', 'no-store')
         try {
+          assertHarnessEnabled(enabled)
           const card = await harness.getCard({
             device_id: request.query.device_id,
             credential: readCredential(request.headers['x-api-key'])
@@ -166,6 +178,7 @@ export function createHarnessRoute(
       handler: async (request, reply) => {
         reply.header('Cache-Control', 'no-store')
         try {
+          assertHarnessEnabled(enabled)
           const view = await harness.start({
             ...request.body,
             metadata: request.body.metadata || {},
@@ -189,6 +202,7 @@ export function createHarnessRoute(
       handler: async (request, reply) => {
         reply.header('Cache-Control', 'no-store')
         try {
+          assertHarnessEnabled(enabled)
           const afterSequence = request.query.after_sequence
           const view = await harness.read({
             device_id: request.query.device_id,
@@ -215,6 +229,7 @@ export function createHarnessRoute(
       handler: async (request, reply) => {
         reply.header('Cache-Control', 'no-store')
         try {
+          assertHarnessEnabled(enabled)
           const reason = request.body.reason
           const view = await harness.cancel({
             device_id: request.body.device_id,
@@ -239,6 +254,7 @@ export function createHarnessRoute(
       handler: async (request, reply) => {
         reply.header('Cache-Control', 'no-store')
         try {
+          assertHarnessEnabled(enabled)
           const view = await harness.decide({
             device_id: request.body.device_id,
             credential: readCredential(request.headers['x-api-key']),
@@ -255,4 +271,8 @@ export function createHarnessRoute(
   }
 }
 
-export const harnessRoute = createHarnessRoute(getDefaultMiraHarness())
+export const harnessRoute = createHarnessRoute(
+  getDefaultMiraHarness(),
+  process.env['MIRA_GREENFIELD_ENABLED'] === 'true' &&
+    process.env['MIRA_HARNESS_ENABLED'] === 'true'
+)
