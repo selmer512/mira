@@ -4,22 +4,36 @@ import type {
   HarnessTaskState
 } from './contracts'
 
+export const MCP_PROTOCOL_VERSION = '2026-07-28'
+export const A2A_PROTOCOL_VERSION = '1.0.0'
+
+export interface McpRequestContext {
+  protocol_version: typeof MCP_PROTOCOL_VERSION
+  client_info: {
+    name: string
+    version: string
+  }
+  capabilities: {
+    tasks: boolean
+  }
+  extensions: string[]
+  request_id: string
+}
+
 export interface McpCapabilitySet {
   tools: boolean
   resources: boolean
   prompts: boolean
-  sampling: boolean
-  elicitation: boolean
-  roots: boolean
-  logging: boolean
+  tasks: boolean
 }
 
 export interface McpServerDescriptor {
   server_id: string
   name: string
   version: string
-  protocol_version: string
+  protocol_version: typeof MCP_PROTOCOL_VERSION
   capabilities: McpCapabilitySet
+  extensions: string[]
 }
 
 export interface McpToolDescriptor {
@@ -30,11 +44,19 @@ export interface McpToolDescriptor {
   annotations: Record<string, unknown>
 }
 
+export interface McpListToolsResult {
+  tools: McpToolDescriptor[]
+  cache: {
+    ttl_ms: number
+    scope: 'request' | 'client' | 'server'
+  }
+}
+
 export interface McpToolCallInput {
+  context: McpRequestContext
   server_id: string
   tool_name: string
   arguments: Record<string, unknown>
-  progress_token: string
   signal: AbortSignal
 }
 
@@ -46,11 +68,21 @@ export interface McpToolCallResult {
   metadata: Record<string, unknown>
 }
 
+export interface McpTaskExtensionDescriptor {
+  extension_id: 'io.modelcontextprotocol/tasks'
+  supported: boolean
+}
+
 export interface McpClientPort {
-  initialize(signal: AbortSignal): Promise<McpServerDescriptor>
-  listTools(signal: AbortSignal): Promise<McpToolDescriptor[]>
+  discover(
+    context: McpRequestContext,
+    signal: AbortSignal
+  ): Promise<McpServerDescriptor>
+  listTools(
+    context: McpRequestContext,
+    signal: AbortSignal
+  ): Promise<McpListToolsResult>
   callTool(input: McpToolCallInput): Promise<McpToolCallResult>
-  cancel(progressToken: string): Promise<void>
 }
 
 export interface A2ARemoteAgentCard {
@@ -58,7 +90,7 @@ export interface A2ARemoteAgentCard {
   name: string
   description: string
   version: string
-  protocol_version: string
+  protocol_version: typeof A2A_PROTOCOL_VERSION
   endpoint_ref: string
   supports_streaming: boolean
   supports_push_notifications: boolean
