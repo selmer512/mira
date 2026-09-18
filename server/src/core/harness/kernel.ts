@@ -447,6 +447,14 @@ export class MiraHarnessKernel {
         this.executionStates.set(taskId, execution)
         const adapter = this.getAdapter(task.active_capability_id)
         const manifest = adapter.manifest
+        const report = (event: Parameters<HarnessAdapterExecutionInput['report']>[0]): HarnessEvent =>
+          this.emit(
+            this.readTask(taskId),
+            event.type,
+            event.message,
+            event.data || {},
+            event.phase || null
+          )
         const activeRequest: HarnessStartRequest = {
           device_id: task.device_id,
           credential: '',
@@ -473,7 +481,8 @@ export class MiraHarnessKernel {
           input: execution.input,
           metadata: execution.metadata,
           context: execution.context || createEmptyContext(),
-          signal: controller.signal
+          signal: controller.signal,
+          report
         })
         execution.context = structuredClone(context)
         this.executionStates.set(taskId, execution)
@@ -539,7 +548,8 @@ export class MiraHarnessKernel {
           input: execution.input,
           metadata: execution.metadata,
           context,
-          signal
+          signal,
+          report
         }
         let result: HarnessStepResult
         try {
