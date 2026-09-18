@@ -1,6 +1,6 @@
 import type { IdentityContext, PrivacyClassification } from '@/core/greenfield/contracts'
 
-export const HARNESS_PROTOCOL_VERSION = '2026-07-15'
+export const HARNESS_PROTOCOL_VERSION = '2026-09-18'
 
 export type HarnessTaskState =
   | 'queued'
@@ -32,6 +32,13 @@ export type HarnessEventType =
   | 'context.assembled'
   | 'adapter.started'
   | 'adapter.completed'
+  | 'model.invocation.started'
+  | 'model.invocation.completed'
+  | 'tool.call.proposed'
+  | 'tool.call.started'
+  | 'tool.call.completed'
+  | 'verification.started'
+  | 'verification.completed'
   | 'handoff.requested'
   | 'approval.requested'
   | 'approval.decided'
@@ -238,6 +245,17 @@ export interface HarnessPreparedContext {
   limitations: string[]
 }
 
+export interface HarnessAdapterReportInput {
+  type: HarnessEventType
+  message: string
+  data?: Record<string, unknown>
+  phase?: string | null
+}
+
+export type HarnessAdapterReporter = (
+  event: HarnessAdapterReportInput
+) => HarnessEvent
+
 export interface HarnessAdapterExecutionInput {
   task: HarnessTask
   identity: IdentityContext
@@ -245,6 +263,7 @@ export interface HarnessAdapterExecutionInput {
   metadata: Record<string, unknown>
   context: HarnessPreparedContext
   signal: AbortSignal
+  report: HarnessAdapterReporter
 }
 
 export interface HarnessAdapterResumeInput extends HarnessAdapterExecutionInput {
